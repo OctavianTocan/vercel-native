@@ -6,7 +6,7 @@ The first milestone is the delivery setup: a small native shell, Inventory accou
 
 ## Download
 
-[Shared downloads page](https://mymind.octaviantocan.com/download) — sign in with your existing Inventory account. The Vercel entry is being connected during initial setup.
+[Shared downloads page](https://mymind.octaviantocan.com/download) — sign in with your existing Inventory account and choose **Download Vercel Native**.
 
 ## Build
 
