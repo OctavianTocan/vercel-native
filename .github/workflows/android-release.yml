@@ -27,7 +27,8 @@ jobs:
       ANDROID_RELEASE_CERT_SHA256: ${{ vars.ANDROID_RELEASE_CERT_SHA256 }}
       ANDROID_GOOGLE_WEB_CLIENT_ID: ${{ vars.ANDROID_GOOGLE_WEB_CLIENT_ID }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       TEST_USER_NAME: ${{ secrets.TEST_USER_NAME }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       ANDROID_RELEASE_REVISION: ${{ github.event.workflow_run.head_sha || github.sha }}
@@ -43,14 +44,15 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '22'
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd
         with:
           packages: ''
       - run: sdkmanager "platforms;android-37.0" "build-tools;37.0.0"
-      - run: npm ci --prefix deploy --ignore-scripts
+      - name: Install pinned S3 release tool
+        run: |
+          python3 -m venv "$RUNNER_TEMP/vercel-release-tools"
+          "$RUNNER_TEMP/vercel-release-tools/bin/pip" install -r deploy/requirements.txt
+          echo "RELEASE_PYTHON=$RUNNER_TEMP/vercel-release-tools/bin/python" >> "$GITHUB_ENV"
       - name: Verify manually dispatched release
         if: github.event_name == 'workflow_dispatch'
         working-directory: android

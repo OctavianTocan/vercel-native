@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-exec python3 -B deploy/release.py publish --if-needed "$@"
+exec "${RELEASE_PYTHON:-python3}" -B deploy/release.py publish --if-needed "$@"

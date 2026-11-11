@@ -6,7 +6,7 @@ The first milestone is the delivery setup: a small native shell, Inventory accou
 
 ## Download
 
-[Shared downloads page](https://mymind.octaviantocan.com/download) — sign in with your existing Inventory account. The Vercel entry is being connected during initial setup.
+[Shared downloads page](https://mymind.octaviantocan.com/download) — sign in with your existing Inventory account and choose **Download Vercel Native**.
 
 ## Build
 
@@ -14,7 +14,7 @@ Use JDK 21 and Android SDK/build-tools 37. The Gradle wrapper and Kotlin/Compose
 
 ```sh
 cd android
-./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
+mise exec -- ./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
 ```
 
 Debug builds use a separate package ID and do not install production updates. Release builds require the project’s signing key and environment configuration; keys and APKs are never committed.
@@ -33,6 +33,7 @@ Updates are mandatory. The app checks on resume and in the background, verifies 
 - [Behavior contracts](CONTRACTS)
 - [Decisions](docs/decisions.md)
 - [Release notes](android/CHANGELOG.md)
+- [Build, CI, signing and recovery guide](docs/android-releases.md)
 - [Reused code provenance](docs/provenance.md)
 
 Add dated notes under `android/changes/` for app runtime changes. Versions are assigned from main’s merge history. This project contains no Inventory library data, private Git history, private AI-kit dependency or application backend.
