@@ -1,0 +1,13 @@
+**/.gradle/
+**/build/
+android/local.properties
+.idea/
+*.iml
+.env
+*.jks
+*.p12
+*.keystore
+*.apk
+node_modules/
+__pycache__/
+.wrangler/

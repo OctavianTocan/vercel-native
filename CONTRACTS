@@ -1,0 +1,8 @@
+@cc [owner:OctavianTocan,label:setup] mandatory-updates
+The app MUST preserve Inventory's mandatory update behavior. It MUST NOT offer skip/later/continue-using controls once a newer release is offered. Source: Tavi, 2026-11-11.
+
+@cc [owner:OctavianTocan,label:setup] independent-publishing
+This repository MUST own its CI, signing key, publisher, artifacts and feed. Inventory's publisher and manifest MUST NOT manage its releases. The generic existing downloads page MAY link to its authenticated download route. Source: Tavi, 2026-11-11.
+
+@cc [owner:OctavianTocan,label:setup] existing-infrastructure
+CI MUST run on mini-002-netcup through Tailscale-accessed infrastructure. Authentication MUST reuse the existing Inventory session as-is. Source: Tavi, 2026-11-11.
