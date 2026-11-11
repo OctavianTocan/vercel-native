@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Android version gate and fail-closed release publisher. Uses only the Python standard library."""
+"""Android version gate and fail-closed release publisher. Publication uses the pinned S3 SDK."""
 import argparse
 import datetime
 import hashlib
@@ -265,17 +265,27 @@ class Remote:
     def __init__(self, stage):
         self.stage = stage
         self.token = None
-        for name in ("CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "TEST_USER_NAME", "TEST_USER_PASSWORD", "ANDROID_GOOGLE_WEB_CLIENT_ID"):
+        for name in ("CLOUDFLARE_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "TEST_USER_NAME", "TEST_USER_PASSWORD", "ANDROID_GOOGLE_WEB_CLIENT_ID"):
             required(name)
-        self.wrangler = Path(os.environ.get("WRANGLER", str(ROOT / "deploy/node_modules/wrangler/bin/wrangler.js")))
-        if not self.wrangler.is_file():
-            fail("pinned Wrangler is missing; run npm ci --prefix deploy")
+        import boto3
+        from botocore.config import Config
+        self.s3 = boto3.client("s3", endpoint_url=f"https://{required('CLOUDFLARE_ACCOUNT_ID')}.r2.cloudflarestorage.com",
+            aws_access_key_id=required("R2_ACCESS_KEY_ID"), aws_secret_access_key=required("R2_SECRET_ACCESS_KEY"),
+            region_name="auto", config=Config(signature_version="s3v4", retries={"max_attempts": 4}, connect_timeout=15, read_timeout=300))
 
-    def r2(self, action, key, path):
-        args = ["node", str(self.wrangler), "r2", "object", action, f"vercel-native/{key}", "--file", str(path), "--remote", "--config", str(ROOT / "deploy/wrangler.jsonc")]
-        if action == "put":
-            args += ["--content-type", "application/json" if key == "manifest.json" else "application/vnd.android.package-archive"]
-        command(args, f"R2 {action} {key}", cwd=ROOT / "deploy", env={**os.environ, "WRANGLER_SEND_METRICS": "false"})
+    def r2(self, action, key, path, if_match=None):
+        if action == "get":
+            answer = self.s3.get_object(Bucket="vercel-native", Key=key)
+            with answer["Body"] as body, Path(path).open("wb") as output:
+                shutil.copyfileobj(body, output)
+            return answer["ETag"]
+        elif action == "put":
+            kind = "application/json" if key.endswith(".json") else "application/vnd.android.package-archive"
+            with Path(path).open("rb") as source:
+                condition = {"IfMatch": if_match} if if_match is not None else {}
+                self.s3.put_object(Bucket="vercel-native", Key=key, Body=source, ContentType=kind, **condition)
+        else:
+            fail("Unsupported release storage operation")
 
     def request(self, path, output, method="GET", payload=None):
         args = ["curl", "--silent", "--show-error", "--fail", "--connect-timeout", "15", "--max-time", "300", "--request", method, "--output", str(output)]
@@ -296,6 +306,13 @@ class Remote:
         if not isinstance(self.token, str) or not self.token or re.search(r"[\r\n]", self.token):
             fail("test-user sign-in did not return an app token")
         output.unlink()
+
+    def verify_package(self, entry, signer, digest):
+        apk = self.stage / "candidate-hosted.apk"
+        self.request(f"/download/vercel/{entry['name']}", apk)
+        if apk.stat().st_size != entry["bytes"] or checksum(apk) != entry["sha256"]:
+            fail("hosted candidate APK checksum/size mismatch; active feed was not changed")
+        verify_apk(apk, entry, signer, digest)
 
     def verify(self, entry, signer, digest):
         description = self.stage / "hosted-android.json"
@@ -338,7 +355,7 @@ def publish(local=None, if_needed=False):
                 data = manifest(target / "manifest.json", missing=True)
             else:
                 remote = Remote(stage)
-                remote.r2("get", "manifest.json", stage / "manifest.json")
+                original_etag = remote.r2("get", "manifest.json", stage / "manifest.json")
                 data = manifest(stage / "manifest.json")
             previous = published(data)
             equal = previous and latest["versionCode"] == previous["versionCode"]
@@ -379,10 +396,14 @@ def publish(local=None, if_needed=False):
             candidate.write_text(json.dumps(updated, indent=2) + "\n")
             if remote:
                 remote.r2("put", name, apk)
-                remote.r2("get", "manifest.json", stage / "latest-manifest.json")
-                if manifest(stage / "latest-manifest.json") != data:
+                remote.verify_package(entry, signer, digest)
+                latest_etag = remote.r2("get", "manifest.json", stage / "latest-manifest.json")
+                if latest_etag != original_etag or manifest(stage / "latest-manifest.json") != data:
                     fail("live manifest changed during publication; refusing to overwrite it, retry after the other publisher finishes")
-                remote.r2("put", "manifest.json", candidate)
+                backup = stage / "previous-manifest.json"
+                backup.write_text(json.dumps(data, indent=2) + "\n")
+                remote.r2("put", "previous-manifest.json", backup)
+                remote.r2("put", "manifest.json", candidate, if_match=original_etag)
                 remote.verify(entry, signer, digest)
                 print(f"Published and verified {name} at {SITE}/download")
             else:

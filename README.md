@@ -33,6 +33,7 @@ Updates are mandatory. The app checks on resume and in the background, verifies 
 - [Behavior contracts](CONTRACTS)
 - [Decisions](docs/decisions.md)
 - [Release notes](android/CHANGELOG.md)
+- [Build, CI, signing and recovery guide](docs/android-releases.md)
 - [Reused code provenance](docs/provenance.md)
 
 Add dated notes under `android/changes/` for app runtime changes. Versions are assigned from main’s merge history. This project contains no Inventory library data, private Git history, private AI-kit dependency or application backend.

@@ -11,3 +11,4 @@ android/local.properties
 node_modules/
 __pycache__/
 .wrangler/
+**/.venv/
