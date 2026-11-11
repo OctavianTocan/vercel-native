@@ -1,0 +1,68 @@
+name: Android release
+on:
+  workflow_run:
+    workflows: [Android verify]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: vercel-native-production-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: [self-hosted, linux, x64, vercel-linux]
+    timeout-minutes: 30
+    environment: production
+    env:
+      ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+      ANDROID_RELEASE_PASSWORD: ${{ secrets.ANDROID_RELEASE_PASSWORD }}
+      ANDROID_RELEASE_CERT_SHA256: ${{ vars.ANDROID_RELEASE_CERT_SHA256 }}
+      ANDROID_GOOGLE_WEB_CLIENT_ID: ${{ vars.ANDROID_GOOGLE_WEB_CLIENT_ID }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TEST_USER_NAME: ${{ secrets.TEST_USER_NAME }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      ANDROID_RELEASE_REVISION: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Restrict publication to a verified main commit
+        run: git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd
+        with:
+          packages: ''
+      - run: sdkmanager "platforms;android-37.0" "build-tools;37.0.0"
+      - run: npm ci --prefix deploy --ignore-scripts
+      - name: Verify manually dispatched release
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: android
+        run: ./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
+      - name: Publish signed package and verify protected download
+        run: |
+          umask 077
+          export ANDROID_RELEASE_STORE="$RUNNER_TEMP/vercel-native-release.p12"
+          trap 'rm -f "$ANDROID_RELEASE_STORE"' EXIT
+          python3 - <<'PYKEY'
+          import base64, os
+          from pathlib import Path
+          Path(os.environ['ANDROID_RELEASE_STORE']).write_bytes(base64.b64decode(os.environ['ANDROID_RELEASE_KEYSTORE_BASE64'], validate=True))
+          PYKEY
+          bash deploy/publish-android.sh
