@@ -14,7 +14,7 @@ Use JDK 21 and Android SDK/build-tools 37. The Gradle wrapper and Kotlin/Compose
 
 ```sh
 cd android
-./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
+mise exec -- ./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
 ```
 
 Debug builds use a separate package ID and do not install production updates. Release builds require the project’s signing key and environment configuration; keys and APKs are never committed.

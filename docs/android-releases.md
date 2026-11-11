@@ -4,11 +4,11 @@ This app owns its delivery pipeline. Inventory supplies its existing account/ses
 
 ## Build locally
 
-Install JDK 21, Python 3 and Android SDK 37 with build-tools 37.0.0. `.mise.toml` pins the JDK; `android/gradlew` pins Gradle. Set `ANDROID_HOME` to your SDK, then run:
+Install JDK 21, Python 3 and Android SDK 37 with build-tools 37.0.0. `.mise.toml` pins the JDK; `android/gradlew` pins Gradle. The owner's workstation already has these tools. Set `ANDROID_HOME` to your SDK, then run through `mise` so the build uses the project JDK even when the shell's default Java is newer:
 
 ```sh
 cd android
-./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
+mise exec -- ./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintVitalRelease --no-daemon --max-workers=2
 ```
 
 The debug APK is `android/app/build/outputs/apk/debug/app-debug.apk`. It uses `com.octaviantocan.vercelnative.debug`, cannot replace the signed release, and has production self-updating disabled. Password account sign-in uses the existing server. Google sign-in on a development build additionally needs its own debug-package/certificate registration; this initial setup registers the release app only.
