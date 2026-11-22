@@ -41,11 +41,44 @@ internal object DashboardTokens {
     val AvatarSize = 80.dp
     val IllustrationWidth = 156.dp
     val IllustrationHeight = 120.dp
-    val DrawerWidth = 304.dp
     val SearchResultsHeight = 428.dp
     val SheetMaxHeight = 734.dp
     val CompactSheetMaxHeight = 490.dp
     val DialogWidth = 340.dp
+    val ProjectOptionsRadius = 17.dp
+    val ProjectOptionsLightRadius = 16.dp
+    val WorkspaceSelectionRadius = 1.5.dp
+    val ProjectSectionHeight = 38.dp
+    val ProjectBadgeGap = 14.dp
+    val DockIcon = 18.dp
+    val DockInset = 5.dp
+    val DockBottomGap = 10.dp
+    val DockScrollClearance = 90.dp
+    val DockLabelGap = 3.dp
+    val ProjectOptionsWidth = 247.dp
+    val ProjectOptionsIcon = 18.dp
+    val ProjectOptionsInset = 13.dp
+    val ProjectOptionsLightWidth = 236.dp
+    val ProjectOptionsLightRow = 46.dp
+    val WorkspaceRailWidth = 81.dp
+    val WorkspacePanelWidth = 260.dp
+    val WorkspacePanelTop = 72.dp
+    val WorkspaceRowInset = 14.dp
+    val WorkspaceBadgeSize = 49.dp
+    val WorkspaceBadgeTop = 23.dp
+    val WorkspaceBadgeGap = 21.dp
+    val WorkspaceSelectionWidth = 3.dp
+    val WorkspaceSelectionHeight = 25.dp
+    val ProjectTileRadius = 6.dp
+    val RecentProjectRadius = 5.dp
+    val RecentsStart = 14.dp
+    val RecentAvatarSlot = 40.dp
+    val RecentTitleGap = 9.dp
+    val RecentContentTop = 17.dp
+    val RecentMetadataGap = 5.dp
+    val RecentMetadataHeight = 28.dp
+    val RecentMetadataSpacing = 10.dp
+    val ProjectOptionsGear = 18.9.dp
     val Caption = 11.sp
     val Metadata = 12.sp
     val Body = 15.sp
@@ -53,11 +86,21 @@ internal object DashboardTokens {
     val Heading = 22.sp
     val Metric = 26.sp
     val Large = 29.sp
+    val ListTitle = 16.sp
+    val ListSubtitle = 14.sp
+    val RootTitle = 18.sp
+    val ListTitleLine = 24.sp
+    val ListSubtitleLine = 20.sp
+    val ProjectSectionLine = 19.sp
+    val ProjectOptionsLine = 21.sp
+    val RootTitleTracking = -0.36.sp
+    val DockLabelTracking = -0.28.sp
+    val RecentMetadata = 13.sp
+    val RecentMetadataLine = 18.sp
     const val ScreenFadeMillis = 150
     const val ScrimOpacity = 0.62f
-    const val RailOpacity = 0.34f
-    const val DrawerFraction = 0.86f
     const val ProjectSheetFraction = 0.98f
+    const val SidebarScrimOpacity = 0.55f
 }
 
 internal data class DashboardPalette(
@@ -84,6 +127,23 @@ internal data class DashboardPalette(
     val readySurface: Color,
     val chart: Color,
     val badge: Color,
+    val glassTint: Color,
+    val glassInk: Color,
+    val glassSelection: Color,
+    val sidebarPanel: Color,
+    val insetSurface: Color,
+    val projectBadge: Color,
+    val projectEllipsis: Color,
+    val projectOptionsSurface: Color,
+    val projectOptionsInk: Color,
+    val projectOptionsGlyph: Color,
+    val projectOptionsBorder: Color,
+    val workspaceRail: Color,
+    val projectDivider: Color,
+    val projectTile: Color,
+    val projectTileDivider: Color,
+    val workspaceBadgeSelected: Color,
+    val workspaceBadgeInk: Color,
 ) {
     companion object {
         val Dark = DashboardPalette(
@@ -110,6 +170,23 @@ internal data class DashboardPalette(
             readySurface = Color(0xFF294637),
             chart = Color(0xFF9AB5DB),
             badge = Color(0xFF263953),
+            glassTint = Color(0x57171718),
+            glassInk = Color(0xFFF5F5F0),
+            glassSelection = Color(0x26FFFFFF),
+            sidebarPanel = Color(0xF00A0A0A),
+            insetSurface = Color(0xFF303030),
+            projectBadge = Color(0xFF202020),
+            projectEllipsis = Color(0xFFCFCFCF),
+            projectOptionsSurface = Color(0xFF181818),
+            projectOptionsInk = Color(0xFFF1F1F1),
+            projectOptionsGlyph = Color(0xFFACACAC),
+            projectOptionsBorder = Color(0xFF303030),
+            workspaceRail = Color(0xDC131313),
+            projectDivider = Color(0xFF202020),
+            projectTile = Color(0xFF292929),
+            projectTileDivider = Color(0xFF2B2B2B),
+            workspaceBadgeSelected = Color(0xFF212121),
+            workspaceBadgeInk = Color(0xFFC7C7C7),
         )
 
         val Light = DashboardPalette(
@@ -136,6 +213,23 @@ internal data class DashboardPalette(
             readySurface = Color(0xFFE5F4E8),
             chart = Color(0xFF415E8A),
             badge = Color(0xFFDDE8F5),
+            glassTint = Color(0x6BFFFFFF),
+            glassInk = Color(0xFF121213),
+            glassSelection = Color(0x12000000),
+            sidebarPanel = Color(0xF0FFFFFF),
+            insetSurface = Color(0xFFE8E8E8),
+            projectBadge = Color(0xFFEDEDED),
+            projectEllipsis = Color(0xFF666666),
+            projectOptionsSurface = Color(0xFFFCFCFC),
+            projectOptionsInk = Color(0xFF171717),
+            projectOptionsGlyph = Color(0xFF666666),
+            projectOptionsBorder = Color(0xFFE5E5E5),
+            workspaceRail = Color(0xDCF5F5F5),
+            projectDivider = Color(0xFFE6E6E6),
+            projectTile = Color(0xFFEDEDED),
+            projectTileDivider = Color(0xFFE6E6E6),
+            workspaceBadgeSelected = Color(0xFFEAEAEA),
+            workspaceBadgeInk = Color(0xFF525252),
         )
     }
 }

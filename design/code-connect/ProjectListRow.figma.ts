@@ -4,7 +4,7 @@
 import figma from 'figma'
 
 export default {
-  example: figma.code`ProjectListRow(project = project, navigation = navigation, expanded = expanded, onOpen = onOpen, onClose = onClose, earlier = false)`,
+  example: figma.code`ProjectListRow(project = project, navigation = navigation, favorite = favorite, expanded = expanded, onOpen = onOpen, onClose = onClose, onToggleFavorite = onToggleFavorite)`,
   id: 'vercel-658-5789',
 }
 

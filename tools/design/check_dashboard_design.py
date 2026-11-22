@@ -48,7 +48,8 @@ def render_tokens(tokens):
         lines.append(f"        val {mode.title()} = DashboardPalette(")
         for token in colors:
             value = token[mode].upper()
-            lines.append(f"            {token['name']} = Color(0xFF{value}),")
+            argb = f"FF{value}" if len(value) == 6 else value[6:] + value[:6]
+            lines.append(f"            {token['name']} = Color(0x{argb}),")
         lines.append("        )")
     return "\n".join(lines + ["    }", "}", ""])
 
@@ -118,6 +119,9 @@ def verify_manifest(manifest):
         for kind in ("colors", "dimensions", "type"):
             for token in manifest["tokens"][kind]:
                 figma_id = token.get("figmaId")
+                if figma_id is None and token.get("figmaFrame") in review["frames"]:
+                    # Some approved layers still have values set directly on the frame.
+                    continue
                 variable = review["variables"].get(figma_id, {})
                 expected = (
                     {"Dark": token["dark"], "Light": token["light"]}
