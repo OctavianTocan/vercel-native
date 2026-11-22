@@ -44,8 +44,10 @@ private val workspaceRoutes = listOf(
 @Composable
 internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit, backdrop: GraphicsLayer) {
     val palette = LocalDashboardPalette.current
+    val safeInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+    val verticalInsets = safeInsets.only(WindowInsetsSides.Vertical)
     var failed by rememberSaveable { mutableStateOf(route.variant == "workspace-failed") }
-    BoxWithConstraints(Modifier.fillMaxSize()) {
+    BoxWithConstraints(Modifier.fillMaxSize().windowInsetsPadding(safeInsets.only(WindowInsetsSides.Horizontal))) {
         val panelWidth = (maxWidth - Tokens.Touch).coerceIn(
             Tokens.WorkspaceRailWidth, Tokens.WorkspaceRailWidth + Tokens.WorkspacePanelWidth,
         ).coerceAtMost(maxWidth)
@@ -60,11 +62,11 @@ internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigatio
             color = Color.Transparent,
         ) {
             Row {
-                WorkspaceSwitcher(navigation, backdrop)
+                WorkspaceSwitcher(navigation, backdrop, verticalInsets)
                 Box(Modifier.fillMaxHeight().width(Tokens.Stroke).background(palette.insetSurface))
                 Box(Modifier.weight(1f).fillMaxHeight().dashboardBackdrop(backdrop).background(palette.sidebarPanel)) {
                     Column(
-                        Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()
+                        Modifier.fillMaxSize().windowInsetsPadding(verticalInsets)
                             .padding(bottom = Tokens.Space20),
                     ) {
                         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(top = Tokens.WorkspacePanelTop)) {
@@ -96,12 +98,12 @@ internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigatio
 }
 
 @Composable
-private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: GraphicsLayer) {
+private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: GraphicsLayer, verticalInsets: WindowInsets) {
     val palette = LocalDashboardPalette.current
     Column(
         Modifier.fillMaxHeight().width(Tokens.WorkspaceRailWidth - Tokens.Stroke)
             .dashboardBackdrop(backdrop).background(palette.workspaceRail)
-            .statusBarsPadding().navigationBarsPadding(),
+            .windowInsetsPadding(verticalInsets),
     ) {
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())

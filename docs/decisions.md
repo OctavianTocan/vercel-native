@@ -11,3 +11,5 @@ The Projects title and sidebar button stay visible while the list scrolls. Use t
 ## Registered screenshots for the dashboard review
 
 The 393 px Figma exports and 393 dp running app exposed a 35 px vertical offset in the light Project Options preview and a 1 px height error on each Recents row. The light menu now aligns its top with the ellipsis control as drawn. Recents uses the approved 14 px gap under the tabs and includes the divider in its 96 px row. The icon-only Projects frame uses its original tiles and chevrons. [Light menu](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-4911) · [Recents](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=225-2) · [Icon-only Projects](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=228-2750)
+
+The follow-up verification confirmed that the light menu closes when tapped in its shadow. Favorite changes appear in the design preview after the action. The workspace menu uses the Android system bar and display cutout insets.

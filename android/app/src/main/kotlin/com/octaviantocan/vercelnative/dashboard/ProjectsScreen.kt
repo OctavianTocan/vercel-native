@@ -4,10 +4,13 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -42,8 +50,10 @@ import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 @Composable
 internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigation) {
     val projects = navigation.projects()
-    val showFavorites = route.variant !in setOf("plain", "icons", "menu-add", "menu-earlier")
-    val useProjectTiles = route.variant in setOf("plain", "icons")
+    var showFavorites by rememberSaveable(route.variant) {
+        mutableStateOf(route.variant !in setOf("plain", "icons", "menu-add", "menu-earlier"))
+    }
+    val useProjectTiles = !showFavorites && route.variant in setOf("plain", "icons")
     val favorite = projects.filter { showFavorites && it.id in navigation.favorites }
     val other = projects.filterNot { it in favorite }
     var expanded by rememberSaveable {
@@ -56,6 +66,14 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
         )
     }
     var favoriteFailed by rememberSaveable { mutableStateOf(route.variant == "favorite-failed") }
+    val listState = rememberLazyListState()
+    val toggleFavorite: (String) -> Unit = { projectId ->
+        navigation.changeFavorite(projectId)
+        if (!showFavorites) {
+            showFavorites = true
+            listState.requestScrollToItem(0)
+        }
+    }
 
     Column(Modifier.fillMaxSize()) {
         DashboardRootHeader("Projects") { navigation.show(Destination.More) }
@@ -79,7 +97,10 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
             return@Column
         }
         Spacer(Modifier.height(Tokens.Inset))
-        LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance)) {
+        LazyColumn(
+            Modifier.weight(1f), state = listState,
+            contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance),
+        ) {
             if (favoriteFailed) item {
                 DashboardNotice(
                     "Couldn’t add to Favorites",
@@ -90,13 +111,16 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
             }
             if (favorite.isNotEmpty()) item { ProjectSectionLabel("Favorites") }
             items(favorite, key = Project::id) { project ->
-                ProjectListRow(project, navigation, true, expanded == project.id, { expanded = project.id }, { expanded = null })
+                ProjectListRow(
+                    project, navigation, true, expanded == project.id,
+                    { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
+                )
             }
             if (showFavorites) item { ProjectSectionLabel("Other projects") }
             itemsIndexed(other, key = { _, project -> project.id }) { index, project ->
                 ProjectListRow(
                     project, navigation, false, expanded == project.id,
-                    { expanded = project.id }, { expanded = null },
+                    { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
                     earlier = route.variant == "menu-earlier",
                     useTile = useProjectTiles,
                     topDivider = !showFavorites && index == 0,
@@ -128,6 +152,7 @@ private fun ProjectListRow(
     expanded: Boolean,
     onOpen: () -> Unit,
     onClose: () -> Unit,
+    onToggleFavorite: () -> Unit,
     earlier: Boolean = false,
     useTile: Boolean = false,
     topDivider: Boolean = false,
@@ -180,7 +205,7 @@ private fun ProjectListRow(
                         DashboardArtwork(R.drawable.dashboard_icon_row_more, Tokens.IconSlot, palette.projectEllipsis)
                     }
                 }
-                if (expanded) ProjectOptions(project, navigation, earlier, onClose)
+                if (expanded) ProjectOptions(project, navigation, earlier, onClose, onToggleFavorite)
             }
         }
         val divider = if (useTile) palette.projectTileDivider else palette.projectDivider
@@ -192,15 +217,22 @@ private fun ProjectListRow(
 private data class ProjectOption(val title: String, @DrawableRes val icon: Int, val onClick: () -> Unit)
 
 @Composable
-private fun ProjectOptions(project: Project, navigation: DashboardNavigation, earlier: Boolean, onClose: () -> Unit) {
+private fun ProjectOptions(
+    project: Project,
+    navigation: DashboardNavigation,
+    earlier: Boolean,
+    onClose: () -> Unit,
+    onToggleFavorite: () -> Unit,
+) {
     val palette = LocalDashboardPalette.current
     val light = palette == DashboardPalette.Light
     val id = project.id
     val deployment = DashboardFixtures.deployments(id).first()
     val options = listOf(
         ProjectOption(
-            if (id in navigation.favorites) "Remove Favorite" else "Add Favorite", R.drawable.dashboard_icon_favorite,
-        ) { navigation.changeFavorite(id) },
+            if (id in navigation.favorites) "Remove Favorite" else "Add Favorite",
+            R.drawable.dashboard_icon_favorite, onToggleFavorite,
+        ),
         ProjectOption("Visit with Toolbar", R.drawable.dashboard_icon_toolbar) { navigation.show(Destination.Toolbar, deployment.id) },
         ProjectOption("View Logs", R.drawable.dashboard_icon_view_logs) { navigation.show(Destination.Logs, id) },
         ProjectOption("Manage Domains", R.drawable.dashboard_icon_manage_domains) { navigation.show(Destination.ProjectDomains, id) },
@@ -219,9 +251,23 @@ private fun ProjectOptions(project: Project, navigation: DashboardNavigation, ea
             ProjectOptionsPosition(edgeGap, anchorGap, openingOffset, viewportGap, margin)
         }
     }
+    val dismiss by rememberUpdatedState(onClose)
     Popup(position, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
+        // The light menu's shadow padding is part of the popup window.
+        val dismissThroughShadow = if (light) Modifier.pointerInput(shadowMargin) {
+            val margin = shadowMargin.roundToPx().toFloat()
+            val radius = CornerRadius(Tokens.ProjectOptionsLightRadius.toPx())
+            awaitEachGesture {
+                val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                val card = RoundRect(Rect(margin, margin, size.width - margin, size.height - margin), radius)
+                if (!card.contains(down.position)) {
+                    down.consume()
+                    dismiss()
+                }
+            }
+        } else Modifier
         Column(
-            Modifier.padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
+            dismissThroughShadow.padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
                 .then(if (light) Modifier.shadow(Tokens.Space12, shape) else Modifier)
                 .clip(shape).background(palette.projectOptionsSurface).border(Tokens.Stroke, palette.projectOptionsBorder, shape)
                 .padding(Tokens.Stroke).verticalScroll(rememberScrollState()),
