@@ -134,9 +134,9 @@ internal object DashboardFixtures {
     }
     private val domainsById = domainsByProject.values.flatten().associateBy(ProjectDomain::id)
 
-    private val alertsByWorkspace = workspaces.associate { workspace ->
+    val alerts = workspaces.flatMap { workspace ->
         val candidates = projects.filter { it.workspaceId == workspace.id }
-        workspace.id to List(36) { index ->
+        List(36) { index ->
             val project = candidates[index % candidates.size]
             val kind = AlertKind.entries[index % AlertKind.entries.size]
             val (detail, value, threshold) = when (kind) {
@@ -147,7 +147,7 @@ internal object DashboardFixtures {
             DashboardAlert("alt-${workspace.id}-$index", project.id, kind, detail, value, threshold, "${index + 1} h ago")
         }
     }
-    private val alertsById = alertsByWorkspace.values.flatten().associateBy(DashboardAlert::id)
+    private val alertsById = alerts.associateBy(DashboardAlert::id)
 
     private val logsByProject = projects.associate { project ->
         project.id to List(45) { index ->
@@ -187,7 +187,6 @@ internal object DashboardFixtures {
     fun deployment(id: String) = deploymentsById.getValue(id)
     fun domains(projectId: String) = domainsByProject.getValue(projectId)
     fun domain(id: String) = domainsById.getValue(id)
-    fun alerts(workspaceId: String) = alertsByWorkspace.getValue(workspaceId)
     fun alert(id: String) = alertsById.getValue(id)
     fun logs(projectId: String) = logsByProject.getValue(projectId)
     fun log(id: String) = logsById.getValue(id)

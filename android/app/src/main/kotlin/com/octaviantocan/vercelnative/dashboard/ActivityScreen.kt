@@ -268,20 +268,21 @@ private fun UsageResourceRow(resource: UsageResource, scale: Double, preset: Int
 
 @Composable
 private fun AlertsList(route: DashboardRoute, navigation: DashboardNavigation) {
-    if (route.variant in setOf("loading", "empty", "plan")) {
+    val alerts = navigation.alerts()
+    if (alerts.isEmpty() || route.variant in setOf("loading", "empty", "plan")) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             when (route.variant) {
                 "loading" -> DashboardEmpty("Loading Alerts", "Getting alerts for this workspace.", Glyph.Activity, loading = true)
-                "empty" -> DashboardEmpty("All quiet here.", "There are no alerts in this workspace.", Glyph.Activity)
-                else -> DashboardEmpty("Alerts aren’t on this plan", "Check the current workspace plan for alerts.", Glyph.Warn, action = {
+                "plan" -> DashboardEmpty("Alerts aren’t on this plan", "Check the current workspace plan for alerts.", Glyph.Warn, action = {
                     navigation.main(Destination.Usage)
                 }, actionLabel = "View plan")
+                else -> DashboardEmpty("All quiet here.", "There are no alerts in this workspace.", Glyph.Activity)
             }
         }
         return
     }
     LazyColumn(Modifier.fillMaxSize()) {
-        items(DashboardFixtures.alerts(navigation.workspaceId), key = DashboardAlert::id) { alert ->
+        items(alerts, key = DashboardAlert::id) { alert ->
             val project = navigation.project(alert.projectId)
             DashboardRow(
                 navigation.projectName(project), "${alert.kind.label} · ${alert.elapsed}",
@@ -295,7 +296,16 @@ private fun AlertsList(route: DashboardRoute, navigation: DashboardNavigation) {
 
 @Composable
 internal fun AlertScreen(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
-    val alert = route.target?.let(DashboardFixtures::alert) ?: DashboardFixtures.alerts(navigation.workspaceId).first()
+    val alert = route.target?.let(DashboardFixtures::alert) ?: navigation.alerts().firstOrNull()
+    if (alert == null) {
+        Column(Modifier.fillMaxSize()) {
+            DashboardHeader("Alert details", onBack)
+            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                DashboardEmpty("All quiet here.", "There are no alerts in this workspace.", Glyph.Activity)
+            }
+        }
+        return
+    }
     val project = navigation.project(alert.projectId)
     val title = when (alert.kind) {
         AlertKind.Function -> "Function error spike"

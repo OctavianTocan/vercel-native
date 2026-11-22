@@ -149,8 +149,12 @@ internal fun DashboardDesignPicker(navigation: DashboardNavigation, onBack: () -
     var query by rememberSaveable { mutableStateOf("") }
     val openUri = LocalUriHandler.current
     val visibleGroups = remember(query) {
-        designCases.filter { it.title.contains(query, ignoreCase = true) || it.group.contains(query, ignoreCase = true) }
-            .groupBy(DashboardDesignCase::group)
+        val term = query.trim()
+        val frameId = term.replace('-', ':')
+        designCases.filter {
+            it.title.contains(term, ignoreCase = true) || it.group.contains(term, ignoreCase = true) ||
+                it.frameId.contains(frameId)
+        }.groupBy(DashboardDesignCase::group)
     }
     Column(Modifier.fillMaxSize()) {
         DashboardHeader("Design states", onBack)

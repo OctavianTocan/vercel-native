@@ -174,6 +174,17 @@ def compare_snapshots(manifest, candidate):
         if previous_count == len(changed_components):
             break
     found = False
+    for kind in ("colors", "dimensions", "type"):
+        for token in manifest["tokens"][kind]:
+            token_id = token.get("figmaId")
+            if token_id not in changed_variables:
+                continue
+            old_modes = previous["variables"].get(token_id, {}).get("modes", {})
+            new_modes = candidate["variables"].get(token_id, {}).get("modes", {})
+            modes = sorted(mode for mode in old_modes.keys() | new_modes.keys() if old_modes.get(mode) != new_modes.get(mode))
+            mode_label = f" ({', '.join(modes)})" if modes else ""
+            print(f"Compose token {token['name']}{mode_label} → {TOKENS.relative_to(ROOT)}")
+            found = True
     for frame_id in sorted(old_frames.keys() | new_frames.keys()):
         old_frame, new_frame = old_frames.get(frame_id, {}), new_frames.get(frame_id, {})
         components = set(old_frame.get("components", [])) | set(new_frame.get("components", []))

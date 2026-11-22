@@ -36,7 +36,7 @@ internal fun LogsScreen(route: DashboardRoute, navigation: DashboardNavigation, 
     val errors = caseErrors || remembered.errors
     val logs = remember(project, navigation.projects()) {
         if (project != null) DashboardFixtures.logs(project.id) else navigation.projects()
-            .flatMap { project -> DashboardFixtures.logs(project.id).filterIndexed { index, _ -> index % 5 == 0 } }
+            .flatMap { project -> DashboardFixtures.logs(project.id) }
             .sortedByDescending(LogEvent::time)
     }
     val minutes = when (remembered.range) {

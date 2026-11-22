@@ -52,7 +52,7 @@ internal fun SearchOverlay(route: DashboardRoute, navigation: DashboardNavigatio
                     add(SearchHit(deployment.id, deployment.title, "Deployment · $name · ${deployment.sha}", Glyph.Branch, DashboardRoute(Destination.Deployment, deployment.id)))
                 }
             }
-            for (alert in DashboardFixtures.alerts(navigation.workspaceId)) {
+            for (alert in navigation.alerts()) {
                 val name = navigation.projectName(navigation.project(alert.projectId))
                 add(SearchHit(alert.id, alert.kind.label, "Alerts · $name", Glyph.Activity, DashboardRoute(Destination.Alert, alert.id)))
             }

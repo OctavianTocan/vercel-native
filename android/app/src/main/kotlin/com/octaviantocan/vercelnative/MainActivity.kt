@@ -14,12 +14,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.octaviantocan.vercelnative.dashboard.Dashboard
+import com.octaviantocan.vercelnative.dashboard.DashboardPreviewViewModel
 import com.octaviantocan.vercelnative.data.SessionState
 import com.octaviantocan.vercelnative.update.*
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val preview = ViewModelProvider(this)[DashboardPreviewViewModel::class.java]
         setContent {
             MaterialTheme(colorScheme = darkColorScheme()) {
                 val session by app.account.session.state.collectAsStateWithLifecycle()
@@ -43,7 +45,6 @@ class MainActivity : ComponentActivity() {
                 var password by remember { mutableStateOf("") }
                 val prefs = remember { getSharedPreferences("local", MODE_PRIVATE) }
                 var sample by remember { mutableStateOf(prefs.getBoolean("sample", false)) }
-                var preview by rememberSaveable { mutableStateOf<String?>(null) }
                 val run = { call: suspend () -> Unit ->
                     scope.launch {
                         busy = true; error = null
@@ -57,17 +58,18 @@ class MainActivity : ComponentActivity() {
                 }
                 LaunchedEffect(prompt) { prompt?.let { startActivity(it) } }
                 val updateRequired = offer != null
-                LaunchedEffect(updateRequired) { if (updateRequired) preview = null }
-                if (!updateRequired && preview != null) {
-                    Dashboard(showDesigns = BuildConfig.DEBUG && preview == "designs", onExit = { preview = null })
+                val navigation = preview.navigation
+                LaunchedEffect(updateRequired) { if (updateRequired) preview.close() }
+                if (!updateRequired && navigation != null) {
+                    Dashboard(navigation, onExit = preview::close)
                 } else Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.safeDrawingPadding().padding(24.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                         Text(if (offer != null) "Update Vercel Native" else "Vercel Native", style = MaterialTheme.typography.headlineLarge)
                         Text("Version ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", style = MaterialTheme.typography.bodySmall)
                         if (offer == null) {
-                            Button(onClick = { preview = "dashboard" }) { Text("Open dashboard preview") }
+                            Button(onClick = { preview.open(showDesigns = false) }) { Text("Open dashboard preview") }
                             if (BuildConfig.DEBUG) {
-                                TextButton(onClick = { preview = "designs" }) { Text("Browse design states") }
+                                TextButton(onClick = { preview.open(showDesigns = true) }) { Text("Browse design states") }
                             }
                             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Switch(checked = sample, onCheckedChange = { sample = it; prefs.edit().putBoolean("sample", it).apply() })

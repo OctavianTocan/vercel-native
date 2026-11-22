@@ -166,9 +166,13 @@ private fun SampleAvatar(modifier: Modifier) {
 internal fun AgentScreen(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
     val palette = LocalDashboardPalette.current
     val focus = LocalFocusManager.current
-    var phase by rememberSaveable { mutableStateOf(if (route.variant == "content" && navigation.agentEnabled) "conversation" else route.variant) }
-    var input by rememberSaveable { mutableStateOf("") }
-    var sent by rememberSaveable { mutableStateOf("Is the latest production deployment ready?") }
+    val workspace = navigation.currentWorkspace
+    val frozenEnabling = route.frozen && route.variant == "enabling"
+    var phase by rememberSaveable(workspace.id) {
+        mutableStateOf(if (route.variant == "content" && navigation.isAgentEnabled(workspace.id)) "conversation" else route.variant)
+    }
+    var input by rememberSaveable(workspace.id) { mutableStateOf("") }
+    var sent by rememberSaveable(workspace.id) { mutableStateOf("Is the latest production deployment ready?") }
     val project = navigation.project(null)
     val deployment = DashboardFixtures.deployments(project.id).first()
     val send = {
@@ -179,15 +183,15 @@ internal fun AgentScreen(route: DashboardRoute, navigation: DashboardNavigation,
         }
     }
 
-    LaunchedEffect(phase, route.frozen) {
-        if (phase == "enabling" && !route.frozen) {
+    LaunchedEffect(workspace.id, phase, frozenEnabling) {
+        if (phase == "enabling" && !frozenEnabling) {
             delay(1300)
-            navigation.agentEnabled = true
+            navigation.enableAgent(workspace.id)
             phase = "conversation"
         }
     }
     Column(Modifier.fillMaxSize().imePadding()) {
-        DashboardHeader("Agent", onBack, Glyph.Close, subtitle = navigation.currentWorkspace.name, trailing = {
+        DashboardHeader("Agent", onBack, Glyph.Close, subtitle = workspace.name, trailing = {
             IconControl(Glyph.Settings, "Agent settings", {}, enabled = false)
         })
         when (phase) {

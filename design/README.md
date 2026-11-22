@@ -2,6 +2,8 @@
 
 In a debug build, open **Browse design states** to find a screen by its Figma frame ID. The manifest links each case to its Compose function and the reusable Figma layout. Approved frames also carry a Kotlin source link in their annotations.
 
+Rotating the phone preserves the open preview and its sample changes. A transferred project's alerts follow it in the inbox and search. Each workspace has its own Agent setup, and Retry runs setup even when the failure screen was opened from the design picker.
+
 ## Review a new Figma change
 
 1. Load `tools/design/figma_snapshot.js` into Figma MCP's `use_figma` tool. Append a call to `snapshotDashboard` with `figmaFileKey` and `approvedPage` from the manifest. Pass `cases[].id` as `frameIds`, `components[].figmaId` as `componentIds`, and the `figmaId` values from the colors, dimensions and type tokens as `tokenIds`.
@@ -13,7 +15,7 @@ In a debug build, open **Browse design states** to find a screen by its Figma fr
 
 3. Review the reported Figma frames and Android cases. Update the Compose values and the saved snapshot once you accept the changes. Regenerate the Kotlin tokens and state picker with `python3 -B tools/design/check_dashboard_design.py --generate`.
 
-The Android verification job checks the committed mappings and token values. A fresh Figma snapshot supplies the live design data for comparison.
+The Android verification job checks the committed mappings and token values. A fresh Figma snapshot supplies the live design data for comparison, including Compose tokens with no references in the reviewed frames.
 
 ## Publish the Compose templates
 

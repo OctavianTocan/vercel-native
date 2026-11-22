@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
 internal enum class Presentation { Screen, Sheet, Rail, Search }
@@ -97,7 +98,6 @@ internal class DashboardNavigation(showDesigns: Boolean) {
     var defaultTeam by mutableStateOf("Personal")
     var landingPage by mutableStateOf("Personal")
     var samplePhoto by mutableStateOf(false)
-    var agentEnabled by mutableStateOf(false)
     var lastActivity by mutableStateOf(Destination.Recents)
         private set
     val favorites = mutableStateListOf<String>().apply { addAll(DashboardFixtures.favorites) }
@@ -105,6 +105,7 @@ internal class DashboardNavigation(showDesigns: Boolean) {
     private val transfers = mutableStateMapOf<String, String>()
     private val projectNames = mutableStateMapOf<String, String>()
     private val logOptions = mutableStateMapOf<String, LogOptions>()
+    private val agentEnablement = mutableStateMapOf<String, Boolean>()
 
     val current get() = backStack.last()
     val screen get() = backStack.last { it.route.destination.presentation == Presentation.Screen }
@@ -113,11 +114,14 @@ internal class DashboardNavigation(showDesigns: Boolean) {
     fun workspaceOf(project: Project) = transfers[project.id] ?: project.workspaceId
     fun projects(scope: String = workspaceId) = DashboardFixtures.projects.filter { workspaceOf(it) == scope }
     fun project(id: String?) = DashboardFixtures.project(id ?: projects().firstOrNull()?.id ?: DashboardFixtures.defaultProject)
+    fun alerts() = DashboardFixtures.alerts.filter { workspaceOf(project(it.projectId)) == workspaceId }
     fun projectName(project: Project) = projectNames[project.id] ?: project.name
     fun rename(project: Project, name: String) { projectNames[project.id] = name }
     fun transfer(project: Project, scope: String) { transfers[project.id] = scope }
     fun logScope(projectId: String?) = projectId ?: workspaceId
     fun logOptions(projectId: String?) = logOptions[logScope(projectId)] ?: LogOptions()
+    fun isAgentEnabled(workspaceId: String) = agentEnablement[workspaceId] == true
+    fun enableAgent(workspaceId: String) { agentEnablement[workspaceId] = true }
 
     fun updateLogOptions(projectId: String?, update: (LogOptions) -> LogOptions) {
         val scope = logScope(projectId)
@@ -177,9 +181,21 @@ internal class DashboardNavigation(showDesigns: Boolean) {
     }
 }
 
+internal class DashboardPreviewViewModel : ViewModel() {
+    var navigation by mutableStateOf<DashboardNavigation?>(null)
+        private set
+
+    fun open(showDesigns: Boolean) {
+        navigation = DashboardNavigation(showDesigns)
+    }
+
+    fun close() {
+        navigation = null
+    }
+}
+
 @Composable
-internal fun Dashboard(showDesigns: Boolean, onExit: () -> Unit) {
-    val navigation = remember { DashboardNavigation(showDesigns) }
+internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
     val holder = rememberSaveableStateHolder()
     val top = navigation.current
     val base = navigation.screen
@@ -223,7 +239,7 @@ internal fun Dashboard(showDesigns: Boolean, onExit: () -> Unit) {
                         label = "Dashboard destination",
                     ) { entry ->
                         val root = entry.route.destination == Destination.Projects || entry.route.destination in activityDestinations
-                        val stateKey = if (root && !entry.route.frozen) {
+                        val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
                             "root-${entry.route.destination}-${navigation.workspaceId}"
                         } else "screen-${entry.key}"
                         holder.SaveableStateProvider(stateKey) {
