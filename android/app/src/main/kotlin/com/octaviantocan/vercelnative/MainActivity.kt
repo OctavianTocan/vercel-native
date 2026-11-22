@@ -14,10 +14,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.octaviantocan.vercelnative.dashboard.Dashboard
 import com.octaviantocan.vercelnative.data.SessionState
 import com.octaviantocan.vercelnative.update.*
 import kotlinx.coroutines.launch
@@ -41,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 var password by remember { mutableStateOf("") }
                 val prefs = remember { getSharedPreferences("local", MODE_PRIVATE) }
                 var sample by remember { mutableStateOf(prefs.getBoolean("sample", false)) }
+                var preview by rememberSaveable { mutableStateOf<String?>(null) }
                 val run = { call: suspend () -> Unit ->
                     scope.launch {
                         busy = true; error = null
@@ -53,13 +56,19 @@ class MainActivity : ComponentActivity() {
                     if (session == SessionState.SignedIn && !BuildConfig.DEBUG) app.updater.checkIfStale()
                 }
                 LaunchedEffect(prompt) { prompt?.let { startActivity(it) } }
-                Surface(Modifier.fillMaxSize()) {
+                val updateRequired = offer != null
+                LaunchedEffect(updateRequired) { if (updateRequired) preview = null }
+                if (!updateRequired && preview != null) {
+                    Dashboard(showDesigns = BuildConfig.DEBUG && preview == "designs", onExit = { preview = null })
+                } else Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.safeDrawingPadding().padding(24.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                         Text(if (offer != null) "Update Vercel Native" else "Vercel Native", style = MaterialTheme.typography.headlineLarge)
                         Text("Version ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})", style = MaterialTheme.typography.bodySmall)
                         if (offer == null) {
-                            Text("The native workspace is ready.", style = MaterialTheme.typography.titleLarge)
-                            Text("Dashboard screens will be built here. Downloads, sign-in and the release channel are connected independently.")
+                            Button(onClick = { preview = "dashboard" }) { Text("Open dashboard preview") }
+                            if (BuildConfig.DEBUG) {
+                                TextButton(onClick = { preview = "designs" }) { Text("Browse design states") }
+                            }
                             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                 Switch(checked = sample, onCheckedChange = { sample = it; prefs.edit().putBoolean("sample", it).apply() })
                                 Text("Keep this preference across updates")

@@ -1,0 +1,2098 @@
+{
+  "schema": 1,
+  "figmaFileKey": "751Z0BSfstiZTBcJiB3teq",
+  "approvedIndex": "573:3330",
+  "approvedFrameCount": 123,
+  "reviewStatus": "awaiting-live-figma-library-and-visual-review",
+  "cases": [
+    {
+      "id": "402:4957",
+      "title": "Projects with Favorites",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "228:2651",
+      "title": "Projects main",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "plain",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "228:2750",
+      "title": "Icon-only navigation",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "icons",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "604:747",
+      "title": "Loading projects",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "loading",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "479:3002",
+      "title": "Empty Projects",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "empty",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "604:893",
+      "title": "Projects could not load",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "error",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "604:4911",
+      "title": "Add Favorite menu",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "menu-add",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "604:3584",
+      "title": "Remove Favorite menu",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "menu-remove",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "340:386",
+      "title": "Earlier project menu",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "menu-earlier",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "552:2501",
+      "title": "Favorite update failed",
+      "group": "Projects and Favorites",
+      "route": {
+        "destination": "Projects",
+        "variant": "favorite-failed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "535:3158",
+      "title": "Project overview",
+      "group": "Project Sheet and Domains",
+      "route": {
+        "destination": "Project",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "468:4699",
+      "title": "Compact Project Sheet",
+      "group": "Project Sheet and Domains",
+      "route": {
+        "destination": "Project",
+        "variant": "compact",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "604:3083",
+      "title": "GitHub sync status",
+      "group": "Project Sheet and Domains",
+      "route": {
+        "destination": "GitHubSync",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "GitHubSync"
+    },
+    {
+      "id": "604:938",
+      "title": "Project domains",
+      "group": "Project Sheet and Domains",
+      "route": {
+        "destination": "ProjectDomains",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectDomainsScreen"
+    },
+    {
+      "id": "604:1084",
+      "title": "Verify DNS",
+      "group": "Project Sheet and Domains",
+      "route": {
+        "destination": "Domain",
+        "variant": "verify",
+        "target": "dom-prj-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "DomainDetails"
+    },
+    {
+      "id": "604:3224",
+      "title": "Domain management access",
+      "group": "Project Sheet and Domains",
+      "route": {
+        "destination": "Domain",
+        "variant": "restricted",
+        "target": "dom-prj-personal-1-2",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "DomainDetails"
+    },
+    {
+      "id": "584:2553",
+      "title": "Choose destination team",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "Transfer",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "TransferSheet"
+    },
+    {
+      "id": "535:1457",
+      "title": "Review transfer impact",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "Transfer",
+        "variant": "review",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "TransferSheet"
+    },
+    {
+      "id": "535:1680",
+      "title": "Transfer in progress",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "Transfer",
+        "variant": "progress",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "TransferSheet"
+    },
+    {
+      "id": "552:2113",
+      "title": "Transfer complete",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "Transfer",
+        "variant": "done",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "TransferSheet"
+    },
+    {
+      "id": "535:2057",
+      "title": "Project opened in Studio",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "Project",
+        "variant": "transferred",
+        "target": "prj-studio-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "604:3363",
+      "title": "Transfer failed",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "Transfer",
+        "variant": "failed",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "TransferSheet"
+    },
+    {
+      "id": "511:701",
+      "title": "Project settings",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "ProjectSettings",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectSettingsScreen"
+    },
+    {
+      "id": "511:775",
+      "title": "Edit project name",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "ProjectSettings",
+        "variant": "editing",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectSettingsScreen"
+    },
+    {
+      "id": "552:1922",
+      "title": "Project name conflict",
+      "group": "Project Transfer and Settings",
+      "route": {
+        "destination": "ProjectSettings",
+        "variant": "conflict",
+        "target": "prj-personal-2",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectSettingsScreen"
+    },
+    {
+      "id": "468:4800",
+      "title": "Project Deployments",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Project",
+        "variant": "deployments",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "604:1231",
+      "title": "Project deployment options",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Project",
+        "variant": "deployment-menu",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "535:2969",
+      "title": "Branch filter applied",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Project",
+        "variant": "branch",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "512:1592",
+      "title": "Branch filter cleared",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Project",
+        "variant": "cleared",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
+      "symbol": "ProjectScreen"
+    },
+    {
+      "id": "535:3264",
+      "title": "Deployment details",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Deployment",
+        "variant": "content",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentScreen"
+    },
+    {
+      "id": "468:6631",
+      "title": "Centered deployment heading",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Deployment",
+        "variant": "heading",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentScreen"
+    },
+    {
+      "id": "586:176",
+      "title": "Open preview in browser",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Preview",
+        "variant": "content",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentSheetContent"
+    },
+    {
+      "id": "586:274",
+      "title": "Protected preview",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Preview",
+        "variant": "protected",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentSheetContent"
+    },
+    {
+      "id": "604:3774",
+      "title": "Preview unavailable",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Preview",
+        "variant": "unavailable",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentSheetContent"
+    },
+    {
+      "id": "552:2311",
+      "title": "Toolbar unavailable",
+      "group": "Deployments and Previews",
+      "route": {
+        "destination": "Toolbar",
+        "variant": "content",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentSheetContent"
+    },
+    {
+      "id": "225:2",
+      "title": "Recents",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "Recents",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "RecentsList"
+    },
+    {
+      "id": "479:3051",
+      "title": "Empty Recents",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "Recents",
+        "variant": "empty",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "RecentsList"
+    },
+    {
+      "id": "512:976",
+      "title": "Recents deployment options",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "Recents",
+        "variant": "recents-menu",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "RecentsList"
+    },
+    {
+      "id": "468:6678",
+      "title": "Evenly spaced Recents menu",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "Recents",
+        "variant": "menu-spacing",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "RecentsList"
+    },
+    {
+      "id": "339:740",
+      "title": "Earlier Recents menu",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "Recents",
+        "variant": "menu-earlier",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "RecentsList"
+    },
+    {
+      "id": "604:3882",
+      "title": "Confirm Recents removal",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "RemoveRecent",
+        "variant": "content",
+        "target": "dpl-personal-1-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "symbol": "DeploymentSheetContent"
+    },
+    {
+      "id": "586:708",
+      "title": "Removed from Recents",
+      "group": "Activity · Recents",
+      "route": {
+        "destination": "Recents",
+        "variant": "removed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "RecentsList"
+    },
+    {
+      "id": "225:257",
+      "title": "Alerts inbox",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alerts",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertsList"
+    },
+    {
+      "id": "604:4355",
+      "title": "Loading Alerts",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alerts",
+        "variant": "loading",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertsList"
+    },
+    {
+      "id": "479:3118",
+      "title": "Empty Alerts",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alerts",
+        "variant": "empty",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertsList"
+    },
+    {
+      "id": "604:4529",
+      "title": "Alerts unavailable on this plan",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alerts",
+        "variant": "plan",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertsList"
+    },
+    {
+      "id": "587:1267",
+      "title": "Function error alert",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alert",
+        "variant": "content",
+        "target": "alt-personal-0",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertScreen"
+    },
+    {
+      "id": "587:1391",
+      "title": "CDN requests alert",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alert",
+        "variant": "content",
+        "target": "alt-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertScreen"
+    },
+    {
+      "id": "587:1515",
+      "title": "Custom monitor alert",
+      "group": "Activity · Alerts",
+      "route": {
+        "destination": "Alert",
+        "variant": "content",
+        "target": "alt-personal-2",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "AlertScreen"
+    },
+    {
+      "id": "225:163",
+      "title": "Daily Usage",
+      "group": "Activity · Usage",
+      "route": {
+        "destination": "Usage",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "587:484",
+      "title": "Weekly Usage",
+      "group": "Activity · Usage",
+      "route": {
+        "destination": "Usage",
+        "variant": "weekly",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "587:718",
+      "title": "Monthly Usage",
+      "group": "Activity · Usage",
+      "route": {
+        "destination": "Usage",
+        "variant": "monthly",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "513:2445",
+      "title": "Usage in Studio",
+      "group": "Activity · Usage",
+      "route": {
+        "destination": "Usage",
+        "variant": "studio",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "587:949",
+      "title": "No recorded usage",
+      "group": "Activity · Usage",
+      "route": {
+        "destination": "Usage",
+        "variant": "empty",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "604:4293",
+      "title": "Usage could not load",
+      "group": "Activity · Usage",
+      "route": {
+        "destination": "Usage",
+        "variant": "error",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "479:1344",
+      "title": "Search entry from Projects",
+      "group": "Global Search",
+      "route": {
+        "destination": "Projects",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
+      "symbol": "ProjectsScreen"
+    },
+    {
+      "id": "479:1505",
+      "title": "Search suggestions",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "suggestions",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "513:1112",
+      "title": "Typed search results",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "typed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "479:1876",
+      "title": "Mixed results over Projects",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "mixed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "479:2571",
+      "title": "Mixed results over Activity",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "activity",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "513:1485",
+      "title": "Navigation Assistant entry",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "no-match",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "479:2249",
+      "title": "Search fallback",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "fallback",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "604:4113",
+      "title": "Navigation Assistant after Send",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "submitted",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "552:2673",
+      "title": "Search query failed",
+      "group": "Global Search",
+      "route": {
+        "destination": "Search",
+        "variant": "error",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
+      "symbol": "SearchOverlay"
+    },
+    {
+      "id": "513:2132",
+      "title": "Workspace switcher",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "More",
+        "variant": "workspace",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceRail"
+    },
+    {
+      "id": "228:2849",
+      "title": "More menu",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "More",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceRail"
+    },
+    {
+      "id": "344:410",
+      "title": "Account Settings entry",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "More",
+        "variant": "account",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceRail"
+    },
+    {
+      "id": "513:2671",
+      "title": "Workspace switch failed",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "More",
+        "variant": "workspace-failed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceRail"
+    },
+    {
+      "id": "513:3535",
+      "title": "Help",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Help",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "HelpSheet"
+    },
+    {
+      "id": "513:2989",
+      "title": "Observability",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Observability",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "ObservabilityScreen"
+    },
+    {
+      "id": "588:927",
+      "title": "Analytics",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Analytics",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceToolScreen"
+    },
+    {
+      "id": "588:1052",
+      "title": "Speed Insights",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Speed",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceToolScreen"
+    },
+    {
+      "id": "588:1181",
+      "title": "Firewall",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Firewall",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceToolScreen"
+    },
+    {
+      "id": "588:1333",
+      "title": "Workspace Domains",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "WorkspaceDomains",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceDomains"
+    },
+    {
+      "id": "604:4587",
+      "title": "Integrations",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Integrations",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceToolScreen"
+    },
+    {
+      "id": "604:4656",
+      "title": "Analytics empty",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Analytics",
+        "variant": "empty",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceToolScreen"
+    },
+    {
+      "id": "604:4704",
+      "title": "Firewall access required",
+      "group": "Workspace and Tools",
+      "route": {
+        "destination": "Firewall",
+        "variant": "restricted",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
+      "symbol": "WorkspaceToolScreen"
+    },
+    {
+      "id": "468:6875",
+      "title": "Project logs",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "468:6985",
+      "title": "Project log search",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "query",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "468:7128",
+      "title": "Project log filters",
+      "group": "Logs",
+      "route": {
+        "destination": "LogFilters",
+        "variant": "content",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogFilters"
+    },
+    {
+      "id": "468:7051",
+      "title": "Project logs · Errors",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "errors",
+        "target": "prj-personal-1",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "468:7260",
+      "title": "Workspace logs",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "468:7380",
+      "title": "Workspace log search",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "query",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "468:7516",
+      "title": "Workspace log filters",
+      "group": "Logs",
+      "route": {
+        "destination": "LogFilters",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogFilters"
+    },
+    {
+      "id": "468:7448",
+      "title": "Workspace logs · Errors",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "errors",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "590:1355",
+      "title": "Expanded log event",
+      "group": "Logs",
+      "route": {
+        "destination": "LogEvent",
+        "variant": "content",
+        "target": "log-prj-personal-1-4",
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogSheetContent"
+    },
+    {
+      "id": "590:1520",
+      "title": "Live Logs",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "live",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "624:1304",
+      "title": "Logs refreshed",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "refreshed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "590:1752",
+      "title": "Download logs",
+      "group": "Logs",
+      "route": {
+        "destination": "LogDownload",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogDownload"
+    },
+    {
+      "id": "590:1867",
+      "title": "No matching logs",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "empty",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "604:4840",
+      "title": "Logs could not load",
+      "group": "Logs",
+      "route": {
+        "destination": "Logs",
+        "variant": "error",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
+      "symbol": "LogsScreen"
+    },
+    {
+      "id": "344:494",
+      "title": "Profile settings",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Profile",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "ProfileScreen"
+    },
+    {
+      "id": "589:1046",
+      "title": "Profile photo preview",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Photo",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AccountSheetContent"
+    },
+    {
+      "id": "589:1117",
+      "title": "Edit display name",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Profile",
+        "variant": "editing",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "ProfileScreen"
+    },
+    {
+      "id": "605:1910",
+      "title": "Username conflict",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Profile",
+        "variant": "conflict",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "ProfileScreen"
+    },
+    {
+      "id": "605:2118",
+      "title": "Default team picker",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "DefaultScope",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AccountSheetContent"
+    },
+    {
+      "id": "605:2226",
+      "title": "Landing page picker",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "DefaultScope",
+        "variant": "landing",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AccountSheetContent"
+    },
+    {
+      "id": "552:3001",
+      "title": "Theme picker",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Theme",
+        "variant": "content",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AccountSheetContent"
+    },
+    {
+      "id": "605:2334",
+      "title": "Light theme applied",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Theme",
+        "variant": "light",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AccountSheetContent"
+    },
+    {
+      "id": "605:2516",
+      "title": "Enabling Agent",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Agent",
+        "variant": "enabling",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AgentScreen"
+    },
+    {
+      "id": "589:2085",
+      "title": "First Agent conversation",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Agent",
+        "variant": "conversation",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AgentScreen"
+    },
+    {
+      "id": "605:2543",
+      "title": "Agent could not enable",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Agent",
+        "variant": "failed",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AgentScreen"
+    },
+    {
+      "id": "605:2570",
+      "title": "Agent usage limit",
+      "group": "Profile, Appearance and Agent",
+      "route": {
+        "destination": "Agent",
+        "variant": "limit",
+        "target": null,
+        "detail": null
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
+      "symbol": "AgentScreen"
+    },
+    {
+      "id": "606:634",
+      "title": "Neo Financial",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "0"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:865",
+      "title": "Rocket Money",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "1"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:1103",
+      "title": "Buddy",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "2"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:1341",
+      "title": "Revolut",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "3"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:1566",
+      "title": "Glow",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "4"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:1791",
+      "title": "Copilot Categories",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "5"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:2009",
+      "title": "Fidelity",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "6"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:2230",
+      "title": "Public",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "7"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:2471",
+      "title": "CRED",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "8"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:2696",
+      "title": "eBay",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "9"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:2882",
+      "title": "Copilot Investments",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "10"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:3116",
+      "title": "Yahoo Finance",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "11"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:3376",
+      "title": "Coinbase",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "12"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:3610",
+      "title": "Wise",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "13"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:3851",
+      "title": "YouTube Studio",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "14"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:4092",
+      "title": "YNAB",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "15"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:4333",
+      "title": "Origin",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "16"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:4558",
+      "title": "Acorns",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "17"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:4796",
+      "title": "Shopify",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "18"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    },
+    {
+      "id": "606:5017",
+      "title": "Binance",
+      "group": "Usage row design studies",
+      "route": {
+        "destination": "Usage",
+        "variant": "study",
+        "target": null,
+        "detail": "19"
+      },
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "symbol": "UsageScreen"
+    }
+  ],
+  "components": [
+    {
+      "figmaId": "225:271",
+      "name": "ActivityTabs",
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
+      "template": "design/code-connect/ActivityTabs.figma.ts",
+      "status": "unpublished"
+    },
+    {
+      "figmaId": "534:2685",
+      "name": "DeploymentRow",
+      "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
+      "template": "design/code-connect/DeploymentRow.figma.ts",
+      "status": "unpublished"
+    }
+  ],
+  "tokens": {
+    "colors": [
+      {
+        "name": "canvas",
+        "figmaName": "Surface/Canvas",
+        "figmaId": "VariableID:437:3",
+        "dark": "0a0a0a",
+        "light": "ffffff"
+      },
+      {
+        "name": "event",
+        "figmaName": "Surface/Event",
+        "figmaId": "VariableID:437:4",
+        "dark": "0e0e0e",
+        "light": "f5f5f5"
+      },
+      {
+        "name": "input",
+        "figmaName": "Surface/Input",
+        "figmaId": "VariableID:437:5",
+        "dark": "141414",
+        "light": "f5f5f5"
+      },
+      {
+        "name": "control",
+        "figmaName": "Surface/Control",
+        "figmaId": "VariableID:437:6",
+        "dark": "151515",
+        "light": "ededed"
+      },
+      {
+        "name": "sheet",
+        "figmaName": "Surface/Sheet",
+        "figmaId": "VariableID:437:7",
+        "dark": "171717",
+        "light": "ffffff"
+      },
+      {
+        "name": "popover",
+        "figmaName": "Surface/Popover",
+        "figmaId": "VariableID:437:8",
+        "dark": "1b1b1b",
+        "light": "ffffff"
+      },
+      {
+        "name": "group",
+        "figmaName": "Surface/Grouped",
+        "figmaId": "VariableID:437:9",
+        "dark": "1f1f1f",
+        "light": "f4f4f4"
+      },
+      {
+        "name": "selected",
+        "figmaName": "Surface/Selected",
+        "figmaId": "VariableID:437:10",
+        "dark": "252525",
+        "light": "eaeaea"
+      },
+      {
+        "name": "border",
+        "figmaName": "Border/Default",
+        "figmaId": "VariableID:437:13",
+        "dark": "343434",
+        "light": "d6d6d6"
+      },
+      {
+        "name": "quietBorder",
+        "figmaName": "Border/Quiet",
+        "figmaId": "VariableID:437:12",
+        "dark": "242424",
+        "light": "e7e7e7"
+      },
+      {
+        "name": "ink",
+        "figmaName": "Text/Primary",
+        "figmaId": "VariableID:437:15",
+        "dark": "ededed",
+        "light": "171717"
+      },
+      {
+        "name": "secondary",
+        "figmaName": "Text/Secondary",
+        "figmaId": "VariableID:437:16",
+        "dark": "a1a1a1",
+        "light": "525252"
+      },
+      {
+        "name": "muted",
+        "figmaName": "Text/Muted",
+        "figmaId": "VariableID:437:17",
+        "dark": "b8b8b8",
+        "light": "606060"
+      },
+      {
+        "name": "disabled",
+        "figmaName": "Text/Disabled",
+        "figmaId": "VariableID:437:18",
+        "dark": "777777",
+        "light": "757575"
+      },
+      {
+        "name": "link",
+        "figmaName": "Text/Link",
+        "figmaId": "VariableID:437:19",
+        "dark": "a2c7ff",
+        "light": "24548d"
+      },
+      {
+        "name": "error",
+        "figmaName": "Log/Error/Text",
+        "figmaId": "VariableID:437:20",
+        "dark": "ff797f",
+        "light": "b51e28"
+      },
+      {
+        "name": "errorSurface",
+        "figmaName": "Log/Error/Surface",
+        "figmaId": "VariableID:437:22",
+        "dark": "241517",
+        "light": "fce9e8"
+      },
+      {
+        "name": "warning",
+        "figmaName": "Log/Warning/Text",
+        "figmaId": "VariableID:437:25",
+        "dark": "eeb764",
+        "light": "825108"
+      },
+      {
+        "name": "warningSurface",
+        "figmaName": "Log/Warning/Surface",
+        "figmaId": "VariableID:437:26",
+        "dark": "221a10",
+        "light": "fdf2de"
+      },
+      {
+        "name": "ready",
+        "figmaName": "Status/Positive/Text",
+        "figmaId": "VariableID:511:552",
+        "dark": "a7dd96",
+        "light": "22663a"
+      },
+      {
+        "name": "readySurface",
+        "figmaName": "Status/Positive/Surface",
+        "figmaId": "VariableID:511:547",
+        "dark": "294637",
+        "light": "e5f4e8"
+      },
+      {
+        "name": "chart",
+        "figmaName": "Chart/Series",
+        "figmaId": "VariableID:652:2",
+        "dark": "9ab5db",
+        "light": "415e8a"
+      },
+      {
+        "name": "badge",
+        "figmaName": "Badge/Project",
+        "figmaId": "VariableID:652:3",
+        "dark": "263953",
+        "light": "dde8f5"
+      }
+    ],
+    "dimensions": [
+      {
+        "name": "Space2",
+        "figmaName": "Spacing/2",
+        "figmaId": "VariableID:652:5",
+        "value": 2
+      },
+      {
+        "name": "Space4",
+        "figmaName": "Spacing/4",
+        "figmaId": "VariableID:652:6",
+        "value": 4
+      },
+      {
+        "name": "Space6",
+        "figmaName": "Spacing/6",
+        "figmaId": "VariableID:652:7",
+        "value": 6
+      },
+      {
+        "name": "Space8",
+        "figmaName": "Spacing/8",
+        "figmaId": "VariableID:652:8",
+        "value": 8
+      },
+      {
+        "name": "Space12",
+        "figmaName": "Spacing/12",
+        "figmaId": "VariableID:652:9",
+        "value": 12
+      },
+      {
+        "name": "Inset",
+        "figmaName": "Spacing/Screen inset",
+        "figmaId": "VariableID:652:10",
+        "value": 16
+      },
+      {
+        "name": "Space20",
+        "figmaName": "Spacing/20",
+        "figmaId": "VariableID:652:11",
+        "value": 20
+      },
+      {
+        "name": "Space24",
+        "figmaName": "Spacing/24",
+        "figmaId": "VariableID:652:12",
+        "value": 24
+      },
+      {
+        "name": "Space32",
+        "figmaName": "Spacing/32",
+        "figmaId": "VariableID:652:13",
+        "value": 32
+      },
+      {
+        "name": "Icon",
+        "figmaName": "Size/Icon",
+        "figmaId": "VariableID:652:14",
+        "value": 22
+      },
+      {
+        "name": "IconSlot",
+        "figmaName": "Size/Icon Slot",
+        "figmaId": "VariableID:652:15",
+        "value": 32
+      },
+      {
+        "name": "RowIcon",
+        "figmaName": "Size/Row Icon",
+        "figmaId": "VariableID:652:16",
+        "value": 36
+      },
+      {
+        "name": "Filter",
+        "figmaName": "Size/Filter",
+        "figmaId": "VariableID:652:17",
+        "value": 44
+      },
+      {
+        "name": "Touch",
+        "figmaName": "Size/Touch",
+        "figmaId": "VariableID:652:18",
+        "value": 48
+      },
+      {
+        "name": "SearchRow",
+        "figmaName": "Size/Search Row",
+        "figmaId": "VariableID:652:19",
+        "value": 54
+      },
+      {
+        "name": "MenuRow",
+        "figmaName": "Size/Menu Row",
+        "figmaId": "VariableID:652:20",
+        "value": 44
+      },
+      {
+        "figmaName": "Size/Project List Row",
+        "figmaId": "VariableID:655:41",
+        "value": 76,
+        "name": "ProjectListRow"
+      },
+      {
+        "figmaName": "Size/Recent Deployment Row",
+        "figmaId": "VariableID:655:42",
+        "value": 96,
+        "name": "RecentDeploymentRow"
+      },
+      {
+        "figmaName": "Size/Project Deployment Row",
+        "figmaId": "VariableID:655:43",
+        "value": 78,
+        "name": "ProjectDeploymentRow"
+      },
+      {
+        "figmaName": "Size/Metadata Icon",
+        "figmaId": "VariableID:655:44",
+        "value": 14,
+        "name": "MetadataIcon"
+      },
+      {
+        "name": "TopBar",
+        "figmaName": "Size/Top Bar",
+        "figmaId": "VariableID:652:21",
+        "value": 56
+      },
+      {
+        "name": "BottomBar",
+        "figmaName": "Size/Bottom Bar",
+        "figmaId": "VariableID:652:22",
+        "value": 64
+      },
+      {
+        "name": "CompactBar",
+        "figmaName": "Size/Compact Bar",
+        "figmaId": "VariableID:652:23",
+        "value": 56
+      },
+      {
+        "name": "Stroke",
+        "figmaName": "Stroke/Stroke",
+        "figmaId": "VariableID:652:24",
+        "value": 1
+      },
+      {
+        "name": "SelectedUnderline",
+        "figmaName": "Stroke/SelectedUnderline",
+        "figmaId": "VariableID:652:25",
+        "value": 2
+      },
+      {
+        "name": "SmallRadius",
+        "figmaName": "Radius/Small",
+        "figmaId": "VariableID:652:26",
+        "value": 8
+      },
+      {
+        "name": "ControlRadius",
+        "figmaName": "Radius/Control",
+        "figmaId": "VariableID:652:27",
+        "value": 12
+      },
+      {
+        "name": "CardRadius",
+        "figmaName": "Radius/Card",
+        "figmaId": "VariableID:652:28",
+        "value": 18
+      },
+      {
+        "name": "SheetRadius",
+        "figmaName": "Radius/Sheet",
+        "figmaId": "VariableID:652:29",
+        "value": 28
+      },
+      {
+        "name": "PillRadius",
+        "figmaName": "Radius/Pill",
+        "figmaId": "VariableID:652:30",
+        "value": 32
+      },
+      {
+        "name": "ChartHeight",
+        "figmaName": "Size/Chart Height",
+        "figmaId": "VariableID:652:31",
+        "value": 126
+      },
+      {
+        "name": "PreviewHeight",
+        "figmaName": "Size/Preview Height",
+        "figmaId": "VariableID:652:32",
+        "value": 158
+      },
+      {
+        "name": "AvatarSize",
+        "figmaName": "Size/Avatar Size",
+        "figmaId": "VariableID:652:33",
+        "value": 80
+      },
+      {
+        "name": "IllustrationWidth",
+        "figmaName": "Size/Illustration Width",
+        "figmaId": "VariableID:652:34",
+        "value": 156
+      },
+      {
+        "name": "IllustrationHeight",
+        "figmaName": "Size/Illustration Height",
+        "figmaId": "VariableID:652:35",
+        "value": 120
+      },
+      {
+        "name": "DrawerWidth",
+        "figmaName": "Size/Drawer Width",
+        "figmaId": "VariableID:652:36",
+        "value": 304
+      },
+      {
+        "name": "SearchResultsHeight",
+        "figmaName": "Size/Search Results Height",
+        "figmaId": "VariableID:652:37",
+        "value": 428
+      },
+      {
+        "name": "SheetMaxHeight",
+        "figmaName": "Size/Sheet Max Height",
+        "figmaId": "VariableID:652:38",
+        "value": 734
+      },
+      {
+        "name": "CompactSheetMaxHeight",
+        "figmaName": "Size/Compact Sheet Max Height",
+        "figmaId": "VariableID:652:39",
+        "value": 490
+      },
+      {
+        "name": "DialogWidth",
+        "figmaName": "Size/Dialog Width",
+        "figmaId": "VariableID:652:40",
+        "value": 340
+      }
+    ],
+    "type": [
+      {
+        "name": "Caption",
+        "figmaName": "Font size/Caption",
+        "figmaId": "VariableID:652:42",
+        "value": 11
+      },
+      {
+        "name": "Metadata",
+        "figmaName": "Font size/Metadata",
+        "figmaId": "VariableID:652:43",
+        "value": 12
+      },
+      {
+        "name": "Body",
+        "figmaName": "Font size/Body",
+        "figmaId": "VariableID:652:44",
+        "value": 15
+      },
+      {
+        "name": "Title",
+        "figmaName": "Font size/Title",
+        "figmaId": "VariableID:652:45",
+        "value": 17
+      },
+      {
+        "name": "Heading",
+        "figmaName": "Font size/Heading",
+        "figmaId": "VariableID:652:46",
+        "value": 22
+      },
+      {
+        "name": "Metric",
+        "figmaName": "Font size/Metric",
+        "figmaId": "VariableID:652:47",
+        "value": 26
+      },
+      {
+        "name": "Large",
+        "figmaName": "Font size/Large",
+        "figmaId": "VariableID:652:48",
+        "value": 29
+      }
+    ],
+    "numbers": [
+      {
+        "name": "ScreenFadeMillis",
+        "kotlin": "150"
+      },
+      {
+        "name": "ScrimOpacity",
+        "kotlin": "0.62f"
+      },
+      {
+        "name": "RailOpacity",
+        "kotlin": "0.34f"
+      },
+      {
+        "name": "DrawerFraction",
+        "kotlin": "0.86f"
+      },
+      {
+        "name": "ProjectSheetFraction",
+        "kotlin": "0.98f"
+      }
+    ]
+  },
+  "figmaReview": null
+}
