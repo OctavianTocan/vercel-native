@@ -2339,6 +2339,36 @@
         "figmaFrame": "513:2132",
         "dark": "131313dc",
         "light": "f5f5f5dc"
+      },
+      {
+        "name": "projectDivider",
+        "figmaFrame": "402:4957",
+        "dark": "202020",
+        "light": "e6e6e6"
+      },
+      {
+        "name": "projectTile",
+        "figmaFrame": "228:2750",
+        "dark": "292929",
+        "light": "ededed"
+      },
+      {
+        "name": "projectTileDivider",
+        "figmaFrame": "228:2750",
+        "dark": "2b2b2b",
+        "light": "e6e6e6"
+      },
+      {
+        "name": "workspaceBadgeSelected",
+        "figmaFrame": "513:2132",
+        "dark": "212121",
+        "light": "eaeaea"
+      },
+      {
+        "name": "workspaceBadgeInk",
+        "figmaFrame": "513:2132",
+        "dark": "c7c7c7",
+        "light": "525252"
       }
     ],
     "dimensions": [
@@ -2698,6 +2728,58 @@
         "name": "WorkspaceSelectionHeight",
         "figmaFrame": "513:2132",
         "value": 25
+      },
+      {
+        "name": "ProjectTileRadius",
+        "figmaId": "VariableID:655:30",
+        "figmaName": "Radius/6",
+        "value": 6
+      },
+      {
+        "name": "RecentProjectRadius",
+        "figmaId": "VariableID:655:32",
+        "figmaName": "Radius/5",
+        "value": 5
+      },
+      {
+        "name": "RecentsStart",
+        "figmaFrame": "225:2",
+        "value": 14
+      },
+      {
+        "name": "RecentAvatarSlot",
+        "figmaFrame": "225:2",
+        "value": 40
+      },
+      {
+        "name": "RecentTitleGap",
+        "figmaFrame": "225:2",
+        "value": 9
+      },
+      {
+        "name": "RecentContentTop",
+        "figmaFrame": "225:2",
+        "value": 17
+      },
+      {
+        "name": "RecentMetadataGap",
+        "figmaFrame": "225:2",
+        "value": 5
+      },
+      {
+        "name": "RecentMetadataHeight",
+        "figmaFrame": "225:2",
+        "value": 28
+      },
+      {
+        "name": "RecentMetadataSpacing",
+        "figmaFrame": "225:2",
+        "value": 10
+      },
+      {
+        "name": "ProjectOptionsGear",
+        "figmaFrame": "604:3584",
+        "value": 18.9
       }
     ],
     "type": [
@@ -2779,6 +2861,27 @@
         "name": "ProjectOptionsLine",
         "figmaFrame": "604:3584",
         "value": 21
+      },
+      {
+        "name": "RootTitleTracking",
+        "figmaFrame": "402:4957",
+        "value": -0.36
+      },
+      {
+        "name": "DockLabelTracking",
+        "figmaFrame": "402:4957",
+        "value": -0.28
+      },
+      {
+        "name": "RecentMetadata",
+        "figmaId": "VariableID:655:47",
+        "figmaName": "Font size/13",
+        "value": 13
+      },
+      {
+        "name": "RecentMetadataLine",
+        "figmaFrame": "225:2",
+        "value": 18
       }
     ],
     "numbers": [

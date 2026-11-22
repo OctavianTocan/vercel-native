@@ -114,18 +114,18 @@ private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: Graphic
                     if (selected) Box(
                         Modifier.align(Alignment.CenterStart)
                             .size(Tokens.WorkspaceSelectionWidth, Tokens.WorkspaceSelectionHeight)
-                            .background(palette.glassInk, RoundedCornerShape(Tokens.WorkspaceSelectionRadius)),
+                            .background(palette.ink, RoundedCornerShape(Tokens.WorkspaceSelectionRadius)),
                     )
                     Box(
                         Modifier.align(Alignment.Center).size(Tokens.WorkspaceBadgeSize).clip(CircleShape)
-                            .background(palette.selected)
-                            .then(if (selected) Modifier.border(Tokens.Stroke, palette.glassInk, CircleShape) else Modifier)
+                            .background(if (selected) palette.workspaceBadgeSelected else palette.selected)
+                            .then(if (selected) Modifier.border(Tokens.Stroke, palette.ink, CircleShape) else Modifier)
                             .selectable(selected, role = Role.RadioButton) { navigation.chooseWorkspace(workspace.id) }
                             .semantics { contentDescription = workspace.name },
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
-                            workspace.name.take(1), Modifier.clearAndSetSemantics {}, style = GeistText, color = palette.muted,
+                            workspace.name.take(1), Modifier.clearAndSetSemantics {}, style = GeistText, color = palette.workspaceBadgeInk,
                             fontSize = Tokens.Body, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.SemiBold,
                         )
                     }

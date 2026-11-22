@@ -241,6 +241,18 @@ internal fun DashboardButton(label: String, onClick: () -> Unit, modifier: Modif
 @Composable
 internal fun ProjectMark(project: Project, modifier: Modifier = Modifier) {
     val palette = LocalDashboardPalette.current
+    Box(
+        modifier.size(Tokens.RowIcon).background(palette.projectBadge, CircleShape)
+            .border(Tokens.Stroke, palette.insetSurface, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        ProjectArtwork(project, Tokens.Space24, Tokens.Inset)
+    }
+}
+
+@Composable
+internal fun ProjectArtwork(project: Project, size: Dp, fallbackSize: Dp) {
+    val palette = LocalDashboardPalette.current
     val mark = when (project.number) {
         0 -> R.drawable.dashboard_badge_catalog
         1 -> R.drawable.dashboard_badge_market
@@ -249,15 +261,9 @@ internal fun ProjectMark(project: Project, modifier: Modifier = Modifier) {
         4 -> R.drawable.dashboard_badge_guide
         else -> R.drawable.dashboard_badge_vercel
     }
-    Box(
-        modifier.size(Tokens.RowIcon).background(palette.projectBadge, CircleShape)
-            .border(Tokens.Stroke, palette.insetSurface, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        val fallback = mark == R.drawable.dashboard_badge_vercel
-        val tint = if (fallback || project.number == 1 || project.number == 3) palette.projectEllipsis else Color.Unspecified
-        DashboardArtwork(mark, if (fallback) Tokens.Inset else Tokens.Space24, tint)
-    }
+    val fallback = mark == R.drawable.dashboard_badge_vercel
+    val tint = if (fallback || project.number == 1 || project.number == 3) palette.projectEllipsis else Color.Unspecified
+    DashboardArtwork(mark, if (fallback) fallbackSize else size, tint)
 }
 
 @Composable
@@ -317,10 +323,25 @@ internal fun RowOptions(
     onOpen: () -> Unit,
     onClose: () -> Unit,
     separated: Boolean = false,
+    recents: Boolean = false,
 ) {
     val palette = LocalDashboardPalette.current
     Box {
-        IconControl(Glyph.More, label, onOpen, visualSize = Tokens.RowIcon)
+        if (recents) {
+            Box(
+                Modifier.size(Tokens.Touch).clip(CircleShape).clickable(role = Role.Button, onClick = onOpen)
+                    .semantics { contentDescription = label },
+                contentAlignment = Alignment.Center,
+            ) {
+                Box(
+                    Modifier.size(Tokens.RowIcon).background(palette.canvas, CircleShape)
+                        .border(Tokens.Stroke, palette.insetSurface, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    DashboardArtwork(R.drawable.dashboard_icon_more, Tokens.DockIcon)
+                }
+            }
+        } else IconControl(Glyph.More, label, onOpen, visualSize = Tokens.RowIcon)
         DropdownMenu(expanded = expanded, onDismissRequest = onClose, containerColor = palette.popover) {
             actions.forEachIndexed { index, item ->
                 if (separated && index > 0) DividerLine(Modifier.padding(horizontal = Tokens.Space12))

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.octaviantocan.vercelnative.R
@@ -29,35 +30,28 @@ internal fun DeploymentRow(
     onOpen: () -> Unit,
     options: (@Composable () -> Unit)? = null,
 ) {
+    if (project != null) {
+        RecentDeploymentRow(deployment, project, onOpen, options)
+        return
+    }
     val palette = LocalDashboardPalette.current
-    val recent = project != null
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onOpen)
-            .heightIn(min = if (recent) Tokens.RecentDeploymentRow else Tokens.ProjectDeploymentRow)
+            .heightIn(min = Tokens.ProjectDeploymentRow)
             .padding(start = Tokens.Inset, end = Tokens.Space8),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
     ) {
-        Box(Modifier.width(if (recent) Tokens.RowIcon else Tokens.Icon)) {
-            Image(
-                painterResource(R.drawable.dashboard_sample_avatar),
-                contentDescription = deployment.author,
-                modifier = Modifier.size(Tokens.Icon).clip(CircleShape),
-            )
-            if (project != null) {
-                Box(
-                    Modifier.align(Alignment.CenterEnd).size(Tokens.Icon).background(palette.control, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(project.name.take(1).uppercase(), color = palette.secondary, fontSize = Tokens.Caption)
-                }
-            }
-        }
+        Image(
+            painterResource(R.drawable.dashboard_sample_avatar),
+            contentDescription = deployment.author,
+            modifier = Modifier.size(Tokens.Icon).clip(CircleShape),
+        )
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
             Text(
                 deployment.title,
                 fontSize = Tokens.Body,
-                fontWeight = if (recent) FontWeight.Medium else FontWeight.Normal,
+                fontWeight = FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -77,6 +71,73 @@ internal fun DeploymentRow(
         options?.invoke()
     }
     DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+}
+
+@Composable
+private fun RecentDeploymentRow(
+    deployment: Deployment,
+    project: Project,
+    onOpen: () -> Unit,
+    options: (@Composable () -> Unit)?,
+) {
+    val palette = LocalDashboardPalette.current
+    val metadataStyle = GeistText.copy(fontSize = Tokens.RecentMetadata, lineHeight = Tokens.RecentMetadataLine)
+    val pullRequest = deployment.pullRequest
+    Box(Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                Modifier.weight(1f).heightIn(min = Tokens.RecentDeploymentRow).clickable(onClick = onOpen)
+                    .padding(top = Tokens.RecentContentTop, end = Tokens.Space8, bottom = Tokens.Space8),
+                horizontalArrangement = Arrangement.spacedBy(Tokens.RecentTitleGap),
+            ) {
+                Box(Modifier.width(Tokens.RecentAvatarSlot).padding(top = Tokens.Stroke)) {
+                    Image(
+                        painterResource(R.drawable.dashboard_sample_avatar), contentDescription = deployment.author,
+                        modifier = Modifier.padding(start = Tokens.Space2).size(Tokens.Icon).clip(CircleShape),
+                    )
+                    Box(
+                        Modifier.align(Alignment.CenterEnd).size(Tokens.Icon)
+                            .background(palette.projectTile, RoundedCornerShape(Tokens.RecentProjectRadius)),
+                        contentAlignment = Alignment.Center,
+                    ) { ProjectArtwork(project, Tokens.Icon, Tokens.MetadataIcon) }
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.RecentMetadataGap)) {
+                    Text(
+                        deployment.title, style = GeistText, color = palette.ink,
+                        fontSize = Tokens.ListTitle, lineHeight = Tokens.ListTitleLine, fontWeight = FontWeight.Medium,
+                        maxLines = 1, overflow = TextOverflow.MiddleEllipsis,
+                    )
+                    Row(
+                        Modifier.heightIn(min = Tokens.RecentMetadataHeight),
+                        horizontalArrangement = Arrangement.spacedBy(Tokens.RecentMetadataSpacing),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(Tokens.Space4),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Image(
+                                painterResource(R.drawable.dashboard_github_mark), contentDescription = "GitHub",
+                                modifier = Modifier.size(Tokens.MetadataIcon), colorFilter = ColorFilter.tint(palette.ink),
+                            )
+                            Text(
+                                pullRequest?.let { "#$it" } ?: "Source", color = palette.ink,
+                                style = metadataStyle, fontWeight = FontWeight.Medium,
+                            )
+                        }
+                        Text(
+                            if (pullRequest == null) deployment.status.label else deployment.sha, color = palette.ink,
+                            style = metadataStyle, fontFamily = if (pullRequest != null) FontFamily.Monospace else null,
+                            fontWeight = if (pullRequest == null) FontWeight.Medium else FontWeight.Normal,
+                        )
+                        Text(deployment.elapsed, color = palette.secondary, style = metadataStyle)
+                    }
+                }
+            }
+            options?.invoke()
+        }
+        DividerLine(Modifier.align(Alignment.BottomCenter))
+    }
 }
 
 @Composable

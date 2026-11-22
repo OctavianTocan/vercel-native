@@ -83,6 +83,7 @@ internal fun DashboardRootHeader(title: String, onMenu: () -> Unit) {
         Text(
             title, Modifier.weight(1f), color = palette.glassInk, style = GeistText,
             fontSize = Tokens.RootTitle, lineHeight = Tokens.ListTitleLine, fontWeight = FontWeight.SemiBold,
+            letterSpacing = Tokens.RootTitleTracking,
             textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis,
         )
     }
@@ -147,6 +148,7 @@ private fun DashboardNavItem(
         if (!iconsOnly) Text(
             title, color = palette.glassInk, style = GeistText, fontWeight = FontWeight.Medium,
             fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine,
+            letterSpacing = Tokens.DockLabelTracking,
             maxLines = 1, overflow = TextOverflow.Ellipsis,
         )
     }

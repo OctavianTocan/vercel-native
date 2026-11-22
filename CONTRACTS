@@ -9,3 +9,6 @@ CI MUST run on mini-002-netcup through Tailscale-accessed infrastructure. Authen
 
 @cc [owner:OctavianTocan,label:design] projects-pinned-header
 The Projects title and workspace button MUST stay visible as the project rows scroll. The workspace button shares a centerline with the project badges. The floating dock clears the Android navigation inset. Source: Tavi's Android preview recording, 2026-11-22.
+
+@cc [owner:OctavianTocan,label:design] projects-and-recents-geometry
+Keep the divider inside each 76 dp Projects row and 96 dp Recents row. Recents starts 14 dp below the Activity tabs. The icon-only Projects preview uses 32 dp project tiles and up/down chevrons. Project Options uses its approved placement relative to the ellipsis in each theme. Sources: Figma frames 402:4957, 225:2, 228:2750, 604:3584 and 604:4911.

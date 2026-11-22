@@ -34,6 +34,7 @@ internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit
                 Text(
                     tab.name, style = GeistText, color = if (active) palette.ink else palette.secondary,
                     fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine,
+                    fontWeight = if (active) FontWeight.Medium else FontWeight.Normal,
                 )
                 Box(
                     Modifier.align(Alignment.BottomCenter).fillMaxWidth()
@@ -84,7 +85,10 @@ private fun RecentsList(route: DashboardRoute, navigation: DashboardNavigation) 
             Modifier.padding(horizontal = Tokens.Inset, vertical = Tokens.Space6),
             Tone.Success,
         )
-        LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance)) {
+        LazyColumn(
+            Modifier.weight(1f),
+            contentPadding = PaddingValues(top = Tokens.RecentsStart, bottom = Tokens.DockScrollClearance),
+        ) {
             items(visible, key = Deployment::id) { deployment ->
                 val project = navigation.project(deployment.projectId)
                 DeploymentRow(
@@ -105,6 +109,7 @@ private fun RecentsList(route: DashboardRoute, navigation: DashboardNavigation) 
                             onOpen = { expanded = deployment.id },
                             onClose = { expanded = null },
                             separated = route.variant == "menu-earlier",
+                            recents = true,
                         )
                     },
                 )

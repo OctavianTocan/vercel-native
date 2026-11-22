@@ -69,6 +69,16 @@ internal object DashboardTokens {
     val WorkspaceBadgeGap = 21.dp
     val WorkspaceSelectionWidth = 3.dp
     val WorkspaceSelectionHeight = 25.dp
+    val ProjectTileRadius = 6.dp
+    val RecentProjectRadius = 5.dp
+    val RecentsStart = 14.dp
+    val RecentAvatarSlot = 40.dp
+    val RecentTitleGap = 9.dp
+    val RecentContentTop = 17.dp
+    val RecentMetadataGap = 5.dp
+    val RecentMetadataHeight = 28.dp
+    val RecentMetadataSpacing = 10.dp
+    val ProjectOptionsGear = 18.9.dp
     val Caption = 11.sp
     val Metadata = 12.sp
     val Body = 15.sp
@@ -83,6 +93,10 @@ internal object DashboardTokens {
     val ListSubtitleLine = 20.sp
     val ProjectSectionLine = 19.sp
     val ProjectOptionsLine = 21.sp
+    val RootTitleTracking = -0.36.sp
+    val DockLabelTracking = -0.28.sp
+    val RecentMetadata = 13.sp
+    val RecentMetadataLine = 18.sp
     const val ScreenFadeMillis = 150
     const val ScrimOpacity = 0.62f
     const val ProjectSheetFraction = 0.98f
@@ -125,6 +139,11 @@ internal data class DashboardPalette(
     val projectOptionsGlyph: Color,
     val projectOptionsBorder: Color,
     val workspaceRail: Color,
+    val projectDivider: Color,
+    val projectTile: Color,
+    val projectTileDivider: Color,
+    val workspaceBadgeSelected: Color,
+    val workspaceBadgeInk: Color,
 ) {
     companion object {
         val Dark = DashboardPalette(
@@ -163,6 +182,11 @@ internal data class DashboardPalette(
             projectOptionsGlyph = Color(0xFFACACAC),
             projectOptionsBorder = Color(0xFF303030),
             workspaceRail = Color(0xDC131313),
+            projectDivider = Color(0xFF202020),
+            projectTile = Color(0xFF292929),
+            projectTileDivider = Color(0xFF2B2B2B),
+            workspaceBadgeSelected = Color(0xFF212121),
+            workspaceBadgeInk = Color(0xFFC7C7C7),
         )
 
         val Light = DashboardPalette(
@@ -201,6 +225,11 @@ internal data class DashboardPalette(
             projectOptionsGlyph = Color(0xFF666666),
             projectOptionsBorder = Color(0xFFE5E5E5),
             workspaceRail = Color(0xDCF5F5F5),
+            projectDivider = Color(0xFFE6E6E6),
+            projectTile = Color(0xFFEDEDED),
+            projectTileDivider = Color(0xFFE6E6E6),
+            workspaceBadgeSelected = Color(0xFFEAEAEA),
+            workspaceBadgeInk = Color(0xFF525252),
         )
     }
 }

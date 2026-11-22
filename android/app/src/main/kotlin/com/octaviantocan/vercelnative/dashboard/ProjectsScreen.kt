@@ -7,10 +7,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -40,6 +43,7 @@ import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigation) {
     val projects = navigation.projects()
     val showFavorites = route.variant !in setOf("plain", "icons", "menu-add", "menu-earlier")
+    val useProjectTiles = route.variant in setOf("plain", "icons")
     val favorite = projects.filter { showFavorites && it.id in navigation.favorites }
     val other = projects.filterNot { it in favorite }
     var expanded by rememberSaveable {
@@ -89,11 +93,13 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
                 ProjectListRow(project, navigation, true, expanded == project.id, { expanded = project.id }, { expanded = null })
             }
             if (showFavorites) item { ProjectSectionLabel("Other projects") }
-            else item { DividerLine(Modifier.padding(horizontal = Tokens.Space24)) }
-            items(other, key = Project::id) { project ->
+            itemsIndexed(other, key = { _, project -> project.id }) { index, project ->
                 ProjectListRow(
                     project, navigation, false, expanded == project.id,
-                    { expanded = project.id }, { expanded = null }, route.variant == "menu-earlier",
+                    { expanded = project.id }, { expanded = null },
+                    earlier = route.variant == "menu-earlier",
+                    useTile = useProjectTiles,
+                    topDivider = !showFavorites && index == 0,
                 )
             }
         }
@@ -104,7 +110,7 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
 private fun ProjectSectionLabel(title: String) {
     Box(
         Modifier.fillMaxWidth().heightIn(min = Tokens.ProjectSectionHeight)
-            .padding(start = Tokens.Space24, top = Tokens.Space6, end = Tokens.Space24),
+            .padding(start = Tokens.Space24, top = Tokens.Space6, end = Tokens.Space24, bottom = Tokens.Stroke),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
@@ -123,6 +129,8 @@ private fun ProjectListRow(
     onOpen: () -> Unit,
     onClose: () -> Unit,
     earlier: Boolean = false,
+    useTile: Boolean = false,
+    topDivider: Boolean = false,
 ) {
     val palette = LocalDashboardPalette.current
     val name = navigation.projectName(project)
@@ -131,11 +139,16 @@ private fun ProjectListRow(
             Row(
                 Modifier.weight(1f).heightIn(min = Tokens.ProjectListRow)
                     .clickable(role = Role.Button) { navigation.show(Destination.Project, project.id) }
-                    .padding(start = Tokens.Space6, end = Tokens.Space8),
+                    .padding(start = if (useTile) Tokens.Space8 else Tokens.Space6, end = Tokens.Space8),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Tokens.ProjectBadgeGap),
+                horizontalArrangement = Arrangement.spacedBy(if (useTile) Tokens.Inset else Tokens.ProjectBadgeGap),
             ) {
-                ProjectMark(project)
+                if (useTile) {
+                    Box(
+                        Modifier.size(Tokens.IconSlot).background(palette.projectTile, RoundedCornerShape(Tokens.ProjectTileRadius)),
+                        contentAlignment = Alignment.Center,
+                    ) { ProjectArtwork(project, Tokens.Space24, Tokens.MetadataIcon) }
+                } else ProjectMark(project)
                 Column(Modifier.weight(1f)) {
                     Text(
                         name, color = palette.ink, style = GeistText,
@@ -155,7 +168,9 @@ private fun ProjectListRow(
                         .semantics { contentDescription = "Options for $name" },
                     contentAlignment = Alignment.Center,
                 ) {
-                    Box(
+                    if (useTile) Box(Modifier.offset(x = Tokens.Space8)) {
+                        DashboardArtwork(R.drawable.dashboard_icon_chevrons, Tokens.Inset, palette.secondary)
+                    } else Box(
                         Modifier.size(Tokens.IconSlot).then(
                             if (favorite) Modifier.background(palette.projectBadge, CircleShape)
                                 .border(Tokens.Stroke, palette.insetSurface, CircleShape) else Modifier,
@@ -168,7 +183,9 @@ private fun ProjectListRow(
                 if (expanded) ProjectOptions(project, navigation, earlier, onClose)
             }
         }
-        DividerLine(Modifier.align(Alignment.BottomCenter).padding(horizontal = Tokens.Space24), palette.projectBadge)
+        val divider = if (useTile) palette.projectTileDivider else palette.projectDivider
+        if (topDivider) DividerLine(Modifier.align(Alignment.TopCenter).padding(horizontal = Tokens.Space24), divider)
+        DividerLine(Modifier.align(Alignment.BottomCenter).padding(horizontal = Tokens.Space24), divider)
     }
 }
 
@@ -195,9 +212,12 @@ private fun ProjectOptions(project: Project, navigation: DashboardNavigation, ea
     val position = with(LocalDensity.current) {
         val edgeGap = (if (light) Tokens.Space8 else Tokens.Space2).roundToPx()
         val anchorGap = (Tokens.IconSlot / 2 + Tokens.Space2).roundToPx()
+        val openingOffset = if (light) (-(Tokens.IconSlot / 2)).roundToPx() else anchorGap
         val viewportGap = Tokens.Space8.roundToPx()
         val margin = shadowMargin.roundToPx()
-        remember(edgeGap, anchorGap, viewportGap, margin) { ProjectOptionsPosition(edgeGap, anchorGap, viewportGap, margin) }
+        remember(edgeGap, anchorGap, openingOffset, viewportGap, margin) {
+            ProjectOptionsPosition(edgeGap, anchorGap, openingOffset, viewportGap, margin)
+        }
     }
     Popup(position, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
         Column(
@@ -217,20 +237,31 @@ private fun ProjectOptions(project: Project, navigation: DashboardNavigation, ea
                             onClose()
                             option.onClick()
                         }
-                        .padding(horizontal = if (light) Tokens.Inset else Tokens.ProjectOptionsInset),
+                        .padding(
+                            start = if (light) Tokens.Inset else Tokens.ProjectOptionsInset,
+                            end = if (light) Tokens.Inset - Tokens.Space2 else Tokens.ProjectOptionsInset,
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
                 ) {
                     if (!light) {
-                        val tint = if (option.icon == R.drawable.dashboard_icon_settings) Color.Unspecified else palette.projectOptionsGlyph
-                        DashboardArtwork(option.icon, Tokens.ProjectOptionsIcon, tint)
+                        Box(
+                            Modifier.size(Tokens.ProjectOptionsIcon).offset(x = -Tokens.Stroke, y = -Tokens.Stroke),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            if (option.icon == R.drawable.dashboard_icon_settings) {
+                                Icon(painterResource(option.icon), null, Modifier.requiredSize(Tokens.ProjectOptionsGear), tint = Color.Unspecified)
+                            } else DashboardArtwork(option.icon, Tokens.ProjectOptionsIcon, palette.projectOptionsGlyph)
+                        }
                     }
                     Text(
                         option.title, Modifier.weight(1f), color = palette.projectOptionsInk, style = GeistText,
                         fontSize = if (light) Tokens.ListTitle else Tokens.Body,
                         lineHeight = if (light) Tokens.ListSubtitleLine else Tokens.ProjectOptionsLine,
                     )
-                    if (light && index == 0) DashboardArtwork(option.icon, Tokens.ProjectOptionsIcon, palette.projectOptionsGlyph)
+                    if (light && index == 0) {
+                        DashboardArtwork(R.drawable.dashboard_icon_light_star, Tokens.ProjectOptionsIcon, palette.projectOptionsGlyph)
+                    }
                 }
             }
         }
@@ -240,6 +271,7 @@ private fun ProjectOptions(project: Project, navigation: DashboardNavigation, ea
 private class ProjectOptionsPosition(
     private val edgeGap: Int,
     private val anchorGap: Int,
+    private val openingOffset: Int,
     private val viewportGap: Int,
     private val shadowMargin: Int,
 ) : PopupPositionProvider {
@@ -253,7 +285,7 @@ private class ProjectOptionsPosition(
             LayoutDirection.Ltr -> anchorBounds.right - popupContentSize.width - edgeGap + shadowMargin
             LayoutDirection.Rtl -> anchorBounds.left + edgeGap - shadowMargin
         }
-        val below = anchorBounds.center.y + anchorGap - shadowMargin
+        val below = anchorBounds.center.y + openingOffset - shadowMargin
         val above = anchorBounds.center.y - anchorGap - popupContentSize.height + shadowMargin
         val maxY = (windowSize.height - popupContentSize.height - viewportGap).coerceAtLeast(0)
         val y = if (below <= maxY) below else above
