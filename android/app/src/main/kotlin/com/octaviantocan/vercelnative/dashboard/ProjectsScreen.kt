@@ -239,7 +239,8 @@ private fun ProjectOptions(
         ProjectOption("Transfer Project", R.drawable.dashboard_icon_transfer) { navigation.show(Destination.Transfer, id) },
         ProjectOption("Settings", R.drawable.dashboard_icon_settings) { navigation.show(Destination.ProjectSettings, id) },
     )
-    val shape = RoundedCornerShape(if (light) Tokens.ProjectOptionsLightRadius else Tokens.ProjectOptionsRadius)
+    val cardRadius = if (light) Tokens.ProjectOptionsLightRadius else Tokens.ProjectOptionsRadius
+    val shape = RoundedCornerShape(cardRadius)
     val shadowMargin = if (light) Tokens.Space20 else Dp.Hairline
     val position = with(LocalDensity.current) {
         val edgeGap = (if (light) Tokens.Space8 else Tokens.Space2).roundToPx()
@@ -253,10 +254,10 @@ private fun ProjectOptions(
     }
     val dismiss by rememberUpdatedState(onClose)
     Popup(position, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-        // The light menu's shadow padding is part of the popup window.
-        val dismissThroughShadow = if (light) Modifier.pointerInput(shadowMargin) {
+        // The popup window includes the clipped corners and any shadow padding.
+        val dismissOutsideCard = Modifier.pointerInput(shadowMargin, cardRadius) {
             val margin = shadowMargin.roundToPx().toFloat()
-            val radius = CornerRadius(Tokens.ProjectOptionsLightRadius.toPx())
+            val radius = CornerRadius(cardRadius.toPx())
             awaitEachGesture {
                 val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
                 val card = RoundRect(Rect(margin, margin, size.width - margin, size.height - margin), radius)
@@ -265,9 +266,9 @@ private fun ProjectOptions(
                     dismiss()
                 }
             }
-        } else Modifier
+        }
         Column(
-            dismissThroughShadow.padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
+            dismissOutsideCard.padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
                 .then(if (light) Modifier.shadow(Tokens.Space12, shape) else Modifier)
                 .clip(shape).background(palette.projectOptionsSurface).border(Tokens.Stroke, palette.projectOptionsBorder, shape)
                 .padding(Tokens.Stroke).verticalScroll(rememberScrollState()),
