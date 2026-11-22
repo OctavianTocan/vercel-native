@@ -88,7 +88,7 @@ internal object DashboardFixtures {
         }
     }
     val defaultProject = projects.first().id
-    val favorites = projects.filter { it.number < 4 }.map(Project::id).toSet()
+    val favorites = projects.filter { it.number == 0 }.map(Project::id).toSet()
 
     private val deploymentsByProject = projects.associate { project ->
         project.id to List(26) { index ->

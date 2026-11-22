@@ -4,6 +4,12 @@ In a debug build, open **Browse design states** to find a screen by its Figma fr
 
 Rotating the phone preserves the open preview and its sample changes. A transferred project's alerts follow it in the inbox and search. Each workspace has its own Agent setup, and Retry runs setup even when the failure screen was opened from the design picker.
 
+The Projects title and sidebar button stay above the list while it scrolls, following the November 22 phone review. The layout uses the approved row geometry, dock, and sidebar. The app applies Android system bar insets and uses fictional project and workspace identities. [Projects](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=402-4957) · [Sidebar](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=228-2849) · [Workspace switcher](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=513-2132)
+
+The project popover follows its ellipsis and fits on either side of the trigger when space is tight. The dark menu uses leading icons, and the light menu uses the trailing favorite glyph from the approved light frame. [Dark menu](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-3584) · [Light menu](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-4911)
+
+Dashboard icons come from the linked frames. The Geist font and its license are bundled with the app. Where Figma sets a value directly on a layer, `figmaFrame` in the token manifest points to the frame to review. [Geist license](https://github.com/google/fonts/blob/main/ofl/geist/OFL.txt)
+
 ## Review a new Figma change
 
 1. Load `tools/design/figma_snapshot.js` into Figma MCP's `use_figma` tool. Append a call to `snapshotDashboard` with `figmaFileKey` and `approvedPage` from the manifest. Pass `cases[].id` as `frameIds`, `components[].figmaId` as `componentIds`, and the `figmaId` values from the colors, dimensions and type tokens as `tokenIds`.

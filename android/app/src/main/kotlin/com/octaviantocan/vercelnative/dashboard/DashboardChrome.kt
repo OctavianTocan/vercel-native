@@ -26,11 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
 internal val LocalDashboardPalette = staticCompositionLocalOf { DashboardPalette.Dark }
 
-internal enum class Glyph { Back, Close, Menu, More, Chevron, Search, Project, Activity, Globe, Branch, Filter, Refresh, Download, Send, Check, Warn, Settings, Help, Usage, Agent, Theme, Account }
+internal enum class Glyph { Back, Close, More, Chevron, Search, Project, Activity, Globe, Branch, Filter, Refresh, Download, Send, Check, Warn, Settings, Help, Usage, Agent, Theme, Account }
 
 @Composable
 internal fun DashboardIcon(glyph: Glyph, tint: Color = LocalDashboardPalette.current.ink, modifier: Modifier = Modifier) {
@@ -46,7 +47,6 @@ internal fun DashboardIcon(glyph: Glyph, tint: Color = LocalDashboardPalette.cur
         when (glyph) {
             Glyph.Back -> { line(5, 12, 20, 12); line(5, 12, 11, 6); line(5, 12, 11, 18) }
             Glyph.Close -> { line(6, 6, 18, 18); line(18, 6, 6, 18) }
-            Glyph.Menu -> { line(4, 8, 20, 8); line(4, 15, 14, 15) }
             Glyph.More -> for (x in listOf(5, 12, 19)) circle(x, 12, 2, true)
             Glyph.Chevron -> { line(9, 6, 15, 12); line(15, 12, 9, 18) }
             Glyph.Search -> { circle(10, 10, 6); line(15, 15, 20, 20) }
@@ -116,11 +116,7 @@ internal fun DashboardHeader(
     Box(Modifier.fillMaxWidth().heightIn(min = Tokens.TopBar).padding(horizontal = Tokens.Inset)) {
         if (onBack != null) {
             Box(Modifier.align(Alignment.CenterStart)) {
-                val label = when (leftIcon) {
-                    Glyph.Menu -> "Open workspace menu"
-                    Glyph.Close -> "Close"
-                    else -> "Back"
-                }
+                val label = if (leftIcon == Glyph.Close) "Close" else "Back"
                 IconControl(leftIcon, label, onBack)
             }
         }
@@ -245,15 +241,22 @@ internal fun DashboardButton(label: String, onClick: () -> Unit, modifier: Modif
 @Composable
 internal fun ProjectMark(project: Project, modifier: Modifier = Modifier) {
     val palette = LocalDashboardPalette.current
+    val mark = when (project.number) {
+        0 -> R.drawable.dashboard_badge_catalog
+        1 -> R.drawable.dashboard_badge_market
+        2 -> R.drawable.dashboard_badge_harbor
+        3 -> R.drawable.dashboard_badge_docs
+        4 -> R.drawable.dashboard_badge_guide
+        else -> R.drawable.dashboard_badge_vercel
+    }
     Box(
-        modifier.size(Tokens.RowIcon).background(
-            if (project.number % 3 == 0) palette.badge else if (project.number % 3 == 1) palette.readySurface else palette.warningSurface,
-            CircleShape,
-        ),
+        modifier.size(Tokens.RowIcon).background(palette.projectBadge, CircleShape)
+            .border(Tokens.Stroke, palette.insetSurface, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        if (project.number == 0) DashboardIcon(Glyph.Project)
-        else Text(project.name.substringBefore('-').take(2).uppercase(), fontSize = Tokens.Metadata, fontWeight = FontWeight.SemiBold)
+        val fallback = mark == R.drawable.dashboard_badge_vercel
+        val tint = if (fallback || project.number == 1 || project.number == 3) palette.projectEllipsis else Color.Unspecified
+        DashboardArtwork(mark, if (fallback) Tokens.Inset else Tokens.Space24, tint)
     }
 }
 

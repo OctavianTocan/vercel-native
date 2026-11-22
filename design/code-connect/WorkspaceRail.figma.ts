@@ -9,7 +9,7 @@ const route = figma.selectedInstance.getEnum('State', {
 })
 
 export default {
-  example: figma.code`WorkspaceRail(route = ${route}, navigation = navigation, onBack = onBack)`,
+  example: figma.code`WorkspaceRail(route = ${route}, navigation = navigation, onBack = onBack, backdrop = backdrop)`,
   id: 'vercel-660-9374',
 }
 

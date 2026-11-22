@@ -1,5 +1,6 @@
 package com.octaviantocan.vercelnative.dashboard
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -17,70 +20,144 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
 private val workspaceRoutes = listOf(
-    Destination.Observability to Glyph.Activity,
-    Destination.Logs to Glyph.Activity,
-    Destination.Analytics to Glyph.Usage,
-    Destination.Speed to Glyph.Refresh,
-    Destination.Firewall to Glyph.Warn,
-    Destination.WorkspaceDomains to Glyph.Globe,
-    Destination.Integrations to Glyph.Settings,
-    Destination.Help to Glyph.Help,
+    Destination.Logs to R.drawable.dashboard_icon_logs,
+    Destination.Analytics to R.drawable.dashboard_icon_analytics,
+    Destination.Speed to R.drawable.dashboard_icon_speed,
+    Destination.Firewall to R.drawable.dashboard_icon_firewall,
+    Destination.WorkspaceDomains to R.drawable.dashboard_icon_domains,
+    Destination.Integrations to R.drawable.dashboard_icon_integrations,
 )
 
 @Composable
-internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
+internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit, backdrop: GraphicsLayer) {
     val palette = LocalDashboardPalette.current
     var failed by rememberSaveable { mutableStateOf(route.variant == "workspace-failed") }
-    Box(Modifier.fillMaxSize()) {
-        Box(Modifier.matchParentSize().background(palette.canvas.copy(alpha = Tokens.ScrimOpacity)).clickable(onClick = onBack))
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val panelWidth = (maxWidth - Tokens.Touch).coerceIn(
+            Tokens.WorkspaceRailWidth, Tokens.WorkspaceRailWidth + Tokens.WorkspacePanelWidth,
+        ).coerceAtMost(maxWidth)
+        Box(
+            Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(maxWidth - panelWidth)
+                .background(Color.Black.copy(alpha = Tokens.SidebarScrimOpacity))
+                .clickable(role = Role.Button, onClick = onBack)
+                .semantics { contentDescription = "Close workspace menu" },
+        )
         Surface(
-            Modifier.align(Alignment.CenterStart).fillMaxHeight().fillMaxWidth(Tokens.DrawerFraction)
-                .widthIn(max = Tokens.DrawerWidth),
-            color = palette.sheet,
-            shape = RoundedCornerShape(topEnd = Tokens.SheetRadius, bottomEnd = Tokens.SheetRadius),
+            Modifier.align(Alignment.CenterStart).fillMaxHeight().width(panelWidth),
+            color = Color.Transparent,
         ) {
-            Row(Modifier.statusBarsPadding().navigationBarsPadding()) {
-                Column(
-                    Modifier.fillMaxHeight().width(Tokens.TopBar).background(palette.canvas.copy(alpha = Tokens.RailOpacity))
-                        .padding(top = Tokens.Space12),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
-                ) {
-                    for (workspace in DashboardFixtures.workspaces) {
-                        val selected = workspace.id == navigation.workspaceId
-                        val border = if (selected) palette.ink else palette.border
-                        Surface(
-                            onClick = { navigation.chooseWorkspace(workspace.id) },
-                            shape = CircleShape,
-                            color = if (selected) palette.selected else palette.input,
-                            modifier = Modifier.size(Tokens.Filter).border(Tokens.Stroke, border, CircleShape),
-                        ) {
-                            Box(contentAlignment = Alignment.Center) { Text(workspace.name.take(1), fontWeight = FontWeight.Medium) }
+            Row {
+                WorkspaceSwitcher(navigation, backdrop)
+                Box(Modifier.fillMaxHeight().width(Tokens.Stroke).background(palette.insetSurface))
+                Box(Modifier.weight(1f).fillMaxHeight().dashboardBackdrop(backdrop).background(palette.sidebarPanel)) {
+                    Column(
+                        Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()
+                            .padding(bottom = Tokens.Space20),
+                    ) {
+                        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(top = Tokens.WorkspacePanelTop)) {
+                            WorkspaceMenuRow("Observability", R.drawable.dashboard_icon_observability) { navigation.show(Destination.Observability) }
+                            WorkspaceMenuRow("Help", R.drawable.dashboard_icon_help) { navigation.show(Destination.Help) }
+                            WorkspaceMenuRow("Docs", R.drawable.dashboard_icon_docs) { navigation.show(Destination.Help, variant = "docs") }
+                            DividerLine(Modifier.padding(horizontal = Tokens.Space24, vertical = Tokens.Space8), palette.insetSurface)
+                            for ((destination, icon) in workspaceRoutes) {
+                                WorkspaceMenuRow(destination.label, icon) { navigation.show(destination) }
+                            }
+                            if (failed) DashboardNotice(
+                                "Can’t access Studio", tone = Tone.Error,
+                                modifier = Modifier.padding(horizontal = Tokens.WorkspaceRowInset),
+                                retry = {
+                                    failed = false
+                                    navigation.chooseWorkspace(DashboardFixtures.studioWorkspace)
+                                },
+                            )
                         }
+                        WorkspaceMenuRow("Theme", R.drawable.dashboard_icon_theme) { navigation.show(Destination.Theme) }
+                        Spacer(Modifier.height(Tokens.Space8))
+                        WorkspaceMenuRow("Account Settings", R.drawable.dashboard_icon_account) { navigation.show(Destination.Profile) }
                     }
                 }
-                Column(Modifier.weight(1f).fillMaxHeight().padding(vertical = Tokens.Space8)) {
-                    Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-                        SectionLabel(navigation.currentWorkspace.name, Modifier.padding(horizontal = Tokens.Inset))
-                        for ((destination, glyph) in workspaceRoutes) {
-                            DashboardRow(destination.label, glyph = glyph, trailing = {}, onClick = {
-                                navigation.show(destination)
-                            })
-                        }
-                        if (failed) DashboardNotice("Can’t access Studio", tone = Tone.Error,
-                            retry = { failed = false; navigation.chooseWorkspace(DashboardFixtures.studioWorkspace) })
+                Box(Modifier.fillMaxHeight().width(Tokens.Stroke).background(palette.insetSurface))
+            }
+        }
+    }
+}
+
+@Composable
+private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: GraphicsLayer) {
+    val palette = LocalDashboardPalette.current
+    Column(
+        Modifier.fillMaxHeight().width(Tokens.WorkspaceRailWidth - Tokens.Stroke)
+            .dashboardBackdrop(backdrop).background(palette.workspaceRail)
+            .statusBarsPadding().navigationBarsPadding(),
+    ) {
+        Column(
+            Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
+                .padding(top = Tokens.WorkspaceBadgeTop).selectableGroup(),
+            verticalArrangement = Arrangement.spacedBy(Tokens.WorkspaceBadgeGap),
+        ) {
+            for (workspace in DashboardFixtures.workspaces) {
+                val selected = workspace.id == navigation.workspaceId
+                Box(Modifier.fillMaxWidth().height(Tokens.WorkspaceBadgeSize)) {
+                    if (selected) Box(
+                        Modifier.align(Alignment.CenterStart)
+                            .size(Tokens.WorkspaceSelectionWidth, Tokens.WorkspaceSelectionHeight)
+                            .background(palette.glassInk, RoundedCornerShape(Tokens.WorkspaceSelectionRadius)),
+                    )
+                    Box(
+                        Modifier.align(Alignment.Center).size(Tokens.WorkspaceBadgeSize).clip(CircleShape)
+                            .background(palette.selected)
+                            .then(if (selected) Modifier.border(Tokens.Stroke, palette.glassInk, CircleShape) else Modifier)
+                            .selectable(selected, role = Role.RadioButton) { navigation.chooseWorkspace(workspace.id) }
+                            .semantics { contentDescription = workspace.name },
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            workspace.name.take(1), Modifier.clearAndSetSemantics {}, style = GeistText, color = palette.muted,
+                            fontSize = Tokens.Body, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.SemiBold,
+                        )
                     }
-                    DividerLine()
-                    DashboardRow("Agent", glyph = Glyph.Agent, trailing = {}, onClick = { navigation.show(Destination.Agent) })
-                    DashboardRow("Theme", glyph = Glyph.Theme, trailing = {}, onClick = { navigation.show(Destination.Theme) })
-                    DashboardRow("Account Settings", glyph = Glyph.Settings, trailing = {}, onClick = { navigation.show(Destination.Profile) })
                 }
             }
         }
+        Box(
+            Modifier.fillMaxWidth().height(Tokens.Touch)
+                .clickable(role = Role.Button) { navigation.show(Destination.Agent) }
+                .semantics { contentDescription = "Agent" },
+            contentAlignment = Alignment.Center,
+        ) {
+            DashboardArtwork(R.drawable.dashboard_icon_agent, Tokens.Space24, palette.glassInk)
+        }
+    }
+}
+
+@Composable
+private fun WorkspaceMenuRow(label: String, @DrawableRes icon: Int, onClick: () -> Unit) {
+    val palette = LocalDashboardPalette.current
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = Tokens.WorkspaceRowInset).heightIn(min = Tokens.Touch)
+            .clickable(role = Role.Button, onClick = onClick).padding(horizontal = Tokens.Space24 - Tokens.WorkspaceRowInset),
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Inset),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        DashboardArtwork(icon, Tokens.Inset, palette.glassInk)
+        Text(
+            label, style = GeistText, color = palette.glassInk,
+            fontSize = Tokens.ListTitle, lineHeight = Tokens.ListTitleLine, fontWeight = FontWeight.Medium,
+            maxLines = 2, overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -130,7 +207,8 @@ internal fun ObservabilityScreen(navigation: DashboardNavigation, onBack: () -> 
             }
         }
         items(workspaceRoutes.filter { (dest, _) -> dest in setOf(Destination.Logs, Destination.Analytics, Destination.Speed) }, key = { it.first.name }) {
-            DashboardRow(it.first.label, glyph = it.second, onClick = { navigation.show(it.first) })
+            DashboardRow(it.first.label, leading = { DashboardArtwork(it.second, Tokens.Inset, palette.muted) },
+                onClick = { navigation.show(it.first) })
         }
     }
 }
@@ -210,11 +288,13 @@ private fun toolRecords(destination: Destination) = List(27) { index ->
 }
 
 @Composable
-internal fun HelpSheet(onBack: () -> Unit) {
-    DashboardHeader("Help", onBack)
+internal fun HelpSheet(onBack: () -> Unit, docsOnly: Boolean = false) {
+    DashboardHeader(if (docsOnly) "Docs" else "Help", onBack)
     Column(Modifier.padding(Tokens.Inset)) {
-        DashboardRow("Contact Support", "Vercel Support", glyph = Glyph.Help)
-        DividerLine()
+        if (!docsOnly) {
+            DashboardRow("Contact Support", "Vercel Support", glyph = Glyph.Help)
+            DividerLine()
+        }
         DashboardRow("Documentation", "Vercel Docs", glyph = Glyph.Globe)
     }
 }

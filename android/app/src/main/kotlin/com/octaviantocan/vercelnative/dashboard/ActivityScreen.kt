@@ -31,7 +31,10 @@ internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit
                 Modifier.weight(1f).fillMaxHeight().selectable(active, role = Role.Tab, onClick = { onSelect(tab) }),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(tab.name, fontSize = Tokens.Body, color = if (active) palette.ink else palette.secondary)
+                Text(
+                    tab.name, style = GeistText, color = if (active) palette.ink else palette.secondary,
+                    fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine,
+                )
                 Box(
                     Modifier.align(Alignment.BottomCenter).fillMaxWidth()
                         .height(Tokens.Stroke)
@@ -46,7 +49,7 @@ internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit
 internal fun ActivityScreen(route: DashboardRoute, navigation: DashboardNavigation) {
     val tab = ActivityTab.entries.first { it.destination == route.destination }
     Column(Modifier.fillMaxSize()) {
-        DashboardHeader("Activity", { navigation.show(Destination.More) }, Glyph.Menu)
+        DashboardRootHeader("Activity") { navigation.show(Destination.More) }
         ActivityTabs(tab, { navigation.main(it.destination) })
         when (tab) {
             ActivityTab.Recents -> RecentsList(route, navigation)
@@ -81,7 +84,7 @@ private fun RecentsList(route: DashboardRoute, navigation: DashboardNavigation) 
             Modifier.padding(horizontal = Tokens.Inset, vertical = Tokens.Space6),
             Tone.Success,
         )
-        LazyColumn(Modifier.weight(1f)) {
+        LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance)) {
             items(visible, key = Deployment::id) { deployment ->
                 val project = navigation.project(deployment.projectId)
                 DeploymentRow(
@@ -137,7 +140,9 @@ internal fun UsageScreen(route: DashboardRoute, navigation: DashboardNavigation)
     val scale = (period.ordinal + 1) * if (workspace.id == DashboardFixtures.studioWorkspace) 1.7 else 1.0
     val resources = DashboardFixtures.resources
     LazyColumn(
-        Modifier.fillMaxSize(), contentPadding = PaddingValues(Tokens.Inset),
+        Modifier.fillMaxSize(), contentPadding = PaddingValues(
+            start = Tokens.Inset, top = Tokens.Inset, end = Tokens.Inset, bottom = Tokens.DockScrollClearance,
+        ),
         verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
     ) {
         item {
@@ -281,7 +286,7 @@ private fun AlertsList(route: DashboardRoute, navigation: DashboardNavigation) {
         }
         return
     }
-    LazyColumn(Modifier.fillMaxSize()) {
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance)) {
         items(alerts, key = DashboardAlert::id) { alert ->
             val project = navigation.project(alert.projectId)
             DashboardRow(

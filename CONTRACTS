@@ -6,3 +6,6 @@ This repository MUST own its CI, signing key, publisher, artifacts and feed. Inv
 
 @cc [owner:OctavianTocan,label:setup] existing-infrastructure
 CI MUST run on mini-002-netcup through Tailscale-accessed infrastructure. Authentication MUST reuse the existing Inventory session as-is. Source: Tavi, 2026-11-11.
+
+@cc [owner:OctavianTocan,label:design] projects-pinned-header
+The Projects title and workspace button MUST stay visible as the project rows scroll. The workspace button shares a centerline with the project badges. The floating dock clears the Android navigation inset. Source: Tavi's Android preview recording, 2026-11-22.

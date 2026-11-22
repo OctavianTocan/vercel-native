@@ -1,5 +1,6 @@
 package com.octaviantocan.vercelnative.dashboard
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
@@ -18,6 +19,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
@@ -217,52 +221,89 @@ internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
     )
     val onBack: () -> Unit = { if (!navigation.pop()) onExit() }
     BackHandler(onBack = onBack)
+    DashboardSystemBars(dark)
+    val systemInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
 
     MaterialTheme(colorScheme = scheme) {
         CompositionLocalProvider(LocalDashboardPalette provides palette) {
             Surface(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxSize()) {
+                    val content = rememberGraphicsLayer()
+                    val backdrop = rememberGraphicsLayer()
                     val underlay = if (base.route.destination == Destination.DesignCases &&
                         top != base && route.destination.presentation != Presentation.Screen
                     ) {
                         DashboardEntry(-top.key, reviewedUnderlay(route))
                     } else base
-                    AnimatedContent(
-                        targetState = underlay,
-                        transitionSpec = {
-                            if (initialState.route.destination in activityDestinations && targetState.route.destination in activityDestinations) {
-                                EnterTransition.None togetherWith ExitTransition.None
-                            } else {
-                                fadeIn(tween(Tokens.ScreenFadeMillis)) togetherWith fadeOut(tween(Tokens.ScreenFadeMillis))
-                            }
-                        },
-                        label = "Dashboard destination",
-                    ) { entry ->
-                        val root = entry.route.destination == Destination.Projects || entry.route.destination in activityDestinations
-                        val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
-                            "root-${entry.route.destination}-${navigation.workspaceId}"
-                        } else "screen-${entry.key}"
-                        holder.SaveableStateProvider(stateKey) {
-                            Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()) {
-                                Box(Modifier.weight(1f).fillMaxWidth()) { DashboardScreen(entry.route, navigation, onBack) }
-                                if (entry.route.destination !in setOf(Destination.DesignCases, Destination.Agent, Destination.Profile) &&
-                                    route.destination != Destination.Search
-                                ) DashboardBottomBar(entry.route, navigation)
+                    val showDock = route.destination != Destination.Search && underlay.route.destination.hasDock()
+                    Box(Modifier.matchParentSize().captureDashboardBackdrop(content, backdrop).background(palette.canvas)) {
+                        AnimatedContent(
+                            targetState = underlay,
+                            transitionSpec = {
+                                if (initialState.route.destination in activityDestinations && targetState.route.destination in activityDestinations) {
+                                    EnterTransition.None togetherWith ExitTransition.None
+                                } else {
+                                    fadeIn(tween(Tokens.ScreenFadeMillis)) togetherWith fadeOut(tween(Tokens.ScreenFadeMillis))
+                                }
+                            },
+                            label = "Dashboard destination",
+                        ) { entry ->
+                            val destination = entry.route.destination
+                            val root = destination == Destination.Projects || destination in activityDestinations
+                            val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
+                                "root-$destination-${navigation.workspaceId}"
+                            } else "screen-${entry.key}"
+                            holder.SaveableStateProvider(stateKey) {
+                                Box(
+                                    Modifier.fillMaxSize().windowInsetsPadding(systemInsets).then(
+                                        if (showDock && destination.hasDock() && !root) {
+                                            Modifier.padding(bottom = Tokens.BottomBar + Tokens.DockBottomGap)
+                                        } else Modifier,
+                                    ),
+                                ) { DashboardScreen(entry.route, navigation, onBack) }
                             }
                         }
                     }
+                    if (showDock) DashboardBottomBar(
+                        activity = underlay.route.destination in activityDestinations,
+                        iconsOnly = underlay.route.variant == "icons",
+                        navigation = navigation,
+                        backdrop = backdrop,
+                        modifier = Modifier.align(Alignment.BottomCenter).windowInsetsPadding(
+                            systemInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+                        ),
+                    )
                     if (top != base) {
                         holder.SaveableStateProvider("overlay-${top.key}") {
                             when (route.destination.presentation) {
                                 Presentation.Sheet -> DashboardSheetHost(route, navigation, onBack)
                                 Presentation.Search -> SearchOverlay(route, navigation, onBack)
-                                Presentation.Rail -> WorkspaceRail(route, navigation, onBack)
+                                Presentation.Rail -> WorkspaceRail(route, navigation, onBack, backdrop)
                                 Presentation.Screen -> Unit
                             }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+private fun Destination.hasDock() = this !in setOf(Destination.DesignCases, Destination.Agent, Destination.Profile)
+
+@Composable
+private fun DashboardSystemBars(dark: Boolean) {
+    val view = LocalView.current
+    val window = (view.context as? Activity)?.window ?: return
+    DisposableEffect(window, view, dark) {
+        val bars = WindowCompat.getInsetsController(window, view)
+        val previousStatus = bars.isAppearanceLightStatusBars
+        val previousNavigation = bars.isAppearanceLightNavigationBars
+        bars.isAppearanceLightStatusBars = !dark
+        bars.isAppearanceLightNavigationBars = !dark
+        onDispose {
+            bars.isAppearanceLightStatusBars = previousStatus
+            bars.isAppearanceLightNavigationBars = previousNavigation
         }
     }
 }
@@ -329,48 +370,9 @@ private fun DashboardSheetHost(route: DashboardRoute, navigation: DashboardNavig
                     DeploymentSheetContent(route, navigation, onBack)
                 Destination.LogFilters, Destination.LogEvent, Destination.LogDownload ->
                     LogSheetContent(route, navigation, onBack)
-                Destination.Help -> HelpSheet(onBack)
+                Destination.Help -> HelpSheet(onBack, docsOnly = route.variant == "docs")
                 else -> AccountSheetContent(route, navigation, onBack)
             }
-        }
-    }
-}
-
-@Composable
-private fun DashboardBottomBar(route: DashboardRoute, navigation: DashboardNavigation) {
-    val palette = LocalDashboardPalette.current
-    val activity = route.destination in activityDestinations
-    Surface(color = palette.canvas) {
-        Row(
-            Modifier.fillMaxWidth().height(Tokens.BottomBar).padding(horizontal = Tokens.Inset, vertical = Tokens.Space4),
-            horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Surface(
-                Modifier.weight(1f).fillMaxHeight(),
-                shape = CircleShape, color = palette.input,
-                border = androidx.compose.foundation.BorderStroke(Tokens.Stroke, palette.border),
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    DashboardNavItem("Home", Glyph.Project, !activity, route.variant == "icons", Modifier.weight(1f)) { navigation.main(Destination.Projects) }
-                    DashboardNavItem("Activity", Glyph.Activity, activity, route.variant == "icons", Modifier.weight(1f)) { navigation.main(navigation.lastActivity) }
-                    DashboardNavItem("More", Glyph.More, false, route.variant == "icons", Modifier.weight(1f)) { navigation.show(Destination.More) }
-                }
-            }
-            IconControl(Glyph.Search, "Search Vercel", { navigation.show(Destination.Search) })
-        }
-    }
-}
-
-@Composable
-private fun DashboardNavItem(
-    text: String, glyph: Glyph, selected: Boolean, iconsOnly: Boolean, modifier: Modifier, onClick: () -> Unit,
-) {
-    val palette = LocalDashboardPalette.current
-    Surface(onClick, modifier.padding(Tokens.Space4).fillMaxHeight(), shape = CircleShape, color = if (selected) palette.selected else palette.input) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            DashboardIcon(glyph, if (selected) palette.ink else palette.secondary, Modifier)
-            if (!iconsOnly) Text(text, fontSize = Tokens.Caption)
         }
     }
 }
