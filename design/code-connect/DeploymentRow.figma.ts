@@ -8,7 +8,7 @@ const title = row.getString('Commit title')
 const sha = row.getString('Commit SHA')
 const pullRequest = Number(row.getString('Pull request')?.replace(/^#/, ''))
 const options = row.getBoolean('Show menu')
-const kotlinString = (text: string) => JSON.stringify(text).replaceAll('$', '\\$')
+const kotlinString = (text: string | undefined) => JSON.stringify(text ?? '').replaceAll('$', '\\$')
 
 export default {
   example: figma.code`DeploymentRow(

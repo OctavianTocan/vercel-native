@@ -1,4 +1,4 @@
-// url=https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=225-271
+// url=https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=213-259
 // source=android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt
 // component=ActivityTabs
 import figma from 'figma'

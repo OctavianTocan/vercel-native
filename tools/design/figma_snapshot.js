@@ -1,9 +1,9 @@
 /**
  * Read the approved dashboard from Figma MCP. Append
  * `return await snapshotDashboard(config);` in use_figma. Pass figmaFileKey,
- * approvedPage, frameIds, and the mapped tokenIds from design/dashboard.json.
+ * approvedPage, frameIds, componentIds and tokenIds from design/dashboard.json.
  */
-async function snapshotDashboard({ figmaFileKey, approvedPage, frameIds, tokenIds }) {
+async function snapshotDashboard({ figmaFileKey, approvedPage, frameIds, componentIds = [], tokenIds }) {
   const page = await figma.getNodeByIdAsync(approvedPage)
   if (page?.type !== 'PAGE') throw Error('The approved dashboard page could not be read.')
   await figma.setCurrentPageAsync(page)
@@ -52,6 +52,19 @@ async function snapshotDashboard({ figmaFileKey, approvedPage, frameIds, tokenId
     return typeof value === 'symbol' ? String(value) : value
   }
 
+  function recordComponent(owner) {
+    if (owner.id in components) return
+    components[owner.id] = null
+    const nested = { components: new Set(), variables: new Set() }
+    components[owner.id] = {
+      properties: hash(canonical(owner.componentPropertyDefinitions)),
+      layout: hash(canonical(inspect(owner, nested, true))),
+      components: [...nested.components].sort(),
+      variables: [...nested.variables].sort(),
+    }
+    for (const id of nested.variables) referencedVariables.add(id)
+  }
+
   function inspect(node, dependencies, isRoot = false) {
     const layout = { type: node.type }
     if (!isRoot) layout.transform = node.relativeTransform
@@ -79,17 +92,7 @@ async function snapshotDashboard({ figmaFileKey, approvedPage, frameIds, tokenId
       const owner = component.parent?.type === 'COMPONENT_SET' ? component.parent : component
       layout.component = component.id
       dependencies.components.add(owner.id)
-      if (!(owner.id in components)) {
-        components[owner.id] = null
-        const nested = { components: new Set(), variables: new Set() }
-        components[owner.id] = {
-          properties: hash(canonical(owner.componentPropertyDefinitions)),
-          layout: hash(canonical(inspect(owner, nested, true))),
-          components: [...nested.components].sort(),
-          variables: [...nested.variables].sort(),
-        }
-        for (const id of nested.variables) referencedVariables.add(id)
-      }
+      recordComponent(owner)
     }
     if (node.children) layout.children = node.children.map(child => inspect(child, dependencies))
     return layout
@@ -107,6 +110,15 @@ async function snapshotDashboard({ figmaFileKey, approvedPage, frameIds, tokenId
       variables: [...dependencies.variables].sort(),
     }
     for (const id of dependencies.variables) referencedVariables.add(id)
+  }
+
+  const libraryComponents = await Promise.all(componentIds.map(id => figma.getNodeByIdAsync(id)))
+  for (let index = 0; index < libraryComponents.length; index++) {
+    const component = libraryComponents[index]
+    if (component?.type !== 'COMPONENT_SET' && (component?.type !== 'COMPONENT' || component.parent?.type === 'COMPONENT_SET')) {
+      throw Error(`Library component ${componentIds[index]} could not be read.`)
+    }
+    recordComponent(component)
   }
 
   // Reading an alias target may add another ID to the set during iteration.

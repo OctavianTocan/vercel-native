@@ -112,6 +112,9 @@ def verify_manifest(manifest):
     if review is not None:
         if set(review["frames"]) != set(ids):
             errors.append("The Figma snapshot must include every approved frame.")
+        for case in cases:
+            if case.get("libraryComponentId") not in review["components"]:
+                errors.append(f"{case['id']}: the snapshot is missing the linked Figma layout.")
         for kind in ("colors", "dimensions", "type"):
             for token in manifest["tokens"][kind]:
                 figma_id = token.get("figmaId")
@@ -175,6 +178,9 @@ def compare_snapshots(manifest, candidate):
         old_frame, new_frame = old_frames.get(frame_id, {}), new_frames.get(frame_id, {})
         components = set(old_frame.get("components", [])) | set(new_frame.get("components", []))
         variables = set(old_frame.get("variables", [])) | set(new_frame.get("variables", []))
+        case = cases.get(frame_id)
+        if case and case.get("libraryComponentId"):
+            components.add(case["libraryComponentId"])
         reasons = []
         if frame_id in changed_frames:
             reasons.append("layout or instance")
@@ -185,7 +191,6 @@ def compare_snapshots(manifest, candidate):
         if not reasons:
             continue
         found = True
-        case = cases.get(frame_id)
         url = f"https://www.figma.com/design/{key}?node-id={frame_id.replace(':', '-')}"
         code = f"{case['source']} → {case['symbol']} ({case['title']})" if case else "Add a preview case and source mapping"
         print(f"{', '.join(reasons)}: {url} → {code}")
