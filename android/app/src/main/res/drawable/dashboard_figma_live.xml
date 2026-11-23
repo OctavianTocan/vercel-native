@@ -1,0 +1,5 @@
+<!-- Approved Figma vector 468:6954. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="18dp" android:height="18dp" android:viewportWidth="18.0" android:viewportHeight="18.0">
+    <path android:pathData="M15.3 8.99922C15.3 12.4786 12.4793 15.2992 8.99995 15.2992C5.52056 15.2992 2.69995 12.4786 2.69995 8.99922C2.69995 5.51982 5.52056 2.69922 8.99995 2.69922C12.4793 2.69922 15.3 5.51982 15.3 8.99922Z" android:strokeColor="#EDEDED" android:strokeWidth="1.7" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M7.6499 6.59961L11.4749 8.99961L7.6499 11.3996V6.59961Z" android:fillColor="#000000" android:strokeColor="#EDEDED" android:strokeWidth="1.1" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

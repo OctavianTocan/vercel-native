@@ -13,3 +13,17 @@ The Projects title and sidebar button stay visible while the list scrolls. Use t
 The 393 px Figma exports and 393 dp running app exposed a 35 px vertical offset in the light Project Options preview and a 1 px height error on each Recents row. The light menu now aligns its top with the ellipsis control as drawn. Recents uses the approved 14 px gap under the tabs and includes the divider in its 96 px row. The icon-only Projects frame uses its original tiles and chevrons. [Light menu](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-4911) · [Recents](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=225-2) · [Icon-only Projects](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=228-2750)
 
 The follow-up verification confirmed that the light menu closes when tapped in its shadow. Favorite changes appear in the design preview after the action. The workspace menu uses the Android system bar and display cutout insets.
+
+## November 23 visual review
+
+Use Inventory’s progressive scroll-edge blur and motion durations and easing in the dashboard. The dock and Search controls use a live Android shader for curved refraction, color dispersion, and directional highlights. Android 12L uses live blur and tint because it predates Android’s runtime shader API.
+
+The dashboard uses Geist and Geist Mono, with native vector paths exported from approved Figma nodes. Search opens its focused composer over the native keyboard and uses the approved six-row result layout. Alerts show the three-line inbox rows and their timestamps, the skeleton inbox, and the approved art for empty and plan states. The shared 64 dp dock uses the approved inset, optical glyph placement, and gap to Search.
+
+[Alerts inbox](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=225-257) · [Search](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=513-1112) · [Profile](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=344-494) · [Project overview](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=535-3158)
+
+## November 23 preview behavior
+
+Use the alert’s project subtitle to open its project and place Visit with Toolbar in the preview opened from Project Overview. Keep the Search composer and Assistant reachable when the keyboard reduces the viewport, and show an unavailable status for Environment Variables and Storage. Usage chart periods group the same billing-cycle charges.
+
+[Function alert](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=587-1267) · [Toolbar unavailable](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=552-2311) · [Global Search](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=513-1112) · [Weekly Usage](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=587-484)

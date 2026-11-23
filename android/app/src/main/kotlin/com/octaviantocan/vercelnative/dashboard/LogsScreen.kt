@@ -1,17 +1,21 @@
 package com.octaviantocan.vercelnative.dashboard
 
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.rotate
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 import kotlinx.coroutines.delay
@@ -56,42 +60,36 @@ internal fun LogsScreen(route: DashboardRoute, navigation: DashboardNavigation, 
         }
     }
     Column(Modifier.fillMaxSize()) {
-        DashboardHeader("Logs", onBack, subtitle = scopeName)
+        DashboardHeader("Logs", onBack, subtitle = scopeName,
+            modifier = Modifier.padding(top = Tokens.AlertDetailHeaderInset), titleSize = Tokens.DetailTitle)
+        DashboardField(
+            query, { term -> query = term; navigation.updateLogOptions(scopeId) { it.copy(query = term) } },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset).padding(top = Tokens.Inset),
+            placeholder = "Search logs", shape = CircleShape,
+            leading = { DashboardIcon(Glyph.Search, LocalDashboardPalette.current.secondary, Modifier.size(Tokens.Space20)) },
+            trailing = {
+                IconControl(Glyph.Filter, "Filter logs", {
+                    navigation.show(Destination.LogFilters, scopeId, detail = errors.toString())
+                }, active = errors, visualSize = Tokens.LogFilterFace)
+            },
+        )
         Row(
-            Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset),
+            Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset).padding(top = Tokens.Space12, bottom = Tokens.Space8),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Tokens.Space6),
         ) {
-            OutlinedTextField(
-                query, { query = it; navigation.updateLogOptions(scopeId) { current -> current.copy(query = it) } },
-                modifier = Modifier.weight(1f), singleLine = true,
-                leadingIcon = { DashboardIcon(Glyph.Search) }, placeholder = { Text("Search logs") },
-                shape = RoundedCornerShape(Tokens.CardRadius),
-            )
-            IconControl(Glyph.Filter, "Filter logs", {
+            LogControl(remembered.range, Glyph.Chevron, trailing = true) {
                 navigation.show(Destination.LogFilters, scopeId, detail = errors.toString())
-            }, active = errors)
-        }
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset, vertical = Tokens.Space6),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Tokens.Space4),
-        ) {
-            OutlinedButton(
-                { navigation.show(Destination.LogFilters, scopeId, detail = errors.toString()) },
-                contentPadding = PaddingValues(horizontal = Tokens.Space8),
-            ) { Text(remembered.range, fontSize = Tokens.Metadata) }
+            }
             Spacer(Modifier.weight(1f))
-            OutlinedButton(onClick = {
+            LogControl(if (live) "Pause live" else "Live", Glyph.Live) {
                 live = !live
                 navigation.updateLogOptions(scopeId) { it.copy(live = live) }
-            }, contentPadding = PaddingValues(horizontal = Tokens.Space8)) {
-                Text(if (live) "Pause live" else "Live", fontSize = Tokens.Metadata)
             }
-            IconControl(Glyph.Refresh, "Refresh logs", { refreshed = true })
+            IconControl(Glyph.Refresh, "Refresh logs", { refreshed = true }, visualSize = Tokens.LogActionSize)
             IconControl(Glyph.Download, "Download logs", {
                 navigation.show(Destination.LogDownload, scopeId, detail = scopeId)
-            })
+            }, visualSize = Tokens.LogActionSize)
         }
         Box(Modifier.weight(1f).fillMaxWidth()) {
             when {
@@ -107,7 +105,9 @@ internal fun LogsScreen(route: DashboardRoute, navigation: DashboardNavigation, 
                         navigation.updateLogOptions(scopeId) { it.copy(query = "", errors = false) }
                     }, actionLabel = "Clear search",
                 )
-                else -> LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = Tokens.Touch)) {
+                else -> DashboardList(Modifier.fillMaxSize(), contentPadding = PaddingValues(
+                    start = Tokens.Inset, end = Tokens.Inset, bottom = Tokens.DockScrollClearance,
+                )) {
                     item { LogTimeline(shown, minutes) }
                     items(shown, key = LogEvent::id) { event ->
                         LogRow(event, navigation, project == null) {
@@ -127,21 +127,50 @@ internal fun LogsScreen(route: DashboardRoute, navigation: DashboardNavigation, 
 }
 
 @Composable
+private fun LogControl(label: String, glyph: Glyph, trailing: Boolean = false, onClick: () -> Unit) {
+    Row(
+        Modifier.heightIn(min = Tokens.LogActionSize).dashboardGlass().clickable(onClick = onClick).padding(horizontal = Tokens.Space12),
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space6),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (!trailing) DashboardIcon(glyph)
+        Text(label, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine, fontWeight = FontWeight.Medium)
+        if (trailing) DashboardIcon(glyph, modifier = Modifier.rotate(90f))
+    }
+}
+
+@Composable
 private fun LogTimeline(events: List<LogEvent>, minutes: Int) {
-    Column(Modifier.padding(horizontal = Tokens.Inset, vertical = Tokens.Space8)) {
-        DashboardChart(List(16) { index ->
-            val position = index * 3
-            (events.getOrNull(position)?.durationMs ?: 70).rem(660) / 700f
-        })
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            MutedText("14:" + (60 - minutes).toString().padStart(2, '0'))
-            MutedText("14:" + (60 - minutes / 2).toString().padStart(2, '0'))
-            MutedText("15:00")
+    val palette = LocalDashboardPalette.current
+    Column(Modifier.fillMaxWidth()) {
+        Canvas(Modifier.fillMaxWidth().height(Tokens.LogTimelineHeight)) {
+            drawLine(palette.quietBorder, Offset(0f, size.height), Offset(size.width, size.height), Tokens.Stroke.toPx())
+            for ((index, event) in events.take(48).withIndex()) {
+                val x = (1f - ((index + 1f) / 49f)) * size.width
+                val height = (if (event.level == LogLevel.Error) .75f else .16f + (event.durationMs % 7) / 50f) * size.height
+                val color = when (event.level) {
+                    LogLevel.Error -> palette.error
+                    LogLevel.Warning -> palette.warning
+                    LogLevel.Info -> palette.secondary
+                }
+                drawRect(color, Offset(x, size.height - height), Size(Tokens.Space4.toPx(), height))
+            }
         }
-        DividerLine(Modifier.padding(top = Tokens.Space8))
-        Row(Modifier.fillMaxWidth().padding(vertical = Tokens.Space8), horizontalArrangement = Arrangement.SpaceBetween) {
-            MutedText("Time / message", monospace = true)
-            MutedText("${events.size} events")
+        Row(Modifier.fillMaxWidth().padding(top = Tokens.Space4, bottom = Tokens.Space12), horizontalArrangement = Arrangement.SpaceBetween) {
+            val start = 60 - minutes
+            val middle = 60 - minutes / 2
+            listOf("14:" + start.toString().padStart(2, '0'), "14:" + middle.toString().padStart(2, '0'), "15:00").forEach {
+                Text(it, color = palette.secondary, fontSize = Tokens.ChartCaption, lineHeight = Tokens.MetadataLine)
+            }
+        }
+        DividerLine()
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = Tokens.Space32).padding(horizontal = Tokens.Space8 + Tokens.Space2),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("Time", Modifier.width(Tokens.LogTimestampWidth), color = palette.secondary, fontSize = Tokens.Caption)
+            Text("Source / message", Modifier.weight(1f), color = palette.secondary, fontSize = Tokens.Caption)
+            Text("${events.size} events", color = palette.secondary, fontSize = Tokens.Caption)
         }
     }
 }
@@ -151,20 +180,31 @@ private fun LogRow(event: LogEvent, navigation: DashboardNavigation, showProject
     val deployment = DashboardFixtures.deployment(event.deploymentId)
     val palette = LocalDashboardPalette.current
     val summary = if (showProject) "${event.message} · ${navigation.projectName(navigation.project(deployment.projectId))}" else event.message
-    val tone = when (event.level) {
-        LogLevel.Error -> Tone.Error
-        LogLevel.Warning -> Tone.Warning
-        LogLevel.Info -> Tone.Neutral
+    val (ink, surface) = when (event.level) {
+        LogLevel.Error -> palette.error to palette.errorSurface
+        LogLevel.Warning -> palette.warning to palette.warningSurface
+        LogLevel.Info -> palette.secondary to palette.event
     }
-    Surface(color = if (event.level == LogLevel.Error) palette.errorSurface else palette.canvas) {
-        DashboardRow(
-            "${event.time}   ${event.path}",
-            summary,
-            trailing = { StatusPill(event.level.label, tone) },
-            onClick = onOpen,
-        )
+    Column(Modifier.fillMaxWidth().background(surface).clickable(onClick = onOpen)) {
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = Tokens.LogRowHeight).padding(horizontal = Tokens.Space8 + Tokens.Space2, vertical = Tokens.Space8),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(event.time, Modifier.width(Tokens.LogTimestampWidth), color = ink, fontFamily = GeistMono,
+                fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine, maxLines = 1)
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
+                    DashboardArtwork(com.octaviantocan.vercelnative.R.drawable.dashboard_figma_terminal, Tokens.MetadataIcon, ink)
+                    Text(event.path, color = ink, fontFamily = GeistMono, fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+                Text(summary, fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine, fontFamily = GeistMono,
+                    maxLines = 2, overflow = TextOverflow.Ellipsis)
+            }
+            Text(event.level.label, Modifier.padding(start = Tokens.Space4), color = ink, fontSize = Tokens.ChartCaption, lineHeight = Tokens.MetadataLine)
+        }
+        DividerLine()
     }
-    DividerLine()
 }
 
 @Composable
@@ -178,9 +218,9 @@ internal fun LogSheetContent(route: DashboardRoute, navigation: DashboardNavigat
                 ?: DashboardFixtures.logs(navigation.project(null).id).first { it.level == LogLevel.Error }
             val deployment = DashboardFixtures.deployment(event.deploymentId)
             val project = navigation.project(deployment.projectId)
-            Column(Modifier.verticalScroll(rememberScrollState()).padding(Tokens.Inset), verticalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
+            Column(Modifier.dashboardScroll().padding(Tokens.Inset), verticalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
                 StatusPill(event.level.label, if (event.level == LogLevel.Error) Tone.Error else Tone.Neutral)
-                Text(event.path, fontSize = Tokens.Heading, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
+                Text(event.path, fontSize = Tokens.Heading, fontFamily = GeistMono, fontWeight = FontWeight.SemiBold)
                 MutedText("${event.time} · Function")
                 Text(event.message, fontSize = Tokens.Body)
                 KeyValueRow("Project", navigation.projectName(project))
@@ -198,7 +238,7 @@ private fun LogFilters(route: DashboardRoute, navigation: DashboardNavigation, o
     val options = navigation.logOptions(route.target)
     var range by rememberSaveable { mutableStateOf(options.range) }
     var errors by rememberSaveable { mutableStateOf(route.detail?.toBooleanStrictOrNull() ?: (options.errors || route.frozen)) }
-    Column(Modifier.verticalScroll(rememberScrollState()).padding(Tokens.Inset), verticalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
+    Column(Modifier.dashboardScroll().padding(Tokens.Inset), verticalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
         SectionLabel("Log scope")
         KeyValueRow("Project", route.target?.let { navigation.projectName(navigation.project(it)) } ?: "All projects")
         SectionLabel("Time range")
@@ -218,7 +258,7 @@ private fun LogFilters(route: DashboardRoute, navigation: DashboardNavigation, o
 private fun LogDownload(route: DashboardRoute, navigation: DashboardNavigation) {
     var matching by rememberSaveable { mutableStateOf(true) }
     var completed by rememberSaveable { mutableStateOf(false) }
-    Column(Modifier.verticalScroll(rememberScrollState()).padding(Tokens.Inset)) {
+    Column(Modifier.dashboardScroll().padding(Tokens.Inset)) {
         SectionLabel("Time range")
         KeyValueRow("Range", navigation.logOptions(route.target).range)
         SectionLabel("Events to download")

@@ -11,7 +11,7 @@ const route = figma.selectedInstance.getEnum('State', {
 })
 
 export default {
-  example: figma.code`SearchOverlay(route = ${route}, navigation = navigation, onBack = onBack)`,
+  example: figma.code`SearchOverlay(route = ${route}, navigation = navigation, onBack = onBack, backdrop = content, active = true)`,
   id: 'vercel-660-8860',
 }
 

@@ -1,0 +1,4 @@
+<!-- Approved Figma vector 604:3060. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="18dp" android:height="18dp" android:viewportWidth="18.0" android:viewportHeight="18.0">
+    <path android:pathData="M1.79999 9C3.59999 5.85 6.29999 4.5 8.99999 4.5C11.7 4.5 14.4 5.85 16.2 9C14.4 12.15 11.7 13.5 8.99999 13.5C6.29999 13.5 3.59999 12.15 1.79999 9ZM8.99999 10.8C9.47738 10.8 9.93521 10.6104 10.2728 10.2728C10.6103 9.93523 10.8 9.47739 10.8 9C10.8 8.52261 10.6103 8.06477 10.2728 7.72721C9.93521 7.38964 9.47738 7.2 8.99999 7.2C8.5226 7.2 8.06476 7.38964 7.7272 7.72721C7.38963 8.06477 7.19999 8.52261 7.19999 9C7.19999 9.47739 7.38963 9.93523 7.7272 10.2728C8.06476 10.6104 8.5226 10.8 8.99999 10.8Z" android:strokeColor="#ACACAC" android:strokeWidth="1.35" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

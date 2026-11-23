@@ -1,7 +1,6 @@
 package com.octaviantocan.vercelnative.dashboard
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -66,7 +65,7 @@ private val designCases = listOf(
     DashboardDesignCase("604:4529", "Alerts unavailable on this plan", "Activity · Alerts", "AlertsList", DashboardRoute(Destination.Alerts, null, "plan", null)),
     DashboardDesignCase("587:1267", "Function error alert", "Activity · Alerts", "AlertScreen", DashboardRoute(Destination.Alert, "alt-personal-0", "content", null)),
     DashboardDesignCase("587:1391", "CDN requests alert", "Activity · Alerts", "AlertScreen", DashboardRoute(Destination.Alert, "alt-personal-1", "content", null)),
-    DashboardDesignCase("587:1515", "Custom monitor alert", "Activity · Alerts", "AlertScreen", DashboardRoute(Destination.Alert, "alt-personal-2", "content", null)),
+    DashboardDesignCase("587:1515", "Custom monitor alert", "Activity · Alerts", "AlertScreen", DashboardRoute(Destination.Alert, "alt-personal-3", "content", null)),
     DashboardDesignCase("225:163", "Daily Usage", "Activity · Usage", "UsageScreen", DashboardRoute(Destination.Usage, null, "content", null)),
     DashboardDesignCase("587:484", "Weekly Usage", "Activity · Usage", "UsageScreen", DashboardRoute(Destination.Usage, null, "weekly", null)),
     DashboardDesignCase("587:718", "Monthly Usage", "Activity · Usage", "UsageScreen", DashboardRoute(Destination.Usage, null, "monthly", null)),
@@ -160,7 +159,7 @@ internal fun DashboardDesignPicker(navigation: DashboardNavigation, onBack: () -
         DashboardHeader("Design states", onBack)
         OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset),
             singleLine = true, placeholder = { Text("Search design states") }, leadingIcon = { DashboardIcon(Glyph.Search) })
-        LazyColumn(contentPadding = PaddingValues(bottom = Tokens.Space20)) {
+        DashboardList(contentPadding = PaddingValues(bottom = Tokens.Space20)) {
             visibleGroups.forEach { (group, cases) ->
                 item(key = group) { SectionLabel(group, Modifier.padding(horizontal = Tokens.Inset)) }
                 items(cases, key = DashboardDesignCase::frameId) { case ->

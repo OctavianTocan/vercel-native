@@ -18,7 +18,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "228:2651",
@@ -33,7 +33,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "228:2750",
@@ -48,7 +48,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "604:747",
@@ -63,7 +63,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "479:3002",
@@ -78,7 +78,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "604:893",
@@ -93,7 +93,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "604:4911",
@@ -108,7 +108,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "604:3584",
@@ -123,7 +123,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "340:386",
@@ -138,7 +138,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "552:2501",
@@ -153,7 +153,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "535:3158",
@@ -168,7 +168,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "468:4699",
@@ -183,7 +183,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "604:3083",
@@ -198,7 +198,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "GitHubSync",
       "libraryComponentId": "659:8224",
-      "sourceLine": 275
+      "sourceLine": 347
     },
     {
       "id": "604:938",
@@ -213,7 +213,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectDomainsScreen",
       "libraryComponentId": "659:8365",
-      "sourceLine": 213
+      "sourceLine": 285
     },
     {
       "id": "604:1084",
@@ -228,7 +228,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "DomainDetails",
       "libraryComponentId": "659:8501",
-      "sourceLine": 237
+      "sourceLine": 309
     },
     {
       "id": "604:3224",
@@ -243,7 +243,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "DomainDetails",
       "libraryComponentId": "659:8501",
-      "sourceLine": 237
+      "sourceLine": 309
     },
     {
       "id": "584:2553",
@@ -258,7 +258,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 286
+      "sourceLine": 358
     },
     {
       "id": "535:1457",
@@ -273,7 +273,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 286
+      "sourceLine": 358
     },
     {
       "id": "535:1680",
@@ -288,7 +288,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 286
+      "sourceLine": 358
     },
     {
       "id": "552:2113",
@@ -303,7 +303,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 286
+      "sourceLine": 358
     },
     {
       "id": "535:2057",
@@ -318,7 +318,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "604:3363",
@@ -333,7 +333,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 286
+      "sourceLine": 358
     },
     {
       "id": "511:701",
@@ -348,7 +348,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectSettingsScreen",
       "libraryComponentId": "659:8731",
-      "sourceLine": 176
+      "sourceLine": 231
     },
     {
       "id": "511:775",
@@ -363,7 +363,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectSettingsScreen",
       "libraryComponentId": "659:8731",
-      "sourceLine": 176
+      "sourceLine": 231
     },
     {
       "id": "552:1922",
@@ -378,7 +378,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectSettingsScreen",
       "libraryComponentId": "659:8731",
-      "sourceLine": 176
+      "sourceLine": 231
     },
     {
       "id": "468:4800",
@@ -393,7 +393,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "604:1231",
@@ -408,7 +408,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "535:2969",
@@ -423,7 +423,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "512:1592",
@@ -438,7 +438,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 42
+      "sourceLine": 43
     },
     {
       "id": "535:3264",
@@ -453,7 +453,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentScreen",
       "libraryComponentId": "659:8799",
-      "sourceLine": 113
+      "sourceLine": 191
     },
     {
       "id": "468:6631",
@@ -468,7 +468,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentScreen",
       "libraryComponentId": "659:8799",
-      "sourceLine": 113
+      "sourceLine": 191
     },
     {
       "id": "586:176",
@@ -483,7 +483,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 148
+      "sourceLine": 243
     },
     {
       "id": "586:274",
@@ -498,7 +498,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 148
+      "sourceLine": 243
     },
     {
       "id": "604:3774",
@@ -513,7 +513,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 148
+      "sourceLine": 243
     },
     {
       "id": "552:2311",
@@ -528,7 +528,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 148
+      "sourceLine": 243
     },
     {
       "id": "225:2",
@@ -543,7 +543,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 60
+      "sourceLine": 104
     },
     {
       "id": "479:3051",
@@ -558,7 +558,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 60
+      "sourceLine": 104
     },
     {
       "id": "512:976",
@@ -573,7 +573,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 60
+      "sourceLine": 104
     },
     {
       "id": "468:6678",
@@ -588,7 +588,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 60
+      "sourceLine": 104
     },
     {
       "id": "339:740",
@@ -603,7 +603,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 60
+      "sourceLine": 104
     },
     {
       "id": "604:3882",
@@ -618,7 +618,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 148
+      "sourceLine": 243
     },
     {
       "id": "586:708",
@@ -633,7 +633,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 60
+      "sourceLine": 104
     },
     {
       "id": "225:257",
@@ -648,7 +648,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 270
+      "sourceLine": 405
     },
     {
       "id": "604:4355",
@@ -663,7 +663,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 270
+      "sourceLine": 405
     },
     {
       "id": "479:3118",
@@ -678,7 +678,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 270
+      "sourceLine": 405
     },
     {
       "id": "604:4529",
@@ -693,7 +693,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 270
+      "sourceLine": 405
     },
     {
       "id": "587:1267",
@@ -708,7 +708,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertScreen",
       "libraryComponentId": "660:7350",
-      "sourceLine": 297
+      "sourceLine": 503
     },
     {
       "id": "587:1391",
@@ -723,7 +723,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertScreen",
       "libraryComponentId": "660:7350",
-      "sourceLine": 297
+      "sourceLine": 503
     },
     {
       "id": "587:1515",
@@ -732,13 +732,13 @@
       "route": {
         "destination": "Alert",
         "variant": "content",
-        "target": "alt-personal-2",
+        "target": "alt-personal-3",
         "detail": null
       },
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertScreen",
       "libraryComponentId": "660:7350",
-      "sourceLine": 297
+      "sourceLine": 503
     },
     {
       "id": "225:163",
@@ -753,7 +753,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "587:484",
@@ -768,7 +768,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "587:718",
@@ -783,7 +783,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "513:2445",
@@ -798,7 +798,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "587:949",
@@ -813,7 +813,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "604:4293",
@@ -828,7 +828,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "479:1344",
@@ -843,7 +843,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectsScreen.kt",
       "symbol": "ProjectsScreen",
       "libraryComponentId": "659:6159",
-      "sourceLine": 12
+      "sourceLine": 41
     },
     {
       "id": "479:1505",
@@ -858,7 +858,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "513:1112",
@@ -873,7 +873,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "479:1876",
@@ -888,7 +888,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "479:2571",
@@ -903,7 +903,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "513:1485",
@@ -918,7 +918,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "479:2249",
@@ -933,7 +933,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "604:4113",
@@ -948,7 +948,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "552:2673",
@@ -963,7 +963,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 27
+      "sourceLine": 53
     },
     {
       "id": "513:2132",
@@ -978,7 +978,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceRail",
       "libraryComponentId": "660:9374",
-      "sourceLine": 35
+      "sourceLine": 48
     },
     {
       "id": "228:2849",
@@ -993,7 +993,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceRail",
       "libraryComponentId": "660:9374",
-      "sourceLine": 35
+      "sourceLine": 48
     },
     {
       "id": "344:410",
@@ -1008,7 +1008,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceRail",
       "libraryComponentId": "660:9374",
-      "sourceLine": 35
+      "sourceLine": 48
     },
     {
       "id": "513:2671",
@@ -1023,7 +1023,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceRail",
       "libraryComponentId": "660:9374",
-      "sourceLine": 35
+      "sourceLine": 48
     },
     {
       "id": "513:3535",
@@ -1038,7 +1038,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "HelpSheet",
       "libraryComponentId": "660:9524",
-      "sourceLine": 213
+      "sourceLine": 523
     },
     {
       "id": "513:2989",
@@ -1053,7 +1053,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "ObservabilityScreen",
       "libraryComponentId": "660:9767",
-      "sourceLine": 114
+      "sourceLine": 233
     },
     {
       "id": "588:927",
@@ -1068,7 +1068,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 141
+      "sourceLine": 308
     },
     {
       "id": "588:1052",
@@ -1083,7 +1083,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 141
+      "sourceLine": 308
     },
     {
       "id": "588:1181",
@@ -1098,7 +1098,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 141
+      "sourceLine": 308
     },
     {
       "id": "588:1333",
@@ -1113,7 +1113,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceDomains",
       "libraryComponentId": "661:7834",
-      "sourceLine": 97
+      "sourceLine": 179
     },
     {
       "id": "604:4587",
@@ -1128,7 +1128,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 141
+      "sourceLine": 308
     },
     {
       "id": "604:4656",
@@ -1143,7 +1143,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 141
+      "sourceLine": 308
     },
     {
       "id": "604:4704",
@@ -1158,7 +1158,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 141
+      "sourceLine": 308
     },
     {
       "id": "468:6875",
@@ -1173,7 +1173,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "468:6985",
@@ -1188,7 +1188,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "468:7128",
@@ -1203,7 +1203,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogFilters",
       "libraryComponentId": "661:8241",
-      "sourceLine": 197
+      "sourceLine": 237
     },
     {
       "id": "468:7051",
@@ -1218,7 +1218,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "468:7260",
@@ -1233,7 +1233,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "468:7380",
@@ -1248,7 +1248,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "468:7516",
@@ -1263,7 +1263,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogFilters",
       "libraryComponentId": "661:8241",
-      "sourceLine": 197
+      "sourceLine": 237
     },
     {
       "id": "468:7448",
@@ -1278,7 +1278,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "590:1355",
@@ -1293,7 +1293,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogSheetContent",
       "libraryComponentId": "661:8399",
-      "sourceLine": 171
+      "sourceLine": 211
     },
     {
       "id": "590:1520",
@@ -1308,7 +1308,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "624:1304",
@@ -1323,7 +1323,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "590:1752",
@@ -1338,7 +1338,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogDownload",
       "libraryComponentId": "661:8507",
-      "sourceLine": 218
+      "sourceLine": 258
     },
     {
       "id": "590:1867",
@@ -1353,7 +1353,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "604:4840",
@@ -1368,7 +1368,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 20
+      "sourceLine": 24
     },
     {
       "id": "344:494",
@@ -1383,7 +1383,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "ProfileScreen",
       "libraryComponentId": "661:8578",
-      "sourceLine": 35
+      "sourceLine": 38
     },
     {
       "id": "589:1046",
@@ -1398,7 +1398,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 108
+      "sourceLine": 173
     },
     {
       "id": "589:1117",
@@ -1413,7 +1413,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "ProfileScreen",
       "libraryComponentId": "661:8578",
-      "sourceLine": 35
+      "sourceLine": 38
     },
     {
       "id": "605:1910",
@@ -1428,7 +1428,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "ProfileScreen",
       "libraryComponentId": "661:8578",
-      "sourceLine": 35
+      "sourceLine": 38
     },
     {
       "id": "605:2118",
@@ -1443,7 +1443,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 108
+      "sourceLine": 173
     },
     {
       "id": "605:2226",
@@ -1458,7 +1458,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 108
+      "sourceLine": 173
     },
     {
       "id": "552:3001",
@@ -1473,7 +1473,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 108
+      "sourceLine": 173
     },
     {
       "id": "605:2334",
@@ -1488,7 +1488,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 108
+      "sourceLine": 173
     },
     {
       "id": "605:2516",
@@ -1503,7 +1503,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 166
+      "sourceLine": 231
     },
     {
       "id": "589:2085",
@@ -1518,7 +1518,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 166
+      "sourceLine": 231
     },
     {
       "id": "605:2543",
@@ -1533,7 +1533,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 166
+      "sourceLine": 231
     },
     {
       "id": "605:2570",
@@ -1548,7 +1548,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 166
+      "sourceLine": 231
     },
     {
       "id": "606:634",
@@ -1563,7 +1563,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:865",
@@ -1578,7 +1578,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:1103",
@@ -1593,7 +1593,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:1341",
@@ -1608,7 +1608,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:1566",
@@ -1623,7 +1623,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:1791",
@@ -1638,7 +1638,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:2009",
@@ -1653,7 +1653,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:2230",
@@ -1668,7 +1668,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:2471",
@@ -1683,7 +1683,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:2696",
@@ -1698,7 +1698,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:2882",
@@ -1713,7 +1713,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:3116",
@@ -1728,7 +1728,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:3376",
@@ -1743,7 +1743,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:3610",
@@ -1758,7 +1758,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:3851",
@@ -1773,7 +1773,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:4092",
@@ -1788,7 +1788,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:4333",
@@ -1803,7 +1803,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:4558",
@@ -1818,7 +1818,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:4796",
@@ -1833,7 +1833,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     },
     {
       "id": "606:5017",
@@ -1848,7 +1848,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 116
+      "sourceLine": 166
     }
   ],
   "components": [
@@ -2369,6 +2369,18 @@
         "figmaFrame": "513:2132",
         "dark": "c7c7c7",
         "light": "525252"
+      },
+      {
+        "name": "previewPaper",
+        "dark": "eceae7",
+        "light": "eceae7",
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "previewInk",
+        "dark": "242323",
+        "light": "242323",
+        "figmaFrame": "535:3158"
       }
     ],
     "dimensions": [
@@ -2780,6 +2792,291 @@
         "name": "ProjectOptionsGear",
         "figmaFrame": "604:3584",
         "value": 18.9
+      },
+      {
+        "name": "AlertRow",
+        "value": 99,
+        "figmaFrame": "225:257"
+      },
+      {
+        "name": "AlertTopGap",
+        "value": 32,
+        "figmaFrame": "225:257"
+      },
+      {
+        "name": "AlertTextGap",
+        "value": 3,
+        "figmaFrame": "225:257"
+      },
+      {
+        "name": "AlertMark",
+        "value": 24,
+        "figmaFrame": "225:257"
+      },
+      {
+        "name": "SearchPanelRadius",
+        "value": 24,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchSelectionRadius",
+        "value": 16,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchClearance",
+        "value": 8,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchTextGap",
+        "value": 10,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchIconStart",
+        "value": 17,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchPanelHeight",
+        "value": 345,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchIconBox",
+        "value": 32,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchProjectMark",
+        "value": 26,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "GlassBlur",
+        "value": 8,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "GlassDepth",
+        "value": 20,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchBackdropBlur",
+        "value": 4,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "AlertMetricsHeight",
+        "value": 78,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertChartHeight",
+        "value": 185,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertPillHeight",
+        "value": 27,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertContextRow",
+        "value": 46,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertDetailHeaderInset",
+        "value": 12,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertMeasurePad",
+        "value": 14,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertPlanButton",
+        "value": 142,
+        "figmaFrame": "604:4529"
+      },
+      {
+        "name": "AlertSkeletonTime",
+        "value": 41,
+        "figmaFrame": "604:4355"
+      },
+      {
+        "name": "AlertLoadingRadius",
+        "value": 4,
+        "figmaFrame": "604:4355"
+      },
+      {
+        "name": "FilterGlyph",
+        "value": 19,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "ProjectSheetRadius",
+        "value": 34,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ProjectSheetBody",
+        "value": 813,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ProjectSheetMark",
+        "value": 34,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ProjectSheetSegments",
+        "value": 50,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ProjectSheetListTop",
+        "value": 25,
+        "figmaFrame": "468:4800"
+      },
+      {
+        "name": "ProjectPreviewHeight",
+        "value": 138,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ProjectPreviewRadius",
+        "value": 22,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ProfileAvatar",
+        "value": 62,
+        "figmaFrame": "344:494"
+      },
+      {
+        "name": "ProfileAvatarBlock",
+        "value": 70,
+        "figmaFrame": "344:494"
+      },
+      {
+        "name": "ProfileFieldHeight",
+        "value": 40,
+        "figmaFrame": "344:494"
+      },
+      {
+        "name": "ProfileCardRadius",
+        "value": 22,
+        "figmaFrame": "344:494"
+      },
+      {
+        "name": "ProfilePickerHeight",
+        "value": 45,
+        "figmaFrame": "344:494"
+      },
+      {
+        "name": "LogActionSize",
+        "value": 42,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogFilterFace",
+        "value": 36,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogTimelineHeight",
+        "value": 16,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogTimestampWidth",
+        "value": 103,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogRowHeight",
+        "value": 60,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "UsageCreditHeight",
+        "value": 90,
+        "figmaFrame": "225:163"
+      },
+      {
+        "name": "UsageChartPanel",
+        "value": 340,
+        "figmaFrame": "225:163"
+      },
+      {
+        "name": "UsageChartGrid",
+        "value": 100,
+        "figmaFrame": "225:163"
+      },
+      {
+        "name": "BodyInset",
+        "value": 15,
+        "figmaFrame": "225:163"
+      },
+      {
+        "name": "DomainFieldHeight",
+        "value": 46,
+        "figmaFrame": "588:1333"
+      },
+      {
+        "name": "WorkspaceDomainRow",
+        "value": 72,
+        "figmaFrame": "588:1333"
+      },
+      {
+        "name": "ObservabilityChartPanel",
+        "value": 206,
+        "figmaFrame": "513:2989"
+      },
+      {
+        "name": "RecentsOptionsWidth",
+        "value": 246,
+        "figmaFrame": "468:6678"
+      },
+      {
+        "name": "RecentsOptionsTimestamp",
+        "value": 35,
+        "figmaFrame": "468:6678"
+      },
+      {
+        "name": "DeploymentOptionsWidth",
+        "value": 229,
+        "figmaFrame": "604:1231"
+      },
+      {
+        "name": "MenuGlyph",
+        "value": 19,
+        "figmaFrame": "468:6678"
+      },
+      {
+        "name": "MenuRemoveGlyph",
+        "value": 21,
+        "figmaFrame": "468:6678"
+      },
+      {
+        "name": "OutboundGlyph",
+        "value": 10,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "AlertPlotHeight",
+        "value": 110,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "ProjectSettingsButton",
+        "value": 52,
+        "figmaFrame": "535:3158"
       }
     ],
     "type": [
@@ -2882,6 +3179,91 @@
         "name": "RecentMetadataLine",
         "figmaFrame": "225:2",
         "value": 18
+      },
+      {
+        "name": "AlertProjectSize",
+        "value": 13,
+        "figmaFrame": "225:257"
+      },
+      {
+        "name": "AlertTimeSize",
+        "value": 11,
+        "figmaFrame": "225:257"
+      },
+      {
+        "name": "SearchDetailSize",
+        "value": 13,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "SearchDetailLine",
+        "value": 18,
+        "figmaFrame": "513:1112"
+      },
+      {
+        "name": "AlertDetailTitle",
+        "value": 24,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertDetailTitleLine",
+        "value": 30,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "AlertMetricLine",
+        "value": 32,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "MetadataLine",
+        "value": 17,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "EmptyTitleLine",
+        "value": 23,
+        "figmaFrame": "479:3118"
+      },
+      {
+        "name": "ChartCaption",
+        "value": 10,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "PlanTitleLine",
+        "value": 28,
+        "figmaFrame": "604:4529"
+      },
+      {
+        "name": "AlertPillLine",
+        "value": 15,
+        "figmaFrame": "587:1267"
+      },
+      {
+        "name": "SheetTitleLine",
+        "value": 22,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "DetailTitle",
+        "value": 19,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "UsageTitle",
+        "value": 23,
+        "figmaFrame": "225:163"
+      },
+      {
+        "name": "UsageTitleLine",
+        "value": 29,
+        "figmaFrame": "225:163"
+      },
+      {
+        "name": "ProfileHeadingLine",
+        "value": 23,
+        "figmaFrame": "344:494"
       }
     ],
     "numbers": [
@@ -2900,6 +3282,10 @@
       {
         "name": "SidebarScrimOpacity",
         "kotlin": "0.55f"
+      },
+      {
+        "name": "AlertLoadingRows",
+        "kotlin": "6"
       }
     ]
   },
