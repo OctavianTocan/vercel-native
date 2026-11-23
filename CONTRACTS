@@ -36,3 +36,9 @@ The debug picker opens each Usage study at its resource comparison. Use the grou
 
 @cc [owner:OctavianTocan,label:design] dashboard-sheet-footer-visibility
 Keep the DNS verification, preview handoff and project transfer actions visible above the Android navigation area. Allow the content above the action to scroll when it exceeds the viewport. Sources are the approved Figma frames 604:1084, 586:274 and 535:1457.
+
+@cc [owner:OctavianTocan,label:design] dashboard-swipe-ownership
+In ordinary Recents, a right swipe previews the selected deployment and a left swipe opens its removal confirmation. Preview and Remove stay in a group at the bottom of the row menu. A project row ellipsis shows its active face while its popover is open. The Projects workspace sidebar follows a right drag in and a left drag out. Activity and Project tabs and their indicators follow the horizontal drag. Inside a Project Sheet, deployment rows leave sideways movement to the tab pager. Source is Tavi’s November 23 review recording.
+
+@cc [owner:OctavianTocan,label:design] dashboard-dock-and-sheet-gestures
+The dashboard dock starts with icons and briefly reveals a tapped item's label. In Activity, the dock control shows side carets and switches categories on a flick or held lean. Sheets use Inventory's drag stops, spring settling and scroll handoff. The background recedes with sheet progress. Dismissing a nested sheet returns to its parent at the previous height. Source is Tavi’s November 23 review recording.

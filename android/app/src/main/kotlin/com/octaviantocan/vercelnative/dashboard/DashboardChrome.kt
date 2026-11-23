@@ -10,8 +10,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.ui.window.PopupProperties
-import androidx.compose.ui.window.Popup
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.annotation.DrawableRes
@@ -602,6 +600,7 @@ internal fun RowOptions(
     authored: String,
     separated: Boolean = false,
     recents: Boolean = false,
+    actionGroupStart: Int? = null,
 ) {
     val palette = LocalDashboardPalette.current
     Box {
@@ -630,66 +629,66 @@ internal fun RowOptions(
                 }
             }
         }
-        if (expanded) {
-            val radius = if (recents) Tokens.ProjectOptionsLightRadius else Tokens.ProjectOptionsRadius
-            val shape = RoundedCornerShape(radius)
-            val position = with(LocalDensity.current) {
-                val edge = (if (recents) Tokens.Space6 else Tokens.Space8 + Tokens.Space2).roundToPx()
-                val above = Tokens.DockIcon.roundToPx()
-                val below = (if (recents) -Tokens.DockIcon else Tokens.RecentTitleGap).roundToPx()
-                val viewport = Tokens.Space8.roundToPx()
-                remember(edge, above, below, viewport) { ProjectOptionsPosition(edge, above, below, viewport, 0) }
-            }
-            Popup(position, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-                Column(
-                    Modifier.dismissOutsideRoundedCard(radius, Dp.Hairline, onClose)
-                        .width(if (recents) Tokens.RecentsOptionsWidth else Tokens.DeploymentOptionsWidth).clip(shape)
-                        .background(palette.projectOptionsSurface).border(Tokens.Stroke, palette.projectOptionsBorder, shape)
-                        .dashboardScroll(surface = palette.projectOptionsSurface)
-                        .padding(vertical = when {
-                            separated -> Tokens.Stroke
-                            recents -> Tokens.DockInset + Tokens.Stroke
-                            else -> Tokens.Space8
-                        }),
+        val radius = if (recents) Tokens.ProjectOptionsLightRadius else Tokens.ProjectOptionsRadius
+        val shape = RoundedCornerShape(radius)
+        val position = with(LocalDensity.current) {
+            val edge = (if (recents) Tokens.Space6 else Tokens.Space8 + Tokens.Space2).roundToPx()
+            val above = Tokens.DockIcon.roundToPx()
+            val below = (if (recents) -Tokens.DockIcon else Tokens.RecentTitleGap).roundToPx()
+            val viewport = Tokens.Space8.roundToPx()
+            remember(edge, above, below, viewport) { ProjectOptionsPosition(edge, above, below, viewport, 0) }
+        }
+        DashboardMenu(expanded, position, onClose) {
+            Column(
+                Modifier.dismissOutsideRoundedCard(radius, Dp.Hairline, onClose)
+                    .width(if (recents) Tokens.RecentsOptionsWidth else Tokens.DeploymentOptionsWidth).clip(shape)
+                    .background(palette.projectOptionsSurface).border(Tokens.Stroke, palette.projectOptionsBorder, shape)
+                    .dashboardScroll(surface = palette.projectOptionsSurface)
+                    .padding(vertical = when {
+                        separated -> Tokens.Stroke
+                        recents -> Tokens.DockInset + Tokens.Stroke
+                        else -> Tokens.Space8
+                    }),
+            ) {
+                val timestampHeight = when {
+                    separated -> Tokens.EarlierRecentsTimestamp
+                    recents -> Tokens.RecentsOptionsTimestamp
+                    else -> Tokens.Space32 + Tokens.Space2
+                }
+                Box(
+                    Modifier.fillMaxWidth().heightIn(min = timestampHeight).padding(horizontal = Tokens.Inset),
+                    contentAlignment = Alignment.CenterStart,
                 ) {
-                    val timestampHeight = when {
-                        separated -> Tokens.EarlierRecentsTimestamp
-                        recents -> Tokens.RecentsOptionsTimestamp
-                        else -> Tokens.Space32 + Tokens.Space2
+                    val timestamp = if (recents) "Authored $authored" else "Deployed $authored"
+                    Text(timestamp, fontSize = if (recents) Tokens.ListSubtitle else Tokens.SearchDetailSize,
+                        lineHeight = Tokens.SearchDetailLine, color = palette.secondary)
+                }
+                actions.forEachIndexed { index, item ->
+                    if (separated || index == actionGroupStart) {
+                        DividerLine(Modifier.padding(horizontal = if (separated && index == 0) Dp.Hairline else Tokens.Inset))
                     }
-                    Box(
-                        Modifier.fillMaxWidth().heightIn(min = timestampHeight).padding(horizontal = Tokens.Inset),
-                        contentAlignment = Alignment.CenterStart,
+                    Row(
+                        Modifier.fillMaxWidth().heightIn(min = if (separated) Tokens.EarlierRecentsMenuRow else Tokens.MenuRow)
+                            .clickable(enabled = item.onClick != null,
+                            role = Role.Button, onClick = { onClose(); item.onClick?.invoke() })
+                            .padding(horizontal = if (separated) Tokens.BodyInset else Tokens.ProjectOptionsInset),
+                        horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        val timestamp = if (recents) "Authored $authored" else "Deployed $authored"
-                        Text(timestamp, fontSize = if (recents) Tokens.ListSubtitle else Tokens.SearchDetailSize,
-                            lineHeight = Tokens.SearchDetailLine, color = palette.secondary)
-                    }
-                    actions.forEachIndexed { index, item ->
-                        if (separated) DividerLine(Modifier.padding(horizontal = if (index == 0) Dp.Hairline else Tokens.Inset))
-                        Row(
-                            Modifier.fillMaxWidth().heightIn(min = if (separated) Tokens.EarlierRecentsMenuRow else Tokens.MenuRow)
-                                .clickable(enabled = item.onClick != null,
-                                role = Role.Button, onClick = { onClose(); item.onClick?.invoke() })
-                                .padding(horizontal = if (separated) Tokens.BodyInset else Tokens.ProjectOptionsInset),
-                            horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(Modifier.width(Tokens.Space20), contentAlignment = Alignment.Center) {
-                                if (item.project == null) {
-                                    DashboardIcon(item.glyph, if (item.destructive) palette.error else palette.projectOptionsGlyph)
-                                } else {
-                                    Box(Modifier.size(Tokens.Space20).background(palette.projectBadge, CircleShape),
-                                        contentAlignment = Alignment.Center) {
-                                        ProjectArtwork(item.project, Tokens.MetadataIcon, Tokens.MetadataIcon)
-                                    }
+                        Box(Modifier.width(Tokens.Space20), contentAlignment = Alignment.Center) {
+                            if (item.project == null) {
+                                DashboardIcon(item.glyph, if (item.destructive) palette.error else palette.projectOptionsGlyph)
+                            } else {
+                                Box(Modifier.size(Tokens.Space20).background(palette.projectBadge, CircleShape),
+                                    contentAlignment = Alignment.Center) {
+                                    ProjectArtwork(item.project, Tokens.MetadataIcon, Tokens.MetadataIcon)
                                 }
                             }
-                            Text(item.label, color = if (item.destructive) palette.error else palette.projectOptionsInk,
-                                fontSize = if (recents) Tokens.ListTitle else Tokens.Body,
-                                lineHeight = if (recents) Tokens.ListSubtitleLine else Tokens.ProjectOptionsLine,
-                                maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
+                        Text(item.label, color = if (item.destructive) palette.error else palette.projectOptionsInk,
+                            fontSize = if (recents) Tokens.ListTitle else Tokens.Body,
+                            lineHeight = if (recents) Tokens.ListSubtitleLine else Tokens.ProjectOptionsLine,
+                            maxLines = 2, overflow = TextOverflow.Ellipsis)
                     }
                 }
             }

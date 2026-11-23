@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -369,12 +370,25 @@ private fun LogFilters(route: DashboardRoute, navigation: DashboardNavigation, o
             DividerLine(Modifier.padding(horizontal = Tokens.AlertMeasurePad), palette.border)
             Box {
                 LogFilterRow("Time range", range) { pickingRange = true }
-                DropdownMenu(expanded = pickingRange, onDismissRequest = { pickingRange = false }, containerColor = palette.popover) {
-                    for (choice in listOf("Last 15 min", "Last 30 min", "Last hour")) {
-                        DropdownMenuItem(text = { Text(choice, color = palette.ink) }, onClick = {
-                            range = choice
-                            pickingRange = false
-                        })
+                val position = with(LocalDensity.current) {
+                    val inset = Tokens.Space8.roundToPx()
+                    val half = (Tokens.LogFilterRowHeight / 2).roundToPx()
+                    remember(inset, half) { ProjectOptionsPosition(0, half, half, inset, 0) }
+                }
+                DashboardMenu(pickingRange, position, onClose = { pickingRange = false }) {
+                    Surface(
+                        modifier = Modifier.width(Tokens.DeploymentOptionsWidth),
+                        color = palette.popover,
+                        shape = RoundedCornerShape(Tokens.ControlRadius),
+                    ) {
+                        Column(Modifier.padding(vertical = Tokens.Space8)) {
+                            for (choice in listOf("Last 15 min", "Last 30 min", "Last hour")) {
+                                DropdownMenuItem(text = { Text(choice, color = palette.ink) }, onClick = {
+                                    range = choice
+                                    pickingRange = false
+                                })
+                            }
+                        }
                     }
                 }
             }

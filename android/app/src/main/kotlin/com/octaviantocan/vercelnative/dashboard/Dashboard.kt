@@ -3,7 +3,6 @@ package com.octaviantocan.vercelnative.dashboard
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -14,11 +13,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,14 +22,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
-import kotlinx.coroutines.launch
 
 internal enum class Presentation { Screen, Sheet, Rail, Search }
 
-private val activityDestinations = setOf(Destination.Recents, Destination.Usage, Destination.Alerts)
+internal val activityDestinations = setOf(Destination.Recents, Destination.Usage, Destination.Alerts)
 private val activityDetailDesigns = setOf(Destination.Deployment, Destination.Alert, Destination.Logs,
     Destination.Observability, Destination.Analytics, Destination.Speed, Destination.Firewall)
 
@@ -264,94 +261,118 @@ internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
                 Box(Modifier.fillMaxSize()) {
                     val content = rememberGraphicsLayer()
                     val backdrop = rememberGraphicsLayer()
+                    val overlay = top.takeIf { top != base }
+                    val sheetVisible = route.destination.presentation == Presentation.Sheet
+                    val sheetDepths = remember { mutableStateMapOf<Int, Float>() }
+                    val backgroundTop = with(density) { systemInsets.getTop(this).toDp() }
                     val underlay = if (base.route.destination == Destination.DesignCases &&
                         top != base && route.destination.presentation != Presentation.Screen
                     ) {
-                        DashboardEntry(-top.key, reviewedUnderlay(route))
+                        DashboardEntry(-top.key, reviewedUnderlay(route).copy(frozen = route.frozen))
                     } else base
                     val showDock = route.destination != Destination.Search && !imeUp && underlay.route.destination.hasDock()
                     val searching = route.destination == Destination.Search
                     val blur = if (searching) Tokens.SearchBackdropBlur else Tokens.GlassBlur
-                    Box(Modifier.matchParentSize().captureDashboardBackdrop(content, backdrop, blur, searching).background(palette.canvas)) {
-                        AnimatedContent(
-                            targetState = underlay,
-                            contentKey = { entry ->
-                                if (entry.route.destination in activityDestinations && !entry.route.frozen) "activity" else entry.key
-                            },
-                            transitionSpec = {
-                                val direction = if (initialState.key > targetState.key) -1 else 1
-                                val from = initialState.route.destination
-                                val to = targetState.route.destination
-                                if ((from == Destination.Projects || from in activityDestinations) &&
-                                    (to == Destination.Projects || to in activityDestinations)
-                                ) {
-                                    fadeIn(DashboardMotion.prototype(DashboardMotion.Dissolve)) togetherWith
-                                        fadeOut(DashboardMotion.prototype(DashboardMotion.Dissolve))
-                                } else {
-                                    slideInHorizontally(DashboardMotion.push(direction < 0)) { direction * it } togetherWith
-                                        slideOutHorizontally(DashboardMotion.push(direction < 0)) { -direction * it }
+                    val railRoute = overlay?.route?.takeIf { it.destination == Destination.More }
+                        ?: navigation.parentRail?.route
+                        ?: if (route.frozen && route.variant != "light" && route.destination in setOf(Destination.Theme, Destination.Help)) {
+                            DashboardRoute(Destination.More)
+                        } else null
+                    val rail = remember { WorkspaceRailMotion() }
+                    val railScope = rememberCoroutineScope()
+                    var lastRail by remember { mutableStateOf(DashboardRoute(Destination.More)) }
+                    SideEffect { railRoute?.let { lastRail = it } }
+                    LaunchedEffect(railRoute != null) { rail.settle(railScope, railRoute != null) }
+                    val workspaceGesture = if (!route.frozen && route.destination in setOf(Destination.Projects, Destination.More)) {
+                        val open = route.destination == Destination.More
+                        val window = LocalWindowInfo.current.containerSize.width
+                        val width = with(density) { workspacePanelWidth(window.toDp()).toPx() }
+                        Modifier.dashboardHorizontalDrag(
+                            accepts = { delta -> if (open) delta < 0f else delta > 0f },
+                            onStart = rail::grab,
+                            onDelta = { rail.drag(it, width) },
+                            onStop = { velocity, completed ->
+                                val shouldOpen = rail.release(completed, velocity, density.density, open)
+                                if (shouldOpen != open) {
+                                    if (shouldOpen) navigation.show(Destination.More) else onBack()
                                 }
+                                rail.settle(railScope, shouldOpen)
                             },
-                            label = "Dashboard destination",
+                        )
+                    } else Modifier
+                    Box(
+                        Modifier.matchParentSize()
+                            .dashboardRecede(backgroundTop, palette.secondary) {
+                                if (route.frozen) 0f else sheetDepths.values.maxOrNull() ?: 0f
+                            }
+                            .then(if (sheetVisible) Modifier.clearAndSetSemantics {} else workspaceGesture),
+                    ) {
+                        Box(Modifier.matchParentSize().captureDashboardBackdrop(content, backdrop, blur, searching).background(palette.canvas)) {
+                            AnimatedContent(
+                                targetState = underlay,
+                                contentKey = { entry ->
+                                    if (entry.route.destination in activityDestinations && !entry.route.frozen) "activity" else entry.key
+                                },
+                                transitionSpec = {
+                                    val direction = if (initialState.key > targetState.key) -1 else 1
+                                    val from = initialState.route.destination
+                                    val to = targetState.route.destination
+                                    if ((from == Destination.Projects || from in activityDestinations) &&
+                                        (to == Destination.Projects || to in activityDestinations)
+                                    ) {
+                                        fadeIn(DashboardMotion.prototype(DashboardMotion.Dissolve)) togetherWith
+                                            fadeOut(DashboardMotion.prototype(DashboardMotion.Dissolve))
+                                    } else {
+                                        slideInHorizontally(DashboardMotion.push(direction < 0)) { direction * it } togetherWith
+                                            slideOutHorizontally(DashboardMotion.push(direction < 0)) { -direction * it }
+                                    }
+                                },
+                                label = "Dashboard destination",
+                            ) { entry ->
+                                val destination = entry.route.destination
+                                val root = destination == Destination.Projects || destination in activityDestinations
+                                    val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
+                                        "root-${if (destination in activityDestinations) "Activity" else destination.name}-${navigation.workspaceId}"
+                                } else "screen-${entry.key}"
+                                holder.SaveableStateProvider(stateKey) {
+                                    Box(
+                                        Modifier.fillMaxSize().windowInsetsPadding(systemInsets).then(
+                                            if (showDock && destination.hasDock() && !root) {
+                                                Modifier.padding(bottom = Tokens.BottomBar + Tokens.DockBottomGap)
+                                            } else Modifier,
+                                        ),
+                                    ) { DashboardScreen(entry.route, navigation, onBack) }
+                                }
+                            }
+                        }
+                        if (showDock) DashboardBottomBar(
+                            activity = navigation.highlightsActivity(underlay),
+                            reviewedLabels = route.frozen && underlay.route.variant != "icons",
+                            navigation = navigation,
+                            backdrop = content,
+                            modifier = Modifier.align(Alignment.BottomCenter).windowInsetsPadding(
+                                systemInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+                            ),
+                        )
+                        if (rail.fraction > 0f) {
+                            WorkspaceRail(railRoute ?: lastRail, navigation, onBack, backdrop,
+                                progress = { rail.fraction }, interactive = route.destination == Destination.More)
+                        }
+                        AnimatedContent(
+                            targetState = overlay?.takeIf { it.route.destination == Destination.Search },
+                            modifier = Modifier.matchParentSize(),
+                            transitionSpec = {
+                                slideInVertically(DashboardMotion.prototype(DashboardMotion.Search)) { it } togetherWith
+                                    slideOutVertically(DashboardMotion.dismiss()) { it }
+                            },
+                            label = "Dashboard overlay",
                         ) { entry ->
-                            val destination = entry.route.destination
-                            val root = destination == Destination.Projects || destination in activityDestinations
-                                val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
-                                    "root-${if (destination in activityDestinations) "Activity" else destination.name}-${navigation.workspaceId}"
-                            } else "screen-${entry.key}"
-                            holder.SaveableStateProvider(stateKey) {
-                                Box(
-                                    Modifier.fillMaxSize().windowInsetsPadding(systemInsets).then(
-                                        if (showDock && destination.hasDock() && !root) {
-                                            Modifier.padding(bottom = Tokens.BottomBar + Tokens.DockBottomGap)
-                                        } else Modifier,
-                                    ),
-                                ) { DashboardScreen(entry.route, navigation, onBack) }
+                            if (entry != null) holder.SaveableStateProvider("overlay-${entry.key}") {
+                                SearchOverlay(entry.route, navigation, onBack, content, entry == overlay)
                             }
                         }
                     }
-                    if (showDock) DashboardBottomBar(
-                        activity = navigation.highlightsActivity(underlay),
-                        iconsOnly = underlay.route.variant == "icons",
-                        navigation = navigation,
-                        backdrop = content,
-                        modifier = Modifier.align(Alignment.BottomCenter).windowInsetsPadding(
-                            systemInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
-                        ),
-                    )
-                    val overlay = top.takeIf { top != base }
-                    val railUnderSheet = navigation.parentRail ?: if (route.frozen && route.variant != "light" &&
-                        route.destination in setOf(Destination.Theme, Destination.Help)
-                    ) DashboardEntry(-top.key - 1, DashboardRoute(Destination.More)) else null
-                    AnimatedContent(
-                        targetState = overlay?.takeIf { it.route.destination.presentation != Presentation.Sheet } ?: railUnderSheet,
-                        modifier = Modifier.matchParentSize(),
-                        transitionSpec = {
-                            val entering = targetState?.route?.destination?.presentation
-                            val leaving = initialState?.route?.destination?.presentation
-                            val enter = when (entering) {
-                                Presentation.Rail -> slideInHorizontally(DashboardMotion.prototype(DashboardMotion.Rail)) { -it }
-                                Presentation.Search -> slideInVertically(DashboardMotion.prototype(DashboardMotion.Search)) { it }
-                                else -> fadeIn(DashboardMotion.prototype(DashboardMotion.Dissolve))
-                            }
-                            val exit = when (leaving) {
-                                Presentation.Rail -> slideOutHorizontally(DashboardMotion.dismiss()) { -it }
-                                Presentation.Search -> slideOutVertically(DashboardMotion.dismiss()) { it }
-                                else -> fadeOut(DashboardMotion.prototype(DashboardMotion.Dissolve))
-                            }
-                            enter togetherWith exit
-                        },
-                        label = "Dashboard overlay",
-                    ) { entry ->
-                        if (entry != null) holder.SaveableStateProvider("overlay-${entry.key}") {
-                            when (entry.route.destination.presentation) {
-                                Presentation.Search -> SearchOverlay(entry.route, navigation, onBack, content, entry == overlay)
-                                Presentation.Rail -> WorkspaceRail(entry.route, navigation, onBack, backdrop)
-                                else -> Unit
-                            }
-                        }
-                    }
-                    if (overlay?.route?.destination?.presentation == Presentation.Sheet) {
+                    if (sheetVisible) {
                         val projectUnderlay = if (route.frozen && route.destination in
                             setOf(Destination.ProjectDomains, Destination.Domain, Destination.GitHubSync)
                         ) {
@@ -362,7 +383,20 @@ internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
                         } else null
                         val shown = listOfNotNull(projectUnderlay) + navigation.sheets
                         shown.forEachIndexed { index, sheet ->
-                            key(index) { DashboardSheetHost(sheet, navigation, onBack, holder) }
+                            val identity = if (sheet.route.destination == Destination.Transfer) sheet.route.target else sheet.key
+                            key(index) {
+                                holder.SaveableStateProvider("sheet-$index-$identity") {
+                                    DashboardSheetHost(
+                                        sheet, navigation, onBack, holder,
+                                        active = index == shown.lastIndex,
+                                        reviewed = route.frozen,
+                                        childDepth = { sheetDepths.filterKeys { it > index }.values.maxOrNull() ?: 0f },
+                                        reportDepth = { depth ->
+                                            if (depth > 0f) sheetDepths[index] = depth else sheetDepths.remove(index)
+                                        },
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -420,117 +454,5 @@ private fun DashboardScreen(route: DashboardRoute, navigation: DashboardNavigati
         Destination.Profile, Destination.Agent -> AccountScreen(route, navigation, onBack)
         Destination.DesignCases -> DashboardDesignPicker(navigation, onBack)
         else -> WorkspaceScreen(route, navigation, onBack)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DashboardSheetHost(entry: DashboardEntry, navigation: DashboardNavigation, onBack: () -> Unit, holder: SaveableStateHolder) {
-    val palette = LocalDashboardPalette.current
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val destination = entry.route.destination
-    val project = destination == Destination.Project
-    val sheetPaper = when (destination) {
-        Destination.Theme -> if (palette == DashboardPalette.Light) palette.themeLightSheet else palette.sheet
-        Destination.Photo, Destination.DefaultScope -> if (palette == DashboardPalette.Light) palette.sheet else palette.projectOptionsSurface
-        else -> palette.sheet
-    }
-    val handleColor = when {
-        project -> palette.projectSheetHandle
-        destination == Destination.LogFilters -> palette.logFilterHandle
-        palette == DashboardPalette.Light -> palette.sheetHandle
-        destination in setOf(Destination.Theme, Destination.Toolbar, Destination.RemoveRecent, Destination.Help) -> palette.muted
-        destination == Destination.Transfer && entry.route.variant in setOf("review", "progress", "done") -> palette.muted
-        else -> palette.sheetHandle
-    }
-    val scope = rememberCoroutineScope()
-    var closing by remember(entry.key) { mutableStateOf(false) }
-    val close: () -> Unit = {
-        if (!closing && navigation.current == entry) {
-            closing = true
-            scope.launch {
-                sheetState.hide()
-                if (!sheetState.isVisible && navigation.current == entry) onBack()
-                closing = false
-            }
-        }
-    }
-    ModalBottomSheet(
-        onDismissRequest = {
-            if (navigation.current == entry) onBack()
-        },
-        modifier = if (project) {
-            Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Bottom))
-                .padding(top = Tokens.Inset, bottom = Tokens.Inset)
-        } else Modifier,
-        sheetState = sheetState,
-        containerColor = sheetPaper,
-        contentColor = palette.ink,
-        scrimColor = if (project) palette.canvas else Color.Black.copy(
-            alpha = if (palette == DashboardPalette.Dark) Tokens.ScrimOpacity else Tokens.LightSheetScrimOpacity,
-        ),
-        contentWindowInsets = { if (project) WindowInsets(0, 0, 0, 0) else BottomSheetDefaults.windowInsets },
-        shape = if (project) RoundedCornerShape(Tokens.ProjectSheetRadius)
-        else {
-            val radius = if (destination in setOf(Destination.Photo, Destination.DefaultScope) ||
-                (destination == Destination.Theme && palette == DashboardPalette.Light)) Tokens.AccountSheetRadius else Tokens.SheetRadius
-            RoundedCornerShape(topStart = radius, topEnd = radius)
-        },
-        dragHandle = {
-            Box(
-                Modifier.padding(top = if (project) Tokens.Space4 else Tokens.Space8,
-                    bottom = if (project) Tokens.Space2 else Tokens.Space4)
-                    .size(width = Tokens.SheetHandleWidth, height = Tokens.Space4)
-                    .background(handleColor, CircleShape)
-            )
-        },
-    ) {
-        AnimatedContent(
-            targetState = entry,
-            transitionSpec = {
-                val from = initialState.route
-                val to = targetState.route
-                if (from.destination == Destination.Transfer && from.variant == "content" &&
-                    to.destination == Destination.Transfer && to.variant == "review"
-                ) {
-                    (slideInHorizontally(DashboardMotion.push(back = true)) { -it } togetherWith
-                        slideOutHorizontally(DashboardMotion.push(back = true)) { it }).using(
-                        SizeTransform { _, _ -> DashboardMotion.push(back = true) },
-                    )
-                } else {
-                    (fadeIn(DashboardMotion.prototype(DashboardMotion.Tabs)) togetherWith
-                        fadeOut(DashboardMotion.prototype(DashboardMotion.Tabs))).using(
-                        SizeTransform { _, _ -> DashboardMotion.prototype(DashboardMotion.Tabs) },
-                    )
-                }
-            },
-            label = "Sheet destination",
-        ) { current ->
-            val route = current.route
-            val maxHeight = when (route.destination) {
-                Destination.Project -> Tokens.ProjectSheetBody
-                Destination.ProjectDomains -> Tokens.ProjectDomainsBody
-                Destination.Domain -> Tokens.DomainVerificationBody
-                Destination.LogEvent -> Tokens.LogEventBody
-                Destination.Transfer -> Tokens.SheetMaxHeight
-                else -> Tokens.CompactSheetMaxHeight
-            }
-            holder.SaveableStateProvider("overlay-${current.key}") {
-                CompositionLocalProvider(LocalDashboardScrollPaper provides sheetPaper) {
-                    Column(Modifier.fillMaxWidth().heightIn(max = maxHeight)) {
-                        when (route.destination) {
-                            Destination.Project, Destination.ProjectDomains, Destination.Domain, Destination.GitHubSync, Destination.Transfer ->
-                                ProjectSheetContent(route, navigation, close)
-                            Destination.Preview, Destination.Toolbar, Destination.RemoveRecent ->
-                                DeploymentSheetContent(route, navigation, close)
-                            Destination.LogFilters, Destination.LogEvent, Destination.LogDownload ->
-                                LogSheetContent(route, navigation, close)
-                            Destination.Help -> HelpSheet(close, docsOnly = route.variant == "docs")
-                            else -> AccountSheetContent(route, navigation, close)
-                        }
-                    }
-                }
-            }
-        }
     }
 }

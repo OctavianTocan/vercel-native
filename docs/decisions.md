@@ -38,10 +38,18 @@ The Usage studies open at the resource table in the debug picker. Each uses the 
 
 Keep the DNS, deployment preview and transfer actions visible above Android’s navigation area while their sheet bodies scroll. Use the approved 41 dp grip and apply the sheet’s grouped row spacing across each stage. The Profile form uses 46 dp fields and 14 dp between cards.
 
-The dashboard’s glass lens uses the Figma control depth, refraction and rim. The Ready badge uses its own shallower optics and samples the deployment preview beneath it. The Search and workspace rail leave in 220 ms and detail Back uses a 240 ms push.
+The dashboard’s glass lens uses the Figma control depth, refraction and rim. The Ready badge uses its own shallower optics and samples the deployment preview beneath it. Search leaves in 220 ms and detail Back uses a 240 ms push.
 
 [DNS verification](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-1084) · [Protected preview](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=586-274) · [Review transfer](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=535-1457) · [Profile Settings](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=344-494)
 
-Reuse the Recents row for removal confirmation, including the paired artwork, one-line title and GitHub metadata. A transfer review opens with a 240 ms push and returns to the selected team. New modal sheets use Android’s vertical motion and support Back, scrim taps and downward swipes.
+Reuse the Recents row for removal confirmation, including the paired artwork, one-line title and GitHub metadata. A transfer review opens with a 240 ms push and returns to the selected team.
 
 [Recents removal confirmation](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-3882) · [Transfer review](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=535-1457)
+
+## November 23 gesture review
+
+Use Pully's row gesture for Recents. Swipe right to Preview and left to open Remove from Recents. Keep both actions below a divider in the menu. The Projects ellipsis lights up when its menu opens, and the workspace sidebar follows horizontal drags.
+
+Keep the Activity tabs visible. Page content and the indicator follow the same horizontal drag on Activity and on the Project Sheet. A drag on a Project Sheet deployment row moves the tabs. The dock starts with icons, reveals the tapped label for 1.5 seconds, and lets an Activity flick or held lean step through the three tabs.
+
+Use Inventory's sheet position and nested scroll behavior. Keep Project Overview tall on arrival and give it a halfway stop. Other sheets settle to their content up to halfway, with room to drag higher. The previous screen scales and dims as a sheet opens. Keep the approved sheet surfaces, row proportions, and nesting. Use the Menu dropdown recipe for popover motion. [transitions.dev library](https://transitions.dev/library.html)
