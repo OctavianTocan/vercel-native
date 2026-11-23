@@ -5,8 +5,6 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -16,6 +14,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,11 +47,15 @@ internal enum class ActivityTab(val destination: Destination) {
 }
 
 @Composable
-internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit, modifier: Modifier = Modifier) {
+internal fun ActivityTabs(
+    selected: ActivityTab,
+    onSelect: (ActivityTab) -> Unit,
+    modifier: Modifier = Modifier,
+    position: () -> Float = { selected.ordinal.toFloat() },
+) {
     val palette = LocalDashboardPalette.current
     BoxWithConstraints(modifier.fillMaxWidth().height(Tokens.Touch).selectableGroup()) {
         val segment = maxWidth / ActivityTab.entries.size
-        val underline by animateDpAsState(segment * selected.ordinal, DashboardMotion.prototype(DashboardMotion.Tabs), label = "Activity underline")
         DividerLine(Modifier.align(Alignment.BottomCenter))
         Row(Modifier.fillMaxSize()) {
             ActivityTab.entries.forEach { tab ->
@@ -69,7 +72,7 @@ internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit
                 }
             }
         }
-        Box(Modifier.align(Alignment.BottomStart).offset { androidx.compose.ui.unit.IntOffset(underline.roundToPx(), 0) }
+        Box(Modifier.align(Alignment.BottomStart).offset { androidx.compose.ui.unit.IntOffset((segment * position()).roundToPx(), 0) }
             .width(segment).height(Tokens.Stroke).background(palette.ink))
     }
 }
@@ -77,31 +80,53 @@ internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit
 @Composable
 internal fun ActivityScreen(route: DashboardRoute, navigation: DashboardNavigation) {
     val tab = ActivityTab.entries.first { it.destination == route.destination }
-    val state = rememberSaveableStateHolder()
     Column(Modifier.fillMaxSize()) {
         DashboardRootHeader("Activity") { navigation.show(Destination.More) }
-        ActivityTabs(tab, { navigation.main(it.destination) })
-        AnimatedContent(
-            route,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            transitionSpec = {
-                val direction = if (targetState.destination.ordinal > initialState.destination.ordinal) 1 else -1
-                (fadeIn(DashboardMotion.prototype(DashboardMotion.Tabs)) +
-                    slideInHorizontally(DashboardMotion.prototype(DashboardMotion.Tabs)) { direction * it / 8 }) togetherWith
-                    (fadeOut(DashboardMotion.prototype(DashboardMotion.Tabs)) +
-                        slideOutHorizontally(DashboardMotion.prototype(DashboardMotion.Tabs)) { -direction * it / 8 })
-            },
-            label = "Activity tab content",
-        ) { shown ->
-            state.SaveableStateProvider(shown.destination.name + shown.variant) {
-                when (shown.destination) {
-                    Destination.Recents -> RecentsList(shown, navigation)
-                    Destination.Usage -> UsageScreen(shown, navigation)
-                    Destination.Alerts -> AlertsList(shown, navigation)
-                    else -> Unit
+        if (route.frozen) {
+            ActivityTabs(tab, { navigation.main(it.destination) })
+            Box(Modifier.weight(1f)) { ActivityPage(route, navigation) }
+        } else {
+            val pager = rememberPagerState(initialPage = tab.ordinal) { ActivityTab.entries.size }
+            val target by rememberUpdatedState(tab)
+            var movingToTab by remember { mutableStateOf(false) }
+            LaunchedEffect(tab) {
+                if (pager.settledPage != tab.ordinal || pager.isScrollInProgress) {
+                    movingToTab = true
+                    try {
+                        pager.animateScrollToPage(tab.ordinal, animationSpec = DashboardMotion.move(DashboardMotion.MenuOpen))
+                    } finally {
+                        movingToTab = false
+                    }
                 }
             }
+            LaunchedEffect(pager) {
+                snapshotFlow { pager.settledPage to movingToTab }.collect { (page, moving) ->
+                    val selected = ActivityTab.entries[page]
+                    if (!moving && selected != target && navigation.current.route.destination in activityDestinations) {
+                        navigation.main(selected.destination)
+                    }
+                }
+            }
+            ActivityTabs(
+                ActivityTab.entries[pager.currentPage],
+                { navigation.main(it.destination) },
+                Modifier.dragDashboardTabs(pager),
+                position = { pager.currentPage + pager.currentPageOffsetFraction },
+            )
+            HorizontalPager(pager, Modifier.weight(1f).fillMaxWidth(), beyondViewportPageCount = 1) { page ->
+                ActivityPage(DashboardRoute(ActivityTab.entries[page].destination), navigation)
+            }
         }
+    }
+}
+
+@Composable
+private fun ActivityPage(route: DashboardRoute, navigation: DashboardNavigation) {
+    when (route.destination) {
+        Destination.Recents -> RecentsList(route, navigation)
+        Destination.Usage -> UsageScreen(route, navigation)
+        Destination.Alerts -> AlertsList(route, navigation)
+        else -> Unit
     }
 }
 
@@ -144,21 +169,28 @@ private fun RecentsList(route: DashboardRoute, navigation: DashboardNavigation) 
             items(visible, key = Deployment::id) { deployment ->
                 val project = navigation.project(deployment.projectId)
                 val earlier = route.variant == "menu-earlier"
-                DeploymentRow(
+                val preview = { navigation.show(Destination.Preview, deployment.id) }
+                val removeFromRecents = { navigation.show(Destination.RemoveRecent, deployment.id) }
+                val row: @Composable () -> Unit = { DeploymentRow(
                     deployment, project,
                     onOpen = { navigation.show(Destination.Deployment, deployment.id) },
                     options = {
                         val projectAction = MenuAction(if (earlier) "Project" else "Open project", Glyph.Project,
                             { navigation.show(Destination.Project, project.id) }, project)
-                        val remove = MenuAction("Remove", Glyph.MenuRemove, { navigation.show(Destination.RemoveRecent, deployment.id) }, destructive = true)
+                        val remove = MenuAction("Remove", Glyph.MenuRemove, removeFromRecents, destructive = true)
+                        val previewAction = MenuAction("Preview", Glyph.MenuPreview, preview)
                         val actions = listOf(
-                            MenuAction("Preview", Glyph.MenuPreview, { navigation.show(Destination.Preview, deployment.id) }),
                             MenuAction("Source", Glyph.GitHub, null),
                             MenuAction("Deployment", Glyph.MenuDeployment, { navigation.show(Destination.Deployment, deployment.id) }),
                             MenuAction("Branch Deployments", Glyph.MenuBranch, { navigation.show(Destination.Project, project.id, "branch", deployment.branch) }),
                         )
+                        val grouped = !route.frozen
                         RowOptions(
-                            actions = if (earlier) actions + projectAction + remove else listOf(projectAction) + actions + remove,
+                            actions = when {
+                                grouped -> listOf(projectAction) + actions + listOf(previewAction, remove)
+                                earlier -> listOf(previewAction) + actions + projectAction + remove
+                                else -> listOf(projectAction, previewAction) + actions + remove
+                            },
                             label = "Options for ${deployment.title}",
                             expanded = expanded == deployment.id,
                             onOpen = { expanded = deployment.id },
@@ -166,9 +198,11 @@ private fun RecentsList(route: DashboardRoute, navigation: DashboardNavigation) 
                             authored = deployment.elapsed,
                             separated = earlier,
                             recents = true,
+                            actionGroupStart = 4.takeIf { grouped },
                         )
                     },
-                )
+                ) }
+                if (route.frozen) row() else RecentSwipeActions(preview, removeFromRecents, row)
             }
         }
         if (removed != null && showRemoval) {

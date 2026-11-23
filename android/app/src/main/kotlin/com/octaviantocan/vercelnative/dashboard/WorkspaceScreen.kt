@@ -22,16 +22,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
@@ -45,23 +49,30 @@ private val workspaceRoutes = listOf(
 )
 
 @Composable
-internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit, backdrop: GraphicsLayer) {
+internal fun WorkspaceRail(
+    route: DashboardRoute,
+    navigation: DashboardNavigation,
+    onBack: () -> Unit,
+    backdrop: GraphicsLayer,
+    progress: () -> Float = { 1f },
+    interactive: Boolean = true,
+) {
     val palette = LocalDashboardPalette.current
     val safeInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
     val verticalInsets = safeInsets.only(WindowInsetsSides.Vertical)
     var failed by rememberSaveable { mutableStateOf(route.variant == "workspace-failed") }
     BoxWithConstraints(Modifier.fillMaxSize().windowInsetsPadding(safeInsets.only(WindowInsetsSides.Horizontal))) {
-        val panelWidth = (maxWidth - Tokens.Touch).coerceIn(
-            Tokens.WorkspaceRailWidth, Tokens.WorkspaceRailWidth + Tokens.WorkspacePanelWidth,
-        ).coerceAtMost(maxWidth)
+        val panelWidth = workspacePanelWidth(maxWidth)
         Box(
-            Modifier.align(Alignment.CenterEnd).fillMaxHeight().width(maxWidth - panelWidth)
-                .background(Color.Black.copy(alpha = Tokens.SidebarScrimOpacity))
-                .clickable(role = Role.Button, onClick = onBack)
-                .semantics { contentDescription = "Close workspace menu" },
+            Modifier.align(AbsoluteAlignment.CenterRight).fillMaxHeight().width(maxWidth - panelWidth * progress())
+                .graphicsLayer { alpha = progress() }.background(Color.Black.copy(alpha = Tokens.SidebarScrimOpacity))
+                .then(if (interactive) Modifier.clickable(role = Role.Button, onClick = onBack)
+                    .semantics { contentDescription = "Close workspace menu" } else Modifier),
         )
         Surface(
-            Modifier.align(Alignment.CenterStart).fillMaxHeight().width(panelWidth),
+            Modifier.align(AbsoluteAlignment.CenterLeft).absoluteOffset {
+                IntOffset((panelWidth * (progress() - 1f)).roundToPx(), 0)
+            }.fillMaxHeight().width(panelWidth),
             color = Color.Transparent,
         ) {
             Row {
@@ -90,7 +101,7 @@ internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigatio
                 Box(Modifier.fillMaxHeight().width(Tokens.Stroke).background(palette.insetSurface))
             }
         }
-        if (failed) {
+        if (failed && interactive) {
             DashboardGlassNotice("Can’t access Studio", error = true, retryLabel = "Retry",
                 modifier = Modifier.align(Alignment.BottomCenter).windowInsetsPadding(verticalInsets.only(WindowInsetsSides.Bottom))
                     .padding(horizontal = Tokens.Inset).padding(bottom = Tokens.DockScrollClearance),
@@ -101,6 +112,10 @@ internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigatio
         }
     }
 }
+
+internal fun workspacePanelWidth(totalWidth: Dp): Dp = (totalWidth - Tokens.Touch).coerceIn(
+    Tokens.WorkspaceRailWidth, Tokens.WorkspaceRailWidth + Tokens.WorkspacePanelWidth,
+).coerceAtMost(totalWidth)
 
 @Composable
 private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: GraphicsLayer, verticalInsets: WindowInsets) {

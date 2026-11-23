@@ -6,6 +6,7 @@ import android.graphics.LinearGradient
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -79,6 +80,10 @@ internal object DashboardMotion {
     const val PushBack = 240
     const val Search = 280
     const val Dismiss = 220
+    const val MenuOpen = Fast
+    const val MenuClose = Quick
+    const val SheetSettleFrames = 2
+    val SheetSpring = spring<Float>(dampingRatio = .74f, stiffness = 320f)
     private val SmoothOut = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
     private val EaseOut = CubicBezierEasing(0f, 0f, .58f, 1f)
     private val EaseIn = CubicBezierEasing(.42f, 0f, 1f, 1f)

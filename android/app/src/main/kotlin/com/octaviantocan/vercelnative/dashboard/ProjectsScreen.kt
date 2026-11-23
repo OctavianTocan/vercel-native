@@ -31,9 +31,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
-import androidx.compose.ui.window.PopupProperties
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
@@ -93,14 +91,14 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
                 if (favorite.isNotEmpty()) item { ProjectSectionLabel("Favorites") }
                 items(favorite, key = Project::id) { project ->
                     ProjectListRow(
-                        project, navigation, true, expanded == project.id,
+                        project, navigation, expanded == project.id,
                         { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
                     )
                 }
                 if (showFavorites) item { ProjectSectionLabel("Other projects") }
                 itemsIndexed(other, key = { _, project -> project.id }) { index, project ->
                     ProjectListRow(
-                        project, navigation, false, expanded == project.id,
+                        project, navigation, expanded == project.id,
                         { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
                         earlier = route.variant == "menu-earlier",
                         useTile = useProjectTiles,
@@ -169,7 +167,6 @@ private fun ProjectSectionLabel(title: String) {
 private fun ProjectListRow(
     project: Project,
     navigation: DashboardNavigation,
-    favorite: Boolean,
     expanded: Boolean,
     onOpen: () -> Unit,
     onClose: () -> Unit,
@@ -218,7 +215,7 @@ private fun ProjectListRow(
                         DashboardArtwork(R.drawable.dashboard_icon_chevrons, Tokens.Inset, palette.secondary)
                     } else Box(
                         Modifier.size(Tokens.IconSlot).then(
-                            if (favorite) Modifier.background(palette.projectBadge, CircleShape)
+                            if (expanded) Modifier.background(palette.projectBadge, CircleShape)
                                 .border(Tokens.Stroke, palette.insetSurface, CircleShape) else Modifier,
                         ),
                         contentAlignment = Alignment.Center,
@@ -226,7 +223,7 @@ private fun ProjectListRow(
                         DashboardArtwork(R.drawable.dashboard_icon_row_more, Tokens.IconSlot, palette.projectEllipsis)
                     }
                 }
-                if (expanded) ProjectOptions(project, navigation, earlier, onClose, onToggleFavorite)
+                ProjectOptions(project, navigation, earlier, expanded, onClose, onToggleFavorite)
             }
         }
         val divider = if (useTile) palette.projectTileDivider else palette.projectDivider
@@ -242,6 +239,7 @@ private fun ProjectOptions(
     project: Project,
     navigation: DashboardNavigation,
     earlier: Boolean,
+    expanded: Boolean,
     onClose: () -> Unit,
     onToggleFavorite: () -> Unit,
 ) {
@@ -273,7 +271,7 @@ private fun ProjectOptions(
             ProjectOptionsPosition(edgeGap, anchorGap, openingOffset, viewportGap, margin)
         }
     }
-    Popup(position, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
+    DashboardMenu(expanded, position, onClose) {
         Column(
             Modifier.dismissOutsideRoundedCard(cardRadius, shadowMargin, onClose).padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
                 .then(if (light) Modifier.shadow(Tokens.Space12, shape) else Modifier)

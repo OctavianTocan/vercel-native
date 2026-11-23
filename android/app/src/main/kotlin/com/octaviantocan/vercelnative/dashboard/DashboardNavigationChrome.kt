@@ -1,7 +1,14 @@
 package com.octaviantocan.vercelnative.dashboard
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,22 +22,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -43,6 +60,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
+import kotlin.math.abs
+import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
 
 internal val GeistText = TextStyle(
     fontFamily = FontFamily(
@@ -113,12 +133,24 @@ internal fun DashboardRootHeader(title: String, onMenu: () -> Unit) {
 @Composable
 internal fun DashboardBottomBar(
     activity: Boolean,
-    iconsOnly: Boolean,
+    reviewedLabels: Boolean,
     navigation: DashboardNavigation,
     backdrop: GraphicsLayer,
     modifier: Modifier = Modifier,
 ) {
     val palette = LocalDashboardPalette.current
+    var named by remember { mutableStateOf<String?>(null) }
+    var tapCount by remember { mutableIntStateOf(0) }
+    LaunchedEffect(tapCount) {
+        if (named != null) {
+            delay(1500)
+            named = null
+        }
+    }
+    fun showLabel(title: String) {
+        named = title
+        tapCount++
+    }
     Row(
         modifier.fillMaxWidth().padding(start = Tokens.Space20, end = Tokens.Space20, bottom = Tokens.DockBottomGap)
             .heightIn(min = Tokens.BottomBar),
@@ -138,13 +170,17 @@ internal fun DashboardBottomBar(
             Box(Modifier.offset { androidx.compose.ui.unit.IntOffset(selection.roundToPx(), 0) }
                 .fillMaxHeight().width(itemWidth).background(palette.glassSelection, CircleShape))
             Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                DashboardNavItem("Home", R.drawable.dashboard_icon_projects, !activity, iconsOnly, Modifier.weight(1f)) {
+                DashboardNavItem("Home", !activity, reviewedLabels || named == "Home", Modifier.weight(1f),
+                    icon = { DashboardArtwork(R.drawable.dashboard_icon_projects, Tokens.DockIcon, palette.glassInk) }) {
+                    showLabel("Home")
                     navigation.main(Destination.Projects)
                 }
-                DashboardNavItem("Activity", R.drawable.dashboard_icon_activity, activity, iconsOnly, Modifier.weight(1f)) {
-                    navigation.main(navigation.lastActivity)
+                ActivityDockItem(activity, reviewedLabels, reviewedLabels || named == "Activity", navigation, Modifier.weight(1f)) {
+                    showLabel("Activity")
                 }
-                DashboardNavItem("More", R.drawable.dashboard_icon_more, false, iconsOnly, Modifier.weight(1f)) {
+                DashboardNavItem("More", false, reviewedLabels || named == "More", Modifier.weight(1f),
+                    icon = { DashboardArtwork(R.drawable.dashboard_icon_more, Tokens.DockIcon, palette.glassInk) }) {
+                    showLabel("More")
                     navigation.show(Destination.More)
                 }
             }
@@ -162,25 +198,134 @@ internal fun DashboardBottomBar(
 
 @Composable
 private fun DashboardNavItem(
-    title: String, @DrawableRes icon: Int, selected: Boolean, iconsOnly: Boolean,
-    modifier: Modifier, onClick: () -> Unit,
+    title: String,
+    selected: Boolean,
+    named: Boolean,
+    modifier: Modifier,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit,
 ) {
     val palette = LocalDashboardPalette.current
+    val labelReveal by animateFloatAsState(if (named) 1f else 0f, DashboardMotion.move(DashboardMotion.Fast), label = "Dock label")
     Column(
         modifier.fillMaxHeight().heightIn(min = Tokens.BottomBar - Tokens.DockInset * 2)
             .clip(CircleShape)
             .selectable(selected, role = Role.Tab, onClick = onClick)
-            .then(if (iconsOnly) Modifier.semantics { contentDescription = title } else Modifier),
+            .semantics { contentDescription = title },
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Tokens.DockLabelGap, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.Center,
     ) {
-        DashboardArtwork(icon, Tokens.DockIcon, palette.glassInk)
-        if (!iconsOnly) Text(
-            title, color = palette.glassInk, style = GeistText, fontWeight = FontWeight.Medium,
+        icon()
+        Text(
+            title,
+            Modifier.clearAndSetSemantics {}.clipToBounds().layout { measurable, constraints ->
+                val text = measurable.measure(constraints.copy(minHeight = 0))
+                val gap = (Tokens.DockLabelGap.toPx() * labelReveal).roundToInt()
+                layout(text.width, (text.height * labelReveal).roundToInt() + gap) {
+                    text.placeWithLayer(0, gap) { alpha = labelReveal }
+                }
+            },
+            color = palette.glassInk, style = GeistText, fontWeight = FontWeight.Medium,
             fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine,
             letterSpacing = Tokens.DockLabelTracking,
             maxLines = 1, overflow = TextOverflow.Ellipsis,
         )
+    }
+}
+
+@Composable
+private fun ActivityDockItem(
+    selected: Boolean,
+    reviewed: Boolean,
+    named: Boolean,
+    navigation: DashboardNavigation,
+    modifier: Modifier,
+    onTap: () -> Unit,
+) {
+    val palette = LocalDashboardPalette.current
+    val tabs = ActivityTab.entries
+    val tab = tabs.first { it.destination == navigation.lastActivity }
+    val switching = selected && !reviewed
+    val density = LocalDensity.current.density
+    var lean by remember { mutableFloatStateOf(0f) }
+    var turned by remember { mutableStateOf(false) }
+    var forward by remember { mutableStateOf(true) }
+    val direction = when {
+        lean < -36f * density -> 1
+        lean > 36f * density -> -1
+        else -> 0
+    }
+    val step: (Int) -> Unit = { way ->
+        val index = tabs.indexOfFirst { it.destination == navigation.lastActivity }
+        forward = way > 0
+        navigation.main(tabs[(index + way).mod(tabs.size)].destination)
+    }
+    LaunchedEffect(switching, direction) {
+        if (!switching) lean = 0f
+        if (!switching || direction == 0) return@LaunchedEffect
+        delay(260)
+        while (true) {
+            turned = true
+            step(direction)
+            val amount = (abs(lean) / (130f * density)).coerceIn(0f, 1f)
+            delay((720 - 340 * amount).toLong())
+        }
+    }
+    val gestures = if (switching) Modifier.dashboardHorizontalDrag(
+        onStart = { turned = false; lean = 0f },
+        onDelta = { lean += it },
+        onStop = { speed, completed ->
+            if (completed && !turned) {
+                val flick = if (abs(speed) > 650f * density) if (speed < 0f) 1 else -1 else 0
+                val way = if (direction != 0) direction else flick
+                if (way != 0) step(way)
+            }
+            lean = 0f
+        },
+    ).semantics {
+        stateDescription = tab.name
+        customActions = listOf(
+            CustomAccessibilityAction("Previous Activity tab") { step(-1); true },
+            CustomAccessibilityAction("Next Activity tab") { step(1); true },
+        )
+    } else Modifier
+    DashboardNavItem("Activity", selected, named, modifier.then(gestures), icon = {
+        Box(
+            Modifier.fillMaxWidth().height(Tokens.DockIcon).then(if (switching) Modifier.drawBehind {
+                val reach = Tokens.Space8.toPx() * .44f
+                val stroke = Tokens.Stroke.toPx() * 1.5f
+                val center = Offset(size.width / 2f, size.height / 2f)
+                val inset = size.height / 2f + Tokens.Space8.toPx() + reach
+                for (side in listOf(-1, 1)) {
+                    val tip = center.copy(x = center.x + side * inset)
+                    val inner = tip.x - side * reach
+                    drawLine(palette.secondary, Offset(inner, tip.y - reach), tip, stroke, StrokeCap.Round)
+                    drawLine(palette.secondary, tip, Offset(inner, tip.y + reach), stroke, StrokeCap.Round)
+                }
+            } else Modifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            AnimatedContent(
+                targetState = tab.takeIf { switching },
+                transitionSpec = {
+                    val sign = if (forward) 1 else -1
+                    val spec = DashboardMotion.move<androidx.compose.ui.unit.IntOffset>(DashboardMotion.Fast)
+                    (slideInHorizontally(spec) { sign * it / 2 } + fadeIn(DashboardMotion.move(DashboardMotion.Fast))) togetherWith
+                        (slideOutHorizontally(spec) { -sign * it / 2 } + fadeOut(DashboardMotion.move(DashboardMotion.Quick)))
+                },
+                label = "Activity category icon",
+            ) { shown ->
+                val icon = when (shown) {
+                    ActivityTab.Recents -> R.drawable.dashboard_figma_log_clock
+                    ActivityTab.Usage -> R.drawable.dashboard_icon_analytics
+                    else -> R.drawable.dashboard_icon_activity
+                }
+                DashboardArtwork(icon, Tokens.DockIcon, palette.glassInk)
+            }
+        }
+    }) {
+        onTap()
+        navigation.main(navigation.lastActivity)
     }
 }
 

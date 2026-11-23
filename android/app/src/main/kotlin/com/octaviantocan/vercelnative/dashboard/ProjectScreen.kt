@@ -1,10 +1,5 @@
 package com.octaviantocan.vercelnative.dashboard
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,6 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -37,9 +36,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun ProjectSheetContent(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
@@ -57,9 +58,9 @@ internal fun ProjectScreen(route: DashboardRoute, navigation: DashboardNavigatio
     val project = navigation.project(route.target)
     val latest = DashboardFixtures.deployments(project.id).first()
     val palette = LocalDashboardPalette.current
-    var deployments by rememberSaveable {
-        mutableStateOf(route.variant in setOf("deployments", "deployment-menu", "branch", "cleared"))
-    }
+    val firstTab = if (route.variant in setOf("deployments", "deployment-menu", "branch", "cleared")) 1 else 0
+    val pager = rememberPagerState(initialPage = firstTab) { 2 }
+    val scope = rememberCoroutineScope()
     var branch by rememberSaveable { mutableStateOf(route.detail ?: if (route.variant == "branch") "main" else null) }
     var expanded by rememberSaveable { mutableStateOf(if (route.variant == "deployment-menu") latest.id else null) }
     val listState = rememberLazyListState()
@@ -80,30 +81,28 @@ internal fun ProjectScreen(route: DashboardRoute, navigation: DashboardNavigatio
                 .padding(top = Tokens.Space8 + Tokens.Space2, bottom = Tokens.Space4)
                 .height(Tokens.ProjectSheetSegments)
                 .dashboardGlass()
-                .padding(Tokens.Space6),
+                .padding(Tokens.Space6)
+                .selectableGroup()
+                .dragDashboardTabs(pager),
         ) {
             val segment = (maxWidth - Tokens.Space4) / 2
-            val selectedOffset by animateDpAsState(if (deployments) segment + Tokens.Space4 else androidx.compose.ui.unit.Dp.Hairline,
-                DashboardMotion.prototype(DashboardMotion.Tabs), label = "Project segment selection")
-            Box(Modifier.offset(x = selectedOffset).width(segment).fillMaxHeight().background(palette.glassSelection, CircleShape))
+            Box(Modifier.offset {
+                IntOffset(((segment + Tokens.Space4) * (pager.currentPage + pager.currentPageOffsetFraction)).roundToPx(), 0)
+            }.width(segment).fillMaxHeight().background(palette.glassSelection, CircleShape))
             Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
-                for ((selected, label) in listOf(false to "Overview", true to "Deployments")) {
-                    Surface(
-                        onClick = { deployments = selected }, modifier = Modifier.weight(1f).fillMaxHeight(),
-                        color = Color.Transparent, contentColor = palette.ink, shape = CircleShape,
-                    ) { Box(contentAlignment = Alignment.Center) { Text(label, fontSize = Tokens.Body, lineHeight = Tokens.ProjectSectionLine) } }
+                listOf("Overview", "Deployments").forEachIndexed { index, label ->
+                    Box(
+                        Modifier.weight(1f).fillMaxHeight().clip(CircleShape)
+                            .selectable(pager.currentPage == index, role = Role.Tab) {
+                                scope.launch { pager.animateScrollToPage(index, animationSpec = DashboardMotion.move(DashboardMotion.MenuOpen)) }
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) { Text(label, fontSize = Tokens.Body, lineHeight = Tokens.ProjectSectionLine) }
                 }
             }
         }
-        AnimatedContent(
-            targetState = deployments,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            transitionSpec = {
-                fadeIn(DashboardMotion.move(DashboardMotion.Fast)) togetherWith fadeOut(DashboardMotion.move(DashboardMotion.Quick))
-            },
-            label = "Project tab content",
-        ) { selected ->
-            if (selected) DashboardList(
+        HorizontalPager(pager, Modifier.weight(1f).fillMaxWidth(), beyondViewportPageCount = 1) { tab ->
+            if (tab == 1) DashboardList(
                 Modifier.fillMaxSize().padding(horizontal = Tokens.Inset),
                 state = listState, surface = palette.sheet,
                 contentPadding = PaddingValues(top = if (branch == null) Tokens.ProjectSheetListTop else Tokens.ProjectDetailGap,
@@ -152,61 +151,63 @@ internal fun ProjectScreen(route: DashboardRoute, navigation: DashboardNavigatio
                         },
                     )
                 }
-            } else DashboardList(
-                Modifier.fillMaxSize(),
-                state = overviewState, surface = palette.sheet,
-                contentPadding = PaddingValues(start = Tokens.Inset, top = Tokens.ProjectSheetListTop, end = Tokens.Inset, bottom = Tokens.Space20),
-                verticalArrangement = Arrangement.spacedBy(Tokens.Space12),
-            ) {
-                item {
-                    DeploymentPreviewCard(project, latest, outlined = route.variant != "compact") {
-                        navigation.show(Destination.Preview, latest.id, "project-overview")
+            } else Column(Modifier.fillMaxSize()) {
+                DashboardList(
+                    Modifier.weight(1f).fillMaxWidth(),
+                    state = overviewState, surface = palette.sheet,
+                    contentPadding = PaddingValues(start = Tokens.Inset, top = Tokens.ProjectSheetListTop, end = Tokens.Inset, bottom = Tokens.Space20),
+                    verticalArrangement = Arrangement.spacedBy(Tokens.Space12),
+                ) {
+                    item {
+                        DeploymentPreviewCard(project, latest, outlined = route.variant != "compact") {
+                            navigation.show(Destination.Preview, latest.id, "project-overview")
+                        }
                     }
-                }
-                item {
-                    ProjectSectionLabel("Project details")
-                    Surface(shape = RoundedCornerShape(Tokens.ProjectPreviewRadius), color = palette.projectSheetGroup, contentColor = palette.ink) {
-                        Column {
-                            ProjectInfoRow("Team", DashboardFixtures.workspace(navigation.workspaceOf(project)).name, Glyph.Team,
-                                valuePrefix = {
-                                    Box(Modifier.size(Tokens.DockIcon).background(
-                                        Brush.linearGradient(listOf(palette.link, palette.chart)), CircleShape,
-                                    ))
-                                })
-                            ProjectInfoDivider()
-                            ProjectInfoRow("Project", navigation.projectName(project), Glyph.Layers)
-                            ProjectInfoDivider()
-                            ProjectInfoRow("Domains", DashboardFixtures.domains(project.id).size.toString(), Glyph.ProjectDomain, trailing = Glyph.Chevron) {
-                                navigation.show(Destination.ProjectDomains, project.id)
+                    item {
+                        ProjectSectionLabel("Project details")
+                        Surface(shape = RoundedCornerShape(Tokens.ProjectPreviewRadius), color = palette.projectSheetGroup, contentColor = palette.ink) {
+                            Column {
+                                ProjectInfoRow("Team", DashboardFixtures.workspace(navigation.workspaceOf(project)).name, Glyph.Team,
+                                    valuePrefix = {
+                                        Box(Modifier.size(Tokens.DockIcon).background(
+                                            Brush.linearGradient(listOf(palette.link, palette.chart)), CircleShape,
+                                        ))
+                                    })
+                                ProjectInfoDivider()
+                                ProjectInfoRow("Project", navigation.projectName(project), Glyph.Layers)
+                                ProjectInfoDivider()
+                                ProjectInfoRow("Domains", DashboardFixtures.domains(project.id).size.toString(), Glyph.ProjectDomain, trailing = Glyph.Chevron) {
+                                    navigation.show(Destination.ProjectDomains, project.id)
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        ProjectSectionLabel("GitHub")
+                        Surface(shape = RoundedCornerShape(Tokens.ProjectPreviewRadius), color = palette.projectSheetGroup, contentColor = palette.ink) {
+                            Column {
+                                val outbound = Glyph.Outbound.takeUnless { route.variant == "compact" }
+                                ProjectInfoRow("Branch", latest.branch, Glyph.Branch, mono = true, trailing = outbound)
+                                ProjectInfoDivider()
+                                ProjectInfoRow("Commit", latest.sha, Glyph.Commit, mono = true, trailing = outbound)
+                                ProjectInfoDivider()
+                                ProjectInfoRow("Status", "Up to date", Glyph.Info, valuePrefix = {
+                                    Box(Modifier.size(Tokens.Space8).background(palette.projectSyncDot, CircleShape))
+                                }) {
+                                    navigation.show(Destination.GitHubSync, project.id)
+                                }
                             }
                         }
                     }
                 }
-                item {
-                    ProjectSectionLabel("GitHub")
-                    Surface(shape = RoundedCornerShape(Tokens.ProjectPreviewRadius), color = palette.projectSheetGroup, contentColor = palette.ink) {
-                        Column {
-                            val outbound = Glyph.Outbound.takeUnless { route.variant == "compact" }
-                            ProjectInfoRow("Branch", latest.branch, Glyph.Branch, mono = true, trailing = outbound)
-                            ProjectInfoDivider()
-                            ProjectInfoRow("Commit", latest.sha, Glyph.Commit, mono = true, trailing = outbound)
-                            ProjectInfoDivider()
-                            ProjectInfoRow("Status", "Up to date", Glyph.Info, valuePrefix = {
-                                Box(Modifier.size(Tokens.Space8).background(palette.projectSyncDot, CircleShape))
-                            }) {
-                                navigation.show(Destination.GitHubSync, project.id)
-                            }
-                        }
-                    }
+                Row(
+                    Modifier.fillMaxWidth().padding(end = Tokens.Inset, bottom = Tokens.Space32),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    IconControl(Glyph.ProjectSettings, "Project Settings", { navigation.show(Destination.ProjectSettings, project.id) },
+                        visualSize = Tokens.ProjectSettingsButton)
                 }
             }
-        }
-        if (!deployments) Row(
-            Modifier.fillMaxWidth().padding(end = Tokens.Inset, bottom = Tokens.Space32),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            IconControl(Glyph.ProjectSettings, "Project Settings", { navigation.show(Destination.ProjectSettings, project.id) },
-                visualSize = Tokens.ProjectSettingsButton)
         }
     }
 }
