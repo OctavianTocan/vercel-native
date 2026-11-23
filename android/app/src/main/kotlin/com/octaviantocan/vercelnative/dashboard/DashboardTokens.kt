@@ -79,6 +79,63 @@ internal object DashboardTokens {
     val RecentMetadataHeight = 28.dp
     val RecentMetadataSpacing = 10.dp
     val ProjectOptionsGear = 18.9.dp
+    val AlertRow = 99.dp
+    val AlertTopGap = 32.dp
+    val AlertTextGap = 3.dp
+    val AlertMark = 24.dp
+    val SearchPanelRadius = 24.dp
+    val SearchSelectionRadius = 16.dp
+    val SearchClearance = 8.dp
+    val SearchTextGap = 10.dp
+    val SearchIconStart = 17.dp
+    val SearchPanelHeight = 345.dp
+    val SearchIconBox = 32.dp
+    val SearchProjectMark = 26.dp
+    val GlassBlur = 8.dp
+    val GlassDepth = 20.dp
+    val SearchBackdropBlur = 4.dp
+    val AlertMetricsHeight = 78.dp
+    val AlertChartHeight = 185.dp
+    val AlertPillHeight = 27.dp
+    val AlertContextRow = 46.dp
+    val AlertDetailHeaderInset = 12.dp
+    val AlertMeasurePad = 14.dp
+    val AlertPlanButton = 142.dp
+    val AlertSkeletonTime = 41.dp
+    val AlertLoadingRadius = 4.dp
+    val FilterGlyph = 19.dp
+    val ProjectSheetRadius = 34.dp
+    val ProjectSheetBody = 813.dp
+    val ProjectSheetMark = 34.dp
+    val ProjectSheetSegments = 50.dp
+    val ProjectSheetListTop = 25.dp
+    val ProjectPreviewHeight = 138.dp
+    val ProjectPreviewRadius = 22.dp
+    val ProfileAvatar = 62.dp
+    val ProfileAvatarBlock = 70.dp
+    val ProfileFieldHeight = 40.dp
+    val ProfileCardRadius = 22.dp
+    val ProfilePickerHeight = 45.dp
+    val LogActionSize = 42.dp
+    val LogFilterFace = 36.dp
+    val LogTimelineHeight = 16.dp
+    val LogTimestampWidth = 103.dp
+    val LogRowHeight = 60.dp
+    val UsageCreditHeight = 90.dp
+    val UsageChartPanel = 340.dp
+    val UsageChartGrid = 100.dp
+    val BodyInset = 15.dp
+    val DomainFieldHeight = 46.dp
+    val WorkspaceDomainRow = 72.dp
+    val ObservabilityChartPanel = 206.dp
+    val RecentsOptionsWidth = 246.dp
+    val RecentsOptionsTimestamp = 35.dp
+    val DeploymentOptionsWidth = 229.dp
+    val MenuGlyph = 19.dp
+    val MenuRemoveGlyph = 21.dp
+    val OutboundGlyph = 10.dp
+    val AlertPlotHeight = 110.dp
+    val ProjectSettingsButton = 52.dp
     val Caption = 11.sp
     val Metadata = 12.sp
     val Body = 15.sp
@@ -97,10 +154,28 @@ internal object DashboardTokens {
     val DockLabelTracking = -0.28.sp
     val RecentMetadata = 13.sp
     val RecentMetadataLine = 18.sp
+    val AlertProjectSize = 13.sp
+    val AlertTimeSize = 11.sp
+    val SearchDetailSize = 13.sp
+    val SearchDetailLine = 18.sp
+    val AlertDetailTitle = 24.sp
+    val AlertDetailTitleLine = 30.sp
+    val AlertMetricLine = 32.sp
+    val MetadataLine = 17.sp
+    val EmptyTitleLine = 23.sp
+    val ChartCaption = 10.sp
+    val PlanTitleLine = 28.sp
+    val AlertPillLine = 15.sp
+    val SheetTitleLine = 22.sp
+    val DetailTitle = 19.sp
+    val UsageTitle = 23.sp
+    val UsageTitleLine = 29.sp
+    val ProfileHeadingLine = 23.sp
     const val ScreenFadeMillis = 150
     const val ScrimOpacity = 0.62f
     const val ProjectSheetFraction = 0.98f
     const val SidebarScrimOpacity = 0.55f
+    const val AlertLoadingRows = 6
 }
 
 internal data class DashboardPalette(
@@ -144,6 +219,8 @@ internal data class DashboardPalette(
     val projectTileDivider: Color,
     val workspaceBadgeSelected: Color,
     val workspaceBadgeInk: Color,
+    val previewPaper: Color,
+    val previewInk: Color,
 ) {
     companion object {
         val Dark = DashboardPalette(
@@ -187,6 +264,8 @@ internal data class DashboardPalette(
             projectTileDivider = Color(0xFF2B2B2B),
             workspaceBadgeSelected = Color(0xFF212121),
             workspaceBadgeInk = Color(0xFFC7C7C7),
+            previewPaper = Color(0xFFECEAE7),
+            previewInk = Color(0xFF242323),
         )
 
         val Light = DashboardPalette(
@@ -230,6 +309,8 @@ internal data class DashboardPalette(
             projectTileDivider = Color(0xFFE6E6E6),
             workspaceBadgeSelected = Color(0xFFEAEAEA),
             workspaceBadgeInk = Color(0xFF525252),
+            previewPaper = Color(0xFFECEAE7),
+            previewInk = Color(0xFF242323),
         )
     }
 }

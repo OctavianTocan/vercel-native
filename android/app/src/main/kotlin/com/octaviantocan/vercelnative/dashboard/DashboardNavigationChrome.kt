@@ -1,8 +1,8 @@
 package com.octaviantocan.vercelnative.dashboard
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -10,16 +10,15 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlurEffect
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.clipRect
@@ -53,6 +52,26 @@ internal val GeistText = TextStyle(
     ),
     platformStyle = PlatformTextStyle(includeFontPadding = false),
     lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None),
+)
+
+internal val GeistMono = FontFamily(Font(R.font.geist_mono))
+
+internal val DashboardTypography = Typography(
+    displayLarge = GeistText.copy(fontSize = Tokens.Large, fontWeight = FontWeight.SemiBold),
+    displayMedium = GeistText.copy(fontSize = Tokens.Metric, fontWeight = FontWeight.SemiBold),
+    displaySmall = GeistText.copy(fontSize = Tokens.Heading, fontWeight = FontWeight.SemiBold),
+    headlineLarge = GeistText.copy(fontSize = Tokens.Large, fontWeight = FontWeight.SemiBold),
+    headlineMedium = GeistText.copy(fontSize = Tokens.Metric, fontWeight = FontWeight.SemiBold),
+    headlineSmall = GeistText.copy(fontSize = Tokens.Heading, fontWeight = FontWeight.SemiBold),
+    titleLarge = GeistText.copy(fontSize = Tokens.RootTitle, lineHeight = Tokens.ListTitleLine, fontWeight = FontWeight.SemiBold),
+    titleMedium = GeistText.copy(fontSize = Tokens.ListTitle, lineHeight = Tokens.ListTitleLine, fontWeight = FontWeight.Medium),
+    titleSmall = GeistText.copy(fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium),
+    bodyLarge = GeistText.copy(fontSize = Tokens.Body),
+    bodyMedium = GeistText.copy(fontSize = Tokens.ListSubtitle),
+    bodySmall = GeistText.copy(fontSize = Tokens.Metadata),
+    labelLarge = GeistText.copy(fontSize = Tokens.Body, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium),
+    labelMedium = GeistText.copy(fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine, fontWeight = FontWeight.Medium),
+    labelSmall = GeistText.copy(fontSize = Tokens.Caption, fontWeight = FontWeight.Medium),
 )
 
 @Composable
@@ -104,19 +123,28 @@ internal fun DashboardBottomBar(
         horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
+        BoxWithConstraints(
             Modifier.weight(1f).dashboardGlass(backdrop).padding(Tokens.DockInset)
-                .height(IntrinsicSize.Min).selectableGroup(),
-            verticalAlignment = Alignment.CenterVertically,
+                .height(Tokens.BottomBar - Tokens.DockInset * 2).selectableGroup(),
         ) {
-            DashboardNavItem("Home", R.drawable.dashboard_icon_projects, !activity, iconsOnly, Modifier.weight(1f)) {
-                navigation.main(Destination.Projects)
-            }
-            DashboardNavItem("Activity", R.drawable.dashboard_icon_activity, activity, iconsOnly, Modifier.weight(1f)) {
-                navigation.main(navigation.lastActivity)
-            }
-            DashboardNavItem("More", R.drawable.dashboard_icon_more, false, iconsOnly, Modifier.weight(1f)) {
-                navigation.show(Destination.More)
+            val itemWidth = maxWidth / 3
+            val selection by animateDpAsState(
+                if (activity) itemWidth else itemWidth * 0,
+                animationSpec = DashboardMotion.move(DashboardMotion.Medium),
+                label = "Dock selection",
+            )
+            Box(Modifier.offset { androidx.compose.ui.unit.IntOffset(selection.roundToPx(), 0) }
+                .fillMaxHeight().width(itemWidth).background(palette.glassSelection, CircleShape))
+            Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                DashboardNavItem("Home", R.drawable.dashboard_icon_projects, !activity, iconsOnly, Modifier.weight(1f)) {
+                    navigation.main(Destination.Projects)
+                }
+                DashboardNavItem("Activity", R.drawable.dashboard_icon_activity, activity, iconsOnly, Modifier.weight(1f)) {
+                    navigation.main(navigation.lastActivity)
+                }
+                DashboardNavItem("More", R.drawable.dashboard_icon_more, false, iconsOnly, Modifier.weight(1f)) {
+                    navigation.show(Destination.More)
+                }
             }
         }
         Box(
@@ -138,7 +166,7 @@ private fun DashboardNavItem(
     val palette = LocalDashboardPalette.current
     Column(
         modifier.fillMaxHeight().heightIn(min = Tokens.BottomBar - Tokens.DockInset * 2)
-            .clip(CircleShape).background(if (selected) palette.glassSelection else Color.Transparent)
+            .clip(CircleShape)
             .selectable(selected, role = Role.Tab, onClick = onClick)
             .then(if (iconsOnly) Modifier.semantics { contentDescription = title } else Modifier),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -154,14 +182,16 @@ private fun DashboardNavItem(
     }
 }
 
-internal fun Modifier.captureDashboardBackdrop(content: GraphicsLayer, blurred: GraphicsLayer): Modifier =
+internal fun Modifier.captureDashboardBackdrop(
+    content: GraphicsLayer, blurred: GraphicsLayer, blur: Dp, showBlurred: Boolean,
+): Modifier =
     drawWithCache {
-        val radius = Tokens.Space8.toPx()
+        val radius = blur.toPx()
         blurred.renderEffect = BlurEffect(radius, radius, TileMode.Clamp)
         onDrawWithContent {
             content.record { this@onDrawWithContent.drawContent() }
-            drawLayer(content)
             blurred.record { drawLayer(content) }
+            drawLayer(if (showBlurred) blurred else content)
         }
     }
 
@@ -172,21 +202,4 @@ internal fun Modifier.dashboardBackdrop(blurred: GraphicsLayer): Modifier {
         clipRect { translate(left = -origin.x, top = -origin.y) { drawLayer(blurred) } }
         drawContent()
     }
-}
-
-@Composable
-private fun Modifier.dashboardGlass(blurred: GraphicsLayer? = null): Modifier {
-    val palette = LocalDashboardPalette.current
-    val dark = palette == DashboardPalette.Dark
-    val rim = if (dark) {
-        Brush.linearGradient(listOf(Color.White.copy(alpha = 0.48f), Color.White.copy(alpha = 0.13f), Color.White.copy(alpha = 0.32f)))
-    } else {
-        Brush.linearGradient(listOf(Color.White, palette.border.copy(alpha = 0.35f)))
-    }
-    val shadowColor = Color.Black.copy(alpha = if (dark) 1f else 0.42f)
-    val surface = shadow(Tokens.Space8, CircleShape, clip = false, ambientColor = shadowColor, spotColor = shadowColor)
-        .clip(CircleShape)
-    val tint = if (!dark && blurred == null) palette.canvas else palette.glassTint
-    return (if (blurred == null) surface else surface.dashboardBackdrop(blurred))
-        .background(tint).border(Tokens.Stroke, rim, CircleShape)
 }

@@ -3,11 +3,12 @@ package com.octaviantocan.vercelnative.dashboard
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
+import kotlinx.coroutines.launch
 
 internal enum class Presentation { Screen, Sheet, Rail, Search }
 
@@ -113,6 +116,7 @@ internal class DashboardNavigation(showDesigns: Boolean) {
 
     val current get() = backStack.last()
     val screen get() = backStack.last { it.route.destination.presentation == Presentation.Screen }
+    val hasParentSheet get() = backStack.getOrNull(backStack.lastIndex - 1)?.route?.destination?.presentation == Presentation.Sheet
     val currentWorkspace get() = DashboardFixtures.workspace(workspaceId)
 
     fun workspaceOf(project: Project) = transfers[project.id] ?: project.workspaceId
@@ -224,7 +228,7 @@ internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
     DashboardSystemBars(dark)
     val systemInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
 
-    MaterialTheme(colorScheme = scheme) {
+    MaterialTheme(colorScheme = scheme, typography = DashboardTypography) {
         CompositionLocalProvider(LocalDashboardPalette provides palette) {
             Surface(Modifier.fillMaxSize()) {
                 Box(Modifier.fillMaxSize()) {
@@ -236,22 +240,29 @@ internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
                         DashboardEntry(-top.key, reviewedUnderlay(route))
                     } else base
                     val showDock = route.destination != Destination.Search && underlay.route.destination.hasDock()
-                    Box(Modifier.matchParentSize().captureDashboardBackdrop(content, backdrop).background(palette.canvas)) {
+                    val searching = route.destination == Destination.Search
+                    val blur = if (searching) Tokens.SearchBackdropBlur else Tokens.GlassBlur
+                    Box(Modifier.matchParentSize().captureDashboardBackdrop(content, backdrop, blur, searching).background(palette.canvas)) {
                         AnimatedContent(
                             targetState = underlay,
+                            contentKey = { entry ->
+                                if (entry.route.destination in activityDestinations && !entry.route.frozen) "activity" else entry.key
+                            },
                             transitionSpec = {
-                                if (initialState.route.destination in activityDestinations && targetState.route.destination in activityDestinations) {
-                                    EnterTransition.None togetherWith ExitTransition.None
-                                } else {
-                                    fadeIn(tween(Tokens.ScreenFadeMillis)) togetherWith fadeOut(tween(Tokens.ScreenFadeMillis))
-                                }
+                                val direction = if (initialState.key > targetState.key) -1 else 1
+                                val duration = if (initialState.route.destination in activityDestinations &&
+                                    targetState.route.destination in activityDestinations) DashboardMotion.Fast else DashboardMotion.Slow
+                                (fadeIn(DashboardMotion.move(duration)) +
+                                    slideInHorizontally(DashboardMotion.move(duration)) { direction * it / 6 }) togetherWith
+                                    (fadeOut(DashboardMotion.move(DashboardMotion.Quick)) +
+                                        slideOutHorizontally(DashboardMotion.move(duration)) { -direction * it / 12 })
                             },
                             label = "Dashboard destination",
                         ) { entry ->
                             val destination = entry.route.destination
                             val root = destination == Destination.Projects || destination in activityDestinations
-                            val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
-                                "root-$destination-${navigation.workspaceId}"
+                                val stateKey = if (root && !entry.route.frozen && entry.key >= 0) {
+                                    "root-${if (destination in activityDestinations) "Activity" else destination.name}-${navigation.workspaceId}"
                             } else "screen-${entry.key}"
                             holder.SaveableStateProvider(stateKey) {
                                 Box(
@@ -268,20 +279,40 @@ internal fun Dashboard(navigation: DashboardNavigation, onExit: () -> Unit) {
                         activity = underlay.route.destination in activityDestinations,
                         iconsOnly = underlay.route.variant == "icons",
                         navigation = navigation,
-                        backdrop = backdrop,
+                        backdrop = content,
                         modifier = Modifier.align(Alignment.BottomCenter).windowInsetsPadding(
                             systemInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
                         ),
                     )
-                    if (top != base) {
-                        holder.SaveableStateProvider("overlay-${top.key}") {
-                            when (route.destination.presentation) {
-                                Presentation.Sheet -> DashboardSheetHost(route, navigation, onBack)
-                                Presentation.Search -> SearchOverlay(route, navigation, onBack)
-                                Presentation.Rail -> WorkspaceRail(route, navigation, onBack, backdrop)
-                                Presentation.Screen -> Unit
+                    val overlay = top.takeIf { top != base }
+                    AnimatedContent(
+                        targetState = overlay?.takeIf { it.route.destination.presentation != Presentation.Sheet },
+                        modifier = Modifier.matchParentSize(),
+                        transitionSpec = {
+                            val entering = targetState?.route?.destination?.presentation
+                            val leaving = initialState?.route?.destination?.presentation
+                            val enter = fadeIn(DashboardMotion.move(DashboardMotion.Fast)) + when (entering) {
+                                Presentation.Rail -> slideInHorizontally(DashboardMotion.move(DashboardMotion.Medium)) { -it / 8 }
+                                else -> slideInVertically(DashboardMotion.move(DashboardMotion.Fast)) { it / 18 }
+                            }
+                            val exit = fadeOut(DashboardMotion.move(DashboardMotion.Quick)) + when (leaving) {
+                                Presentation.Rail -> slideOutHorizontally(DashboardMotion.move(DashboardMotion.Fast)) { -it / 8 }
+                                else -> slideOutVertically(DashboardMotion.move(DashboardMotion.Fast)) { it / 18 }
+                            }
+                            enter togetherWith exit
+                        },
+                        label = "Dashboard overlay",
+                    ) { entry ->
+                        if (entry != null) holder.SaveableStateProvider("overlay-${entry.key}") {
+                            when (entry.route.destination.presentation) {
+                                Presentation.Search -> SearchOverlay(entry.route, navigation, onBack, content, entry == overlay)
+                                Presentation.Rail -> WorkspaceRail(entry.route, navigation, onBack, backdrop)
+                                else -> Unit
                             }
                         }
+                    }
+                    if (overlay?.route?.destination?.presentation == Presentation.Sheet) {
+                        DashboardSheetHost(overlay, navigation, onBack, holder)
                     }
                 }
             }
@@ -341,37 +372,72 @@ private fun DashboardScreen(route: DashboardRoute, navigation: DashboardNavigati
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DashboardSheetHost(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
+private fun DashboardSheetHost(entry: DashboardEntry, navigation: DashboardNavigation, onBack: () -> Unit, holder: SaveableStateHolder) {
     val palette = LocalDashboardPalette.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val project = entry.route.destination == Destination.Project
+    val scope = rememberCoroutineScope()
+    var closing by remember(entry.key) { mutableStateOf(false) }
+    val close: () -> Unit = {
+        if (navigation.hasParentSheet) onBack()
+        else if (!closing) {
+            closing = true
+            scope.launch {
+                sheetState.hide()
+                if (!sheetState.isVisible && navigation.current == entry) onBack()
+                closing = false
+            }
+        }
+    }
     ModalBottomSheet(
         onDismissRequest = onBack,
+        modifier = if (project) Modifier.padding(bottom = Tokens.Inset) else Modifier,
         sheetState = sheetState,
         containerColor = palette.sheet,
         contentColor = palette.ink,
         scrimColor = palette.canvas.copy(alpha = Tokens.ScrimOpacity),
-        shape = RoundedCornerShape(topStart = Tokens.SheetRadius, topEnd = Tokens.SheetRadius),
+        shape = if (project) RoundedCornerShape(Tokens.ProjectSheetRadius)
+        else RoundedCornerShape(topStart = Tokens.SheetRadius, topEnd = Tokens.SheetRadius),
         dragHandle = {
             Box(
-                Modifier.padding(top = Tokens.Space8, bottom = Tokens.Space4)
+                Modifier.padding(top = if (project) Tokens.Space4 else Tokens.Space8,
+                    bottom = if (project) Tokens.Space2 else Tokens.Space4)
                     .size(width = Tokens.RowIcon, height = Tokens.Space4)
                     .background(palette.border, CircleShape)
             )
         },
     ) {
-        val maxHeight = if (route.destination in setOf(Destination.Project, Destination.ProjectDomains, Destination.Transfer)) {
-            Tokens.SheetMaxHeight
-        } else Tokens.CompactSheetMaxHeight
-        Column(Modifier.fillMaxWidth().heightIn(max = maxHeight)) {
-            when (route.destination) {
-                Destination.Project, Destination.ProjectDomains, Destination.Domain, Destination.GitHubSync, Destination.Transfer ->
-                    ProjectSheetContent(route, navigation, onBack)
-                Destination.Preview, Destination.Toolbar, Destination.RemoveRecent ->
-                    DeploymentSheetContent(route, navigation, onBack)
-                Destination.LogFilters, Destination.LogEvent, Destination.LogDownload ->
-                    LogSheetContent(route, navigation, onBack)
-                Destination.Help -> HelpSheet(onBack, docsOnly = route.variant == "docs")
-                else -> AccountSheetContent(route, navigation, onBack)
+        AnimatedContent(
+            targetState = entry,
+            transitionSpec = {
+                val direction = if (initialState.key > targetState.key) -1 else 1
+                (fadeIn(DashboardMotion.move(DashboardMotion.Fast)) +
+                    slideInHorizontally(DashboardMotion.move(DashboardMotion.Medium)) { direction * it / 8 }) togetherWith
+                    fadeOut(DashboardMotion.move(DashboardMotion.Quick))
+            },
+            label = "Sheet destination",
+        ) { current ->
+            val route = current.route
+            val maxHeight = when (route.destination) {
+                Destination.Project -> Tokens.ProjectSheetBody
+                Destination.ProjectDomains, Destination.Transfer -> Tokens.SheetMaxHeight
+                else -> Tokens.CompactSheetMaxHeight
+            }
+            holder.SaveableStateProvider("overlay-${current.key}") {
+                CompositionLocalProvider(LocalDashboardScrollPaper provides palette.sheet) {
+                    Column(Modifier.fillMaxWidth().heightIn(max = maxHeight)) {
+                        when (route.destination) {
+                            Destination.Project, Destination.ProjectDomains, Destination.Domain, Destination.GitHubSync, Destination.Transfer ->
+                                ProjectSheetContent(route, navigation, close)
+                            Destination.Preview, Destination.Toolbar, Destination.RemoveRecent ->
+                                DeploymentSheetContent(route, navigation, close)
+                            Destination.LogFilters, Destination.LogEvent, Destination.LogDownload ->
+                                LogSheetContent(route, navigation, close)
+                            Destination.Help -> HelpSheet(close, docsOnly = route.variant == "docs")
+                            else -> AccountSheetContent(route, navigation, close)
+                        }
+                    }
+                }
             }
         }
     }

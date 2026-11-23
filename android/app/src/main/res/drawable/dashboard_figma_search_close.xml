@@ -1,0 +1,6 @@
+<!-- Approved Figma vector 479:1652. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="22dp" android:height="22dp" android:viewportWidth="22" android:viewportHeight="22">
+    <group android:translateX="2.5" android:translateY="2.5">
+        <path android:pathData="M1.1499 1.15039L15.6499 15.6504M15.6499 1.15039L1.1499 15.6504" android:strokeColor="#EDEDED" android:strokeWidth="2.3" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

@@ -12,3 +12,12 @@ The Projects title and workspace button MUST stay visible as the project rows sc
 
 @cc [owner:OctavianTocan,label:design] projects-and-recents-geometry
 Keep the divider inside each 76 dp Projects row and 96 dp Recents row. Recents starts 14 dp below the Activity tabs. The icon-only Projects preview uses 32 dp project tiles and up/down chevrons. Project Options opens next to the tapped ellipsis after scrolling, using its approved placement for each theme. A tap outside the visible card closes the menu. Favorite actions update the visible grouping. Workspace menu controls clear system bars and display cutouts. Sources: Figma frames 402:4957, 225:2, 228:2750, 604:3584 and 604:4911.
+
+@cc [owner:OctavianTocan,label:design] dashboard-visual-fidelity
+Use the approved Figma glyph artwork at its visible size and center it in the control slot. Use Geist for dashboard text and Geist Mono for code and log values. Match the measured control outline and keep its touch target accessible. Sources: Figma frames 225:257, 513:1112 and 468:6875.
+
+@cc [owner:OctavianTocan,label:design] dashboard-scroll-and-motion
+Use Inventory’s progressive edge blur on the dashboard scroll surfaces. Its top edge appears after leaving the start and its bottom edge clears when reaching the end. Keep the Activity header and tabs fixed while their content changes. Floating glass samples and refracts the content moving underneath, with a blur and tint fallback on Android 12L. Source: Tavi’s review of Android 0.1.2, 2026-11-23.
+
+@cc [owner:OctavianTocan,label:design] dashboard-alerts-and-search
+Alerts start 32 dp beneath the Activity tabs. Each 99 dp row has a 24 dp project mark, project and timestamp on one line, then the title and its context on separate lines. Opening Global Search focuses the query. The input and action are 64 dp high, the results panel has 24 dp corners, and each result uses a 54 dp row with an inset divider between results. Preserve access to the Assistant as results scroll. Sources: Figma frames 225:257, 604:4355, 479:1505 and 513:1112.

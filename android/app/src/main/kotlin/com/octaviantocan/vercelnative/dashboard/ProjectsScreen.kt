@@ -4,17 +4,12 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,12 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -92,12 +82,13 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
                 glyph = Glyph.Project,
                 modifier = Modifier.weight(1f).padding(bottom = Tokens.DockScrollClearance),
                 loading = route.variant == "loading",
+                illustration = R.drawable.dashboard_figma_projects_empty.takeIf { route.variant == "empty" },
                 action = if (route.variant == "error") ({ navigation.main(Destination.Projects) }) else null,
             )
             return@Column
         }
         Spacer(Modifier.height(Tokens.Inset))
-        LazyColumn(
+        DashboardList(
             Modifier.weight(1f), state = listState,
             contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance),
         ) {
@@ -252,26 +243,12 @@ private fun ProjectOptions(
             ProjectOptionsPosition(edgeGap, anchorGap, openingOffset, viewportGap, margin)
         }
     }
-    val dismiss by rememberUpdatedState(onClose)
     Popup(position, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-        // The popup window includes the clipped corners and any shadow padding.
-        val dismissOutsideCard = Modifier.pointerInput(shadowMargin, cardRadius) {
-            val margin = shadowMargin.roundToPx().toFloat()
-            val radius = CornerRadius(cardRadius.toPx())
-            awaitEachGesture {
-                val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-                val card = RoundRect(Rect(margin, margin, size.width - margin, size.height - margin), radius)
-                if (!card.contains(down.position)) {
-                    down.consume()
-                    dismiss()
-                }
-            }
-        }
         Column(
-            dismissOutsideCard.padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
+            Modifier.dismissOutsideRoundedCard(cardRadius, shadowMargin, onClose).padding(shadowMargin).width(if (light) Tokens.ProjectOptionsLightWidth else Tokens.ProjectOptionsWidth)
                 .then(if (light) Modifier.shadow(Tokens.Space12, shape) else Modifier)
                 .clip(shape).background(palette.projectOptionsSurface).border(Tokens.Stroke, palette.projectOptionsBorder, shape)
-                .padding(Tokens.Stroke).verticalScroll(rememberScrollState()),
+                .padding(Tokens.Stroke).dashboardScroll(),
         ) {
             options.forEachIndexed { index, option ->
                 if (index > 0) {
@@ -315,7 +292,7 @@ private fun ProjectOptions(
     }
 }
 
-private class ProjectOptionsPosition(
+internal class ProjectOptionsPosition(
     private val edgeGap: Int,
     private val anchorGap: Int,
     private val openingOffset: Int,

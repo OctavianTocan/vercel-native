@@ -44,7 +44,8 @@ internal enum class AlertKind(val label: String, val metric: String) {
 
 internal data class DashboardAlert(
     val id: String, val projectId: String, val kind: AlertKind, val detail: String,
-    val value: String, val threshold: String, val elapsed: String,
+    val value: String, val threshold: String, val elapsed: String, val title: String, val summary: String,
+    val severity: String,
 )
 
 internal enum class LogLevel(val label: String) { Info("Info"), Warning("Warning"), Error("Error") }
@@ -138,13 +139,34 @@ internal object DashboardFixtures {
         val candidates = projects.filter { it.workspaceId == workspace.id }
         List(36) { index ->
             val project = candidates[index % candidates.size]
-            val kind = AlertKind.entries[index % AlertKind.entries.size]
+            val example = index % 6
+            val kind = when (example) {
+                1, 2 -> AlertKind.Cdn
+                3 -> AlertKind.Monitor
+                else -> AlertKind.Function
+            }
             val (detail, value, threshold) = when (kind) {
                 AlertKind.Function -> Triple("/api/catalog returned errors", "${index + 3}.2%", "2.0%")
                 AlertKind.Cdn -> Triple("Traffic above the expected range", "${index + 18}.4k", "15.0k")
                 AlertKind.Monitor -> Triple("Checkout monitor missed a check", "${index + 2} checks", "1 check")
             }
-            DashboardAlert("alt-${workspace.id}-$index", project.id, kind, detail, value, threshold, "${index + 1} h ago")
+            val severity = listOf("High", "Medium", "Low", "High", "Critical", "Medium")[example]
+            val title = listOf(
+                "Function error spike", "CDN requests above baseline", "Data transfer above baseline",
+                "Checkout error threshold crossed", "Critical function error anomaly", "Client error spike on /api/search",
+            )[example]
+            val source = listOf(
+                "Error anomaly", "Usage anomaly", "Usage anomaly", "Custom monitor", "Error anomaly", "Error anomaly",
+            )[example]
+            val signal = listOf("5xx", "CDN Requests", "Fast Data Transfer", "5-minute window", "Agent assessed", "Configured 4xx")[example]
+            val elapsed = when (index) {
+                0 -> "5h ago"
+                1 -> "7h ago"
+                2 -> "a day ago"
+                else -> "${index - 1}d ago"
+            }
+            DashboardAlert("alt-${workspace.id}-$index", project.id, kind, detail, value, threshold, elapsed, title,
+                "$source · $severity · $signal", severity)
         }
     }
     private val alertsById = alerts.associateBy(DashboardAlert::id)
