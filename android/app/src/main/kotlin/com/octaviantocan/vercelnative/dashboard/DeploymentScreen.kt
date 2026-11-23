@@ -226,9 +226,9 @@ internal fun DeploymentScreen(route: DashboardRoute, navigation: DashboardNaviga
             item {
                 SectionLabel("GitHub")
                 Column(Modifier.clip(RoundedCornerShape(Tokens.ProjectOptionsRadius)).background(palette.group)) {
-                    KeyValueRow("Branch", deployment.branch)
+                    KeyValueRow("Branch", deployment.branch, mono = true)
                     DividerLine(Modifier.padding(horizontal = Tokens.Inset))
-                    KeyValueRow("Commit", deployment.sha)
+                    KeyValueRow("Commit", deployment.sha, mono = true)
                     deployment.pullRequest?.let {
                         DividerLine(Modifier.padding(horizontal = Tokens.Inset))
                         KeyValueRow("Pull request", "#$it")
@@ -262,7 +262,7 @@ internal fun DeploymentSheetContent(route: DashboardRoute, navigation: Dashboard
                 MutedText("Toolbar is disabled for this deployment.")
                 SectionLabel("Actions")
                 DashboardRow("Open deployment preview", glyph = Glyph.Globe, onClick = {
-                    navigation.replace(DashboardRoute(Destination.Preview, deployment.id))
+                    navigation.replace(route.copy(destination = Destination.Preview))
                 })
                 DashboardRow("Toolbar setup", glyph = Glyph.Settings)
             }
@@ -274,6 +274,11 @@ internal fun DeploymentSheetContent(route: DashboardRoute, navigation: Dashboard
                 }
                 if (route.variant != "unavailable") {
                     KeyValueRow("Deployment URL", deployment.url, Glyph.Globe)
+                    if (route.variant == "project-overview") {
+                        DashboardRow("Visit with Toolbar", glyph = Glyph.Toolbar, onClick = {
+                            navigation.replace(route.copy(destination = Destination.Toolbar))
+                        })
+                    }
                     DashboardButton("Open in browser", {}, Modifier.fillMaxWidth(), enabled = false)
                 } else DashboardButton("Back to deployment", onBack, Modifier.fillMaxWidth())
             }

@@ -390,7 +390,14 @@ private fun DashboardSheetHost(entry: DashboardEntry, navigation: DashboardNavig
         }
     }
     ModalBottomSheet(
-        onDismissRequest = onBack,
+        onDismissRequest = {
+            if (navigation.current == entry) {
+                val restoreParent = navigation.hasParentSheet
+                onBack()
+                // Material hides the shared sheet before calling this callback.
+                if (restoreParent) scope.launch { sheetState.show() }
+            }
+        },
         modifier = if (project) Modifier.padding(bottom = Tokens.Inset) else Modifier,
         sheetState = sheetState,
         containerColor = palette.sheet,

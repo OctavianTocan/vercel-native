@@ -36,16 +36,30 @@ internal data class ProjectDomain(
     val id: String, val projectId: String, val hostname: String, val status: DomainStatus,
 )
 
-internal enum class AlertKind(val label: String, val metric: String) {
-    Function("Function errors", "Error rate"),
-    Cdn("CDN requests", "Requests"),
-    Monitor("Custom monitor", "Failing checks"),
+internal enum class AlertKind(
+    val resourceLabel: String,
+    val metric: String,
+    val chartTitle: String,
+    val unit: String,
+    val chartStep: Int,
+) {
+    Function("Function", "Error rate", "Function errors over time", "%", 1),
+    Cdn("Metric", "CDN requests", "CDN requests over time", "k", 20),
+    Transfer("Metric", "Fast Data Transfer", "Data transfer over time", " GB", 10),
+    Monitor("Monitor", "5-minute rate", "Checkout error rate", "%", 1);
+
+    val isUsage get() = this == Cdn || this == Transfer
 }
 
 internal data class DashboardAlert(
-    val id: String, val projectId: String, val kind: AlertKind, val detail: String,
-    val value: String, val threshold: String, val elapsed: String, val title: String, val summary: String,
+    val id: String, val projectId: String, val kind: AlertKind, val resource: String,
+    val value: Double, val baseline: Double, val elapsed: String, val title: String, val summary: String,
     val severity: String,
+)
+
+private data class AlertExample(
+    val kind: AlertKind, val title: String, val resource: String, val value: Double, val baseline: Double,
+    val severity: String, val source: String, val signal: String,
 )
 
 internal enum class LogLevel(val label: String) { Info("Info"), Warning("Warning"), Error("Error") }
@@ -55,7 +69,10 @@ internal data class LogEvent(
     val level: LogLevel, val path: String, val message: String, val durationMs: Int,
 )
 
-internal data class UsageResource(val id: String, val name: String, val amount: Double, val unit: String, val cost: Double)
+internal data class UsageResource(
+    val id: String, val name: String, val amount: Double, val unit: String, val cost: Double,
+    val showInBreakdown: Boolean,
+)
 
 internal fun sampleMoney(amount: Double): String = String.format(Locale.US, "\$%,.2f", amount)
 internal fun sampleNumber(amount: Double): String = String.format(Locale.US, "%,.1f", amount)
@@ -135,38 +152,31 @@ internal object DashboardFixtures {
     }
     private val domainsById = domainsByProject.values.flatten().associateBy(ProjectDomain::id)
 
+    private val alertExamples = listOf(
+        AlertExample(AlertKind.Function, "Function error spike", "/api/checkout", 2.7, .3, "High", "Error anomaly", "5xx"),
+        AlertExample(AlertKind.Cdn, "CDN requests above baseline", "CDN requests", 49.8, 32.1, "Medium", "Usage anomaly", "CDN Requests"),
+        AlertExample(AlertKind.Transfer, "Data transfer above baseline", "Fast Data Transfer", 24.4, 15.0, "Low", "Usage anomaly", "Fast Data Transfer"),
+        AlertExample(AlertKind.Monitor, "Checkout error threshold crossed", "Checkout errors", 2.1, 1.0, "High", "Custom monitor", "5-minute window"),
+        AlertExample(AlertKind.Function, "Critical function error anomaly", "/api/catalog", 7.2, 2.0, "Critical", "Error anomaly", "Agent assessed"),
+        AlertExample(AlertKind.Function, "Client error spike on /api/search", "/api/search", 8.2, 2.0, "Medium", "Error anomaly", "Configured 4xx"),
+    )
+
     val alerts = workspaces.flatMap { workspace ->
         val candidates = projects.filter { it.workspaceId == workspace.id }
         List(36) { index ->
             val project = candidates[index % candidates.size]
-            val example = index % 6
-            val kind = when (example) {
-                1, 2 -> AlertKind.Cdn
-                3 -> AlertKind.Monitor
-                else -> AlertKind.Function
-            }
-            val (detail, value, threshold) = when (kind) {
-                AlertKind.Function -> Triple("/api/catalog returned errors", "${index + 3}.2%", "2.0%")
-                AlertKind.Cdn -> Triple("Traffic above the expected range", "${index + 18}.4k", "15.0k")
-                AlertKind.Monitor -> Triple("Checkout monitor missed a check", "${index + 2} checks", "1 check")
-            }
-            val severity = listOf("High", "Medium", "Low", "High", "Critical", "Medium")[example]
-            val title = listOf(
-                "Function error spike", "CDN requests above baseline", "Data transfer above baseline",
-                "Checkout error threshold crossed", "Critical function error anomaly", "Client error spike on /api/search",
-            )[example]
-            val source = listOf(
-                "Error anomaly", "Usage anomaly", "Usage anomaly", "Custom monitor", "Error anomaly", "Error anomaly",
-            )[example]
-            val signal = listOf("5xx", "CDN Requests", "Fast Data Transfer", "5-minute window", "Agent assessed", "Configured 4xx")[example]
+            val example = alertExamples[index % alertExamples.size]
             val elapsed = when (index) {
                 0 -> "5h ago"
                 1 -> "7h ago"
                 2 -> "a day ago"
                 else -> "${index - 1}d ago"
             }
-            DashboardAlert("alt-${workspace.id}-$index", project.id, kind, detail, value, threshold, elapsed, title,
-                "$source · $severity · $signal", severity)
+            DashboardAlert(
+                "alt-${workspace.id}-$index", project.id, example.kind, example.resource,
+                example.value + index / alertExamples.size, example.baseline, elapsed, example.title,
+                "${example.source} · ${example.severity} · ${example.signal}", example.severity,
+            )
         }
     }
     private val alertsById = alerts.associateBy(DashboardAlert::id)
@@ -195,12 +205,21 @@ internal object DashboardFixtures {
         "Log Drains", "Observability Events", "Queues", "Sandbox Execution",
     )
     val resources = resourceNames.mapIndexed { index, name ->
-        val units = when (index % 4) {
-            1 -> "GB"
-            2 -> "min"
+        val breakdownCost = when (name) {
+            "Function Invocations" -> .60
+            "Speed Insights Data Points" -> .65
+            else -> null
+        }
+        val units = when {
+            breakdownCost != null -> "k"
+            index % 4 == 1 -> "GB"
+            index % 4 == 2 -> "min"
             else -> "k"
         }
-        UsageResource("usage-$index", name, 7.6 + index * 12.15, units, 0.13 + (index * 11 % 93) * 0.07)
+        UsageResource(
+            "usage-$index", name, 7.6 + index * 12.15, units,
+            breakdownCost ?: (0.13 + (index * 11 % 93) * 0.07), showInBreakdown = breakdownCost != null,
+        )
     }
 
     fun workspace(id: String) = workspaces.first { it.id == id }

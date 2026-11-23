@@ -21,3 +21,9 @@ Use Inventory’s progressive edge blur on the dashboard scroll surfaces. Its to
 
 @cc [owner:OctavianTocan,label:design] dashboard-alerts-and-search
 Alerts start 32 dp beneath the Activity tabs. Each 99 dp row has a 24 dp project mark, project and timestamp on one line, then the title and its context on separate lines. Opening Global Search focuses the query. The input and action are 64 dp high, the results panel has 24 dp corners, and each result uses a 54 dp row with an inset divider between results. Preserve access to the Assistant as results scroll. A new query starts at its highest-ranked result. Back restores the query and its list. Sources: Figma frames 225:257, 604:4355, 479:1505 and 513:1112.
+
+@cc [owner:OctavianTocan,label:design] dashboard-preview-navigation
+Reserve space for the Search composer and Navigation Assistant above the keyboard. Unsupported Search suggestions state that they are unavailable in the preview. Back, scrim taps, and swipe dismissal return to the parent sheet when one is open. The affected project opens from the alert subtitle. A preview opened from Project Overview offers Visit with Toolbar.
+
+@cc [owner:OctavianTocan,label:design] dashboard-preview-metrics
+Alert details, chart labels, and baselines describe the same resource as the selected alert. Usage uses one billing-cycle charge per product across the chart legend and table, with Daily, Weekly, and Monthly grouping the chart. Firewall totals, bars, and time labels follow the selected range.

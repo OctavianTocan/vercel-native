@@ -97,10 +97,9 @@ internal fun SearchOverlay(
                     DashboardRoute(Destination.Project, it.id, "deployments"))
             },
             firstProject?.let {
-                SearchHit("environment", "Environment Variables", firstName, R.drawable.dashboard_figma_terminal,
-                    DashboardRoute(Destination.ProjectSettings, it.id))
+                SearchHit("environment", "Environment Variables", firstName, R.drawable.dashboard_figma_terminal)
             },
-            SearchHit("storage", "Storage", workspace.name, R.drawable.dashboard_figma_storage, DashboardRoute(Destination.Usage)),
+            SearchHit("storage", "Storage", workspace.name, R.drawable.dashboard_figma_storage),
             SearchHit("integrations", "Integrations", workspace.name, R.drawable.dashboard_figma_search_integrations, DashboardRoute(Destination.Integrations)),
         )
     }
@@ -157,47 +156,55 @@ internal fun SearchOverlay(
                 .displayCutoutPadding().padding(horizontal = Tokens.Space20).padding(bottom = Tokens.SearchClearance),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
         ) {
-            when {
-                failed -> DashboardNotice(
-                    "Search couldn’t load", tone = Tone.Neutral,
-                    retry = { failed = false; requester.requestFocus(); keyboard?.show() },
-                )
-                submitted -> Box(Modifier.fillMaxWidth().clip(panel).background(palette.popover).border(Tokens.Stroke, palette.quietBorder, panel).padding(Tokens.Space8)) {
-                    SearchResultRow(assistant.copy(title = "Looking for a destination…"), selected = false)
-                }
-                else -> Column(
-                    Modifier.fillMaxWidth().shadow(Tokens.Inset, panel).clip(panel)
-                        .background(palette.popover).border(Tokens.Stroke, palette.quietBorder, panel).padding(Tokens.Space8),
-                ) {
-                    if (hits.isNotEmpty()) {
-                        DashboardList(
-                            Modifier.fillMaxWidth().heightIn(max = Tokens.SearchPanelHeight - Tokens.SearchRow - Tokens.Space8 * 2 - Tokens.Stroke),
-                            state = resultState,
-                            surface = palette.popover,
-                        ) {
-                            itemsIndexed(hits, key = { _, result -> result.key }) { index, result ->
-                                SearchResultRow(result, selected = index == 0) {
-                                    if (active && result.route != null) {
-                                        focus.clearFocus()
-                                        keyboard?.hide()
-                                        navigation.open(result.route)
-                                    }
-                                }
-                                if (index < hits.lastIndex) DividerLine(Modifier.padding(horizontal = Tokens.Inset))
-                            }
-                        }
-                        DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+            // Measure the composer before allocating space to the panel.
+            Box(Modifier.weight(1f, fill = false)) {
+                when {
+                    failed -> DashboardNotice(
+                        "Search couldn’t load", tone = Tone.Neutral,
+                        retry = { failed = false; requester.requestFocus(); keyboard?.show() },
+                    )
+                    submitted -> Box(Modifier.fillMaxWidth().clip(panel).background(palette.popover).border(Tokens.Stroke, palette.quietBorder, panel).padding(Tokens.Space8)) {
+                        SearchResultRow(assistant.copy(title = "Looking for a destination…"), selected = false)
                     }
-                    SearchResultRow(assistant, selected = hits.isEmpty()) {
-                        if (active) {
-                            if (term.isEmpty()) {
-                                val prompt = "queued production deployments"
-                                input = TextFieldValue(prompt, TextRange(prompt.length))
+                    else -> Column(
+                        Modifier.fillMaxWidth().shadow(Tokens.Inset, panel).clip(panel)
+                            .background(palette.popover).border(Tokens.Stroke, palette.quietBorder, panel).padding(Tokens.Space8),
+                    ) {
+                        if (hits.isNotEmpty()) {
+                            DashboardList(
+                                Modifier.weight(1f, fill = false).fillMaxWidth()
+                                    .heightIn(max = Tokens.SearchPanelHeight - Tokens.SearchRow - Tokens.Space8 * 2 - Tokens.Stroke),
+                                state = resultState,
+                                surface = palette.popover,
+                            ) {
+                                itemsIndexed(hits, key = { _, result -> result.key }) { index, result ->
+                                    val destination = result.route
+                                    SearchResultRow(
+                                        result, selected = index == 0 && destination != null,
+                                        onClick = destination?.takeIf { active }?.let {
+                                            {
+                                                focus.clearFocus()
+                                                keyboard?.hide()
+                                                navigation.open(it)
+                                            }
+                                        },
+                                    )
+                                    if (index < hits.lastIndex) DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+                                }
                             }
-                            focus.clearFocus()
-                            keyboard?.hide()
-                            failed = false
-                            submitted = true
+                            DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+                        }
+                        SearchResultRow(assistant, selected = hits.isEmpty()) {
+                            if (active) {
+                                if (term.isEmpty()) {
+                                    val prompt = "queued production deployments"
+                                    input = TextFieldValue(prompt, TextRange(prompt.length))
+                                }
+                                focus.clearFocus()
+                                keyboard?.hide()
+                                failed = false
+                                submitted = true
+                            }
                         }
                     }
                 }
@@ -273,7 +280,8 @@ private fun SearchResultRow(hit: SearchHit, selected: Boolean, onClick: (() -> U
         Column(Modifier.weight(1f)) {
             Text(hit.title, fontSize = Tokens.Body, fontWeight = FontWeight.Medium, lineHeight = Tokens.ListSubtitleLine,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(hit.context, color = palette.secondary, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine,
+            val context = if (hit.route == null && hit.key != "assistant") "${hit.context} · Unavailable in preview" else hit.context
+            Text(context, color = palette.secondary, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }

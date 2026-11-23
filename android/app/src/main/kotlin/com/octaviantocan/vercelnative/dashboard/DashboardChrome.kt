@@ -59,6 +59,7 @@ internal enum class Glyph(@DrawableRes val artwork: Int, val size: Dp) {
     Project(R.drawable.dashboard_badge_vercel, Tokens.Icon),
     Activity(R.drawable.dashboard_icon_activity, Tokens.DockIcon),
     Globe(R.drawable.dashboard_figma_globe, Tokens.DockIcon),
+    Toolbar(R.drawable.dashboard_icon_toolbar, Tokens.DockIcon),
     Branch(R.drawable.dashboard_figma_branch, Tokens.Inset),
     Filter(R.drawable.dashboard_figma_filter, Tokens.FilterGlyph),
     Refresh(R.drawable.dashboard_figma_refresh, Tokens.DockIcon),
@@ -119,6 +120,7 @@ internal fun DashboardHeader(
     trailing: @Composable (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     titleSize: androidx.compose.ui.unit.TextUnit = Tokens.RootTitle,
+    onSubtitleClick: (() -> Unit)? = null,
 ) {
     Box(modifier.fillMaxWidth().heightIn(min = Tokens.TopBar).padding(horizontal = Tokens.Inset)) {
         if (onBack != null) {
@@ -130,8 +132,14 @@ internal fun DashboardHeader(
         Column(Modifier.align(Alignment.Center).padding(horizontal = Tokens.Touch), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(title, fontSize = titleSize, lineHeight = Tokens.ListTitleLine,
                 fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            if (subtitle != null) Text(subtitle, fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine,
-                color = LocalDashboardPalette.current.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (subtitle != null) Text(
+                subtitle,
+                modifier = if (onSubtitleClick == null) Modifier else Modifier.clickable(
+                    role = Role.Button, onClickLabel = "Open $subtitle", onClick = onSubtitleClick,
+                ),
+                fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine,
+                color = LocalDashboardPalette.current.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis,
+            )
         }
         if (trailing != null) Box(Modifier.align(Alignment.CenterEnd)) { trailing() }
     }

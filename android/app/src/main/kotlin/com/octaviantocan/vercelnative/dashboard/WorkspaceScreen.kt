@@ -304,6 +304,28 @@ internal fun ObservabilityScreen(navigation: DashboardNavigation, onBack: () -> 
 
 private data class ToolRecord(val id: Int, val title: String, val subtitle: String, val detail: String)
 
+private data class FirewallActivity(
+    val allowed: Int,
+    val blocked: Int,
+    val mitigated: List<Int>,
+    val labels: List<String>,
+) {
+    val stats get() = listOf(
+        "Allowed" to "${sampleNumber(allowed / 1_000.0)}k",
+        "Challenged" to (mitigated.sum() - blocked).toString(),
+        "Blocked" to blocked.toString(),
+    )
+}
+
+private val dailyFirewall = FirewallActivity(
+    18_400, 28, listOf(4, 5, 6, 9, 9, 12, 17, 11, 9, 7, 6, 5),
+    listOf("00:00", "06:00", "12:00", "18:00", "24:00"),
+)
+private val monthlyFirewall = FirewallActivity(
+    492_600, 689, listOf(132, 178, 164, 212, 196, 241, 306, 281, 230, 199, 265, 253),
+    listOf("Oct 23", "Oct 30", "Nov 7", "Nov 15", "Nov 22"),
+)
+
 @Composable
 internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
     val destination = route.destination
@@ -315,10 +337,11 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
     var mobile by rememberSaveable { mutableStateOf(true) }
     val restricted = route.variant == "restricted"
     val integration = destination == Destination.Integrations
+    val firewall = if (alternateRange) monthlyFirewall else dailyFirewall
     val stats = when (destination) {
         Destination.Analytics -> listOf("Visitors" to "1,284", "Page views" to "2,062")
         Destination.Speed -> listOf((if (mobile) "Mobile score" else "Desktop score") to if (mobile) "92" else "97", "Data points" to "1,020")
-        Destination.Firewall -> listOf("Allowed" to "18.4k", "Challenged" to "72", "Blocked" to "28")
+        Destination.Firewall -> firewall.stats
         else -> emptyList()
     }
     val metricHeading = when (destination) {
@@ -390,7 +413,7 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
                             }
                         }
                     }
-                    ToolTrend(destination, alternateRange, mobile)
+                    ToolTrend(destination, alternateRange, mobile, firewall)
                 }
             }
             item {
@@ -452,7 +475,7 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
 }
 
 @Composable
-private fun ToolTrend(destination: Destination, alternateRange: Boolean, mobile: Boolean) {
+private fun ToolTrend(destination: Destination, alternateRange: Boolean, mobile: Boolean, firewall: FirewallActivity) {
     val palette = LocalDashboardPalette.current
     val shape = RoundedCornerShape(Tokens.ControlRadius)
     val (title, color) = when (destination) {
@@ -467,7 +490,8 @@ private fun ToolTrend(destination: Destination, alternateRange: Boolean, mobile:
     ) {
         Text(title, fontSize = Tokens.Body, lineHeight = Tokens.ProjectOptionsLine, fontWeight = FontWeight.SemiBold)
         if (destination == Destination.Firewall) {
-            DashboardChart(listOf(.18f, .26f, .34f, .47f, .41f, .62f, .81f, .58f, .49f, .35f, .31f, .25f), color = color)
+            val ceiling = firewall.mitigated.max() * 1.2f
+            DashboardChart(firewall.mitigated.map { it / ceiling }, color = color)
         } else Canvas(Modifier.fillMaxWidth().height(Tokens.ChartHeight)) {
             for (i in 0..4) {
                 val y = size.height * i / 4f
@@ -485,7 +509,7 @@ private fun ToolTrend(destination: Destination, alternateRange: Boolean, mobile:
             drawPath(path, color, style = Stroke(Tokens.Space2.toPx()))
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            val labels = if (destination == Destination.Firewall) listOf("00:00", "06:00", "12:00", "18:00", "24:00")
+            val labels = if (destination == Destination.Firewall) firewall.labels
             else listOf("Nov 15", "Nov 17", "Nov 19", "Nov 21")
             labels.forEach { Text(it, color = palette.secondary, fontSize = Tokens.ChartCaption, fontFamily = GeistMono) }
         }

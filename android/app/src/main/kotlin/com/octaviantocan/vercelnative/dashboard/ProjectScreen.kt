@@ -134,7 +134,7 @@ internal fun ProjectScreen(route: DashboardRoute, navigation: DashboardNavigatio
             ) {
                 item {
                     DeploymentPreviewCard(project, latest, tinted = route.variant != "compact") {
-                        navigation.show(Destination.Preview, latest.id)
+                        navigation.show(Destination.Preview, latest.id, "project-overview")
                     }
                 }
                 item {
@@ -214,7 +214,7 @@ private fun ProjectSectionLabel(label: String) {
 }
 
 @Composable
-internal fun KeyValueRow(label: String, value: String, glyph: Glyph? = null) {
+internal fun KeyValueRow(label: String, value: String, glyph: Glyph? = null, mono: Boolean = false) {
     val palette = LocalDashboardPalette.current
     Row(
         Modifier.fillMaxWidth().heightIn(min = Tokens.Touch).padding(horizontal = Tokens.Inset, vertical = Tokens.Space8),
@@ -223,7 +223,8 @@ internal fun KeyValueRow(label: String, value: String, glyph: Glyph? = null) {
     ) {
         if (glyph != null) DashboardIcon(glyph, palette.muted)
         Text(label, Modifier.weight(1f), fontSize = Tokens.Body)
-        Text(value, Modifier.widthIn(max = Tokens.DialogWidth / 2), fontSize = Tokens.Body, color = palette.secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(value, Modifier.widthIn(max = Tokens.DialogWidth / 2), fontSize = Tokens.Body,
+            fontFamily = if (mono) GeistMono else null, color = palette.secondary, maxLines = 2, overflow = TextOverflow.Ellipsis)
     }
 }
 
