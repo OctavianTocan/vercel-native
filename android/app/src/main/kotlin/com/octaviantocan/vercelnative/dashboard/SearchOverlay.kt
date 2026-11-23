@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -104,6 +105,7 @@ internal fun SearchOverlay(
         )
     }
     val term = query.trim()
+    val resultState = key(term) { rememberLazyListState() }
     val hits = remember(term, destinations, suggestions, route.variant) {
         if (term.isEmpty()) suggestions
         else if (route.variant == "typed" && term == "deployments") {
@@ -118,11 +120,12 @@ internal fun SearchOverlay(
             val terms = term.split(Regex("\\s+"))
             (suggestions + destinations).filter { hit ->
                 terms.all { word -> hit.title.contains(word, true) || hit.context.contains(word, true) || hit.keywords.contains(word, true) }
-            }.sortedWith(compareBy<SearchHit> {
+            }.sortedWith(compareBy<SearchHit> { hit ->
+                val title = hit.title.replace('-', ' ').replace('_', ' ')
                 when {
-                    it.title.equals(term, true) -> 0
-                    it.title.startsWith(term, true) -> 1
-                    it.title.contains(term, true) -> 2
+                    title.equals(term, true) || hit.title.equals(term, true) -> 0
+                    title.startsWith(term, true) || hit.title.startsWith(term, true) -> 1
+                    title.contains(term, true) || hit.title.contains(term, true) -> 2
                     else -> 3
                 }
             }.thenBy { it.project == null })
@@ -169,6 +172,7 @@ internal fun SearchOverlay(
                     if (hits.isNotEmpty()) {
                         DashboardList(
                             Modifier.fillMaxWidth().heightIn(max = Tokens.SearchPanelHeight - Tokens.SearchRow - Tokens.Space8 * 2 - Tokens.Stroke),
+                            state = resultState,
                             surface = palette.popover,
                         ) {
                             itemsIndexed(hits, key = { _, result -> result.key }) { index, result ->
