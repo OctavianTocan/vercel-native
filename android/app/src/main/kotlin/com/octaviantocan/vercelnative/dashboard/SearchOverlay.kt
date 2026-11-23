@@ -36,6 +36,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
@@ -61,7 +62,7 @@ internal fun SearchOverlay(
     var input by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         val initialQuery = when (route.variant) {
             "typed", "error" -> "deployments"
-            "mixed", "activity" -> "preview"
+            "mixed", "activity" -> "h"
             "no-match", "fallback", "submitted" -> "zzqp"
             else -> ""
         }
@@ -105,8 +106,18 @@ internal fun SearchOverlay(
     }
     val term = query.trim()
     val resultState = key(term) { rememberLazyListState() }
-    val hits = remember(term, destinations, suggestions, route.variant) {
+    val classicMixed = route.frozen && route.variant in setOf("mixed", "activity") && term == "h"
+    val hits = remember(term, destinations, suggestions, route.variant, classicMixed) {
         if (term.isEmpty()) suggestions
+        else if (classicMixed) {
+            listOfNotNull(
+                destinations.firstOrNull { it.project != null },
+                destinations.firstOrNull { it.key == "support" }?.copy(context = workspace.name),
+                SearchHit("cases", "Cases", "${workspace.name} / Support", R.drawable.dashboard_figma_support),
+                SearchHit("compliance", "Compliance", "${workspace.name} / Settings", R.drawable.dashboard_figma_compliance),
+                SearchHit("tokens", "Tokens", "Account", R.drawable.dashboard_figma_tokens),
+            )
+        }
         else if (route.variant == "typed" && term == "deployments") {
             listOfNotNull(
                 destinations.firstOrNull { it.project != null },
@@ -153,22 +164,23 @@ internal fun SearchOverlay(
             .clickable(enabled = active, interactionSource = null, indication = null, onClick = close))
         Column(
             Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().imePadding()
-                .displayCutoutPadding().padding(horizontal = Tokens.Space20).padding(bottom = Tokens.SearchClearance),
+                .displayCutoutPadding().padding(horizontal = Tokens.Space20)
+                .padding(bottom = Tokens.SearchClearance + if (submitted) Tokens.Icon else Dp.Hairline),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
         ) {
             // Measure the composer before allocating space to the panel.
             Box(Modifier.weight(1f, fill = false)) {
                 when {
-                    failed -> DashboardNotice(
-                        "Search couldn’t load", tone = Tone.Neutral,
-                        retry = { failed = false; requester.requestFocus(); keyboard?.show() },
+                    failed -> DashboardGlassNotice(
+                        "Search couldn’t load", backdrop = backdrop,
+                        onRetry = { failed = false; requester.requestFocus(); keyboard?.show() },
                     )
-                    submitted -> Box(Modifier.fillMaxWidth().clip(panel).background(palette.popover).border(Tokens.Stroke, palette.quietBorder, panel).padding(Tokens.Space8)) {
+                    submitted -> Box(Modifier.fillMaxWidth().clip(panel).background(palette.popover).border(Tokens.Stroke, palette.border, panel).padding(Tokens.Space8)) {
                         SearchResultRow(assistant.copy(title = "Looking for a destination…"), selected = false)
                     }
                     else -> Column(
                         Modifier.fillMaxWidth().shadow(Tokens.Inset, panel).clip(panel)
-                            .background(palette.popover).border(Tokens.Stroke, palette.quietBorder, panel).padding(Tokens.Space8),
+                            .background(palette.popover).border(Tokens.Stroke, palette.border, panel).padding(Tokens.Space8),
                     ) {
                         if (hits.isNotEmpty()) {
                             DashboardList(
@@ -181,6 +193,7 @@ internal fun SearchOverlay(
                                     val destination = result.route
                                     SearchResultRow(
                                         result, selected = index == 0 && destination != null,
+                                        indicateUnavailable = !classicMixed,
                                         onClick = destination?.takeIf { active }?.let {
                                             {
                                                 focus.clearFocus()
@@ -189,10 +202,10 @@ internal fun SearchOverlay(
                                             }
                                         },
                                     )
-                                    if (index < hits.lastIndex) DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+                                if (index < hits.lastIndex) DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
                                 }
                             }
-                            DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+                            DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
                         }
                         SearchResultRow(assistant, selected = hits.isEmpty()) {
                             if (active) {
@@ -243,20 +256,25 @@ internal fun SearchOverlay(
                         }
                     },
                 )
-                val send = term.isNotEmpty() && !submitted && route.variant != "fallback"
+                val send = term.isNotEmpty() && !submitted && route.variant != "fallback" && !classicMixed
                 Box(
                     Modifier.size(Tokens.BottomBar).dashboardGlass(backdrop, CircleShape)
                         .clickable(enabled = active, role = Role.Button, onClick = if (send) submit else close)
                         .semantics { contentDescription = if (send) "Send to Navigation Assistant" else "Close Search" },
                     contentAlignment = Alignment.Center,
-                ) { DashboardIcon(if (send) Glyph.Send else Glyph.Close) }
+                ) {
+                    if (submitted) DashboardArtwork(R.drawable.dashboard_figma_search_close, Tokens.ProjectOptionsInset)
+                    else DashboardIcon(if (send) Glyph.Send else Glyph.Close)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun SearchResultRow(hit: SearchHit, selected: Boolean, onClick: (() -> Unit)? = null) {
+private fun SearchResultRow(
+    hit: SearchHit, selected: Boolean, indicateUnavailable: Boolean = false, onClick: (() -> Unit)? = null,
+) {
     val palette = LocalDashboardPalette.current
     Row(
         Modifier.fillMaxWidth().heightIn(min = Tokens.SearchRow).clip(RoundedCornerShape(Tokens.SearchSelectionRadius))
@@ -280,8 +298,8 @@ private fun SearchResultRow(hit: SearchHit, selected: Boolean, onClick: (() -> U
         Column(Modifier.weight(1f)) {
             Text(hit.title, fontSize = Tokens.Body, fontWeight = FontWeight.Medium, lineHeight = Tokens.ListSubtitleLine,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
-            val context = if (hit.route == null && hit.key != "assistant") "${hit.context} · Unavailable in preview" else hit.context
-            Text(context, color = palette.secondary, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine,
+            val detail = if (indicateUnavailable && hit.route == null) "${hit.context} · Unavailable in preview" else hit.context
+            Text(detail, color = palette.secondary, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }

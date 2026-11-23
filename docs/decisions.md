@@ -27,3 +27,21 @@ The dashboard uses Geist and Geist Mono, with native vector paths exported from 
 Use the alert’s project subtitle to open its project and place Visit with Toolbar in the preview opened from Project Overview. Keep the Search composer and Assistant reachable when the keyboard reduces the viewport, and show an unavailable status for Environment Variables and Storage. Usage chart periods group the same billing-cycle charges.
 
 [Function alert](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=587-1267) · [Toolbar unavailable](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=552-2311) · [Global Search](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=513-1112) · [Weekly Usage](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=587-484)
+
+## November 23 dashboard verification
+
+Use the approved outline gear, Ready badge and project details groups on the Project Sheet. Keep Android’s status bar clear on short displays and retain the parent sheet underneath Domains and GitHub sync. Use the prototype’s dissolve between root destinations, push for details, and directional entries for Search and the workspace rail.
+
+The Usage studies open at the resource table in the debug picker. Each uses the group, icon and chart treatment in its approved frame. The same fictional records appear across the studies so the layout differences are easy to compare.
+
+[Project Sheet](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=535-3158) · [Project Domains](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-938) · [Usage studies](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=606-535)
+
+Keep the DNS, deployment preview and transfer actions visible above Android’s navigation area while their sheet bodies scroll. Use the approved 41 dp grip and apply the sheet’s grouped row spacing across each stage. The Profile form uses 46 dp fields and 14 dp between cards.
+
+The dashboard’s glass lens uses the Figma control depth, refraction and rim. The Ready badge uses its own shallower optics and samples the deployment preview beneath it. The Search and workspace rail leave in 220 ms and detail Back uses a 240 ms push.
+
+[DNS verification](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-1084) · [Protected preview](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=586-274) · [Review transfer](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=535-1457) · [Profile Settings](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=344-494)
+
+Reuse the Recents row for removal confirmation, including the paired artwork, one-line title and GitHub metadata. A transfer review opens with a 240 ms push and returns to the selected team. New modal sheets use Android’s vertical motion and support Back, scrim taps and downward swipes.
+
+[Recents removal confirmation](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=604-3882) · [Transfer review](https://www.figma.com/design/751Z0BSfstiZTBcJiB3teq?node-id=535-1457)

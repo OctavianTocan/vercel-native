@@ -93,7 +93,10 @@ internal object DashboardTokens {
     val SearchProjectMark = 26.dp
     val GlassBlur = 8.dp
     val GlassDepth = 20.dp
-    val SearchBackdropBlur = 4.dp
+    val GlassShadowRadius = 16.dp
+    val ReadyGlassBlur = 4.dp
+    val ReadyGlassDepth = 6.dp
+    val SearchBackdropBlur = 3.dp
     val AlertMetricsHeight = 78.dp
     val AlertChartHeight = 185.dp
     val AlertPillHeight = 27.dp
@@ -113,14 +116,17 @@ internal object DashboardTokens {
     val ProjectPreviewRadius = 22.dp
     val ProfileAvatar = 62.dp
     val ProfileAvatarBlock = 70.dp
-    val ProfileFieldHeight = 40.dp
+    val ProfileFieldHeight = 46.dp
     val ProfileCardRadius = 22.dp
-    val ProfilePickerHeight = 45.dp
+    val ProfilePickerHeight = 46.dp
     val LogActionSize = 42.dp
+    val LogRangeWidth = 125.dp
+    val LogLiveWidth = 75.dp
     val LogFilterFace = 36.dp
     val LogTimelineHeight = 16.dp
     val LogTimestampWidth = 103.dp
     val LogRowHeight = 60.dp
+    val LogWorkspaceRowHeight = 78.dp
     val UsageCreditHeight = 90.dp
     val UsageChartPanel = 340.dp
     val UsageChartGrid = 100.dp
@@ -136,6 +142,111 @@ internal object DashboardTokens {
     val OutboundGlyph = 10.dp
     val AlertPlotHeight = 110.dp
     val ProjectSettingsButton = 52.dp
+    val SheetHandleWidth = 41.dp
+    val PreviewStatusInset = 9.dp
+    val ProjectDetailGap = 7.dp
+    val PreviewStatusHeight = 26.dp
+    val UsageStudyScroll = 551.dp
+    val UsageStudyColumnScroll = 550.dp
+    val PreviewStatusWidth = 72.dp
+    val DeploymentPreviewGap = 5.dp
+    val DeploymentEnvironmentGap = 17.dp
+    val RecentsFeedbackHeight = 60.dp
+    val LogFilterRowHeight = 57.dp
+    val ProfilePhotoPreviewSize = 123.dp
+    val ProfilePhotoPreviewBody = 344.dp
+    val AgentComposerHeight = 84.dp
+    val AgentProgressWidth = 185.dp
+    val AgentEnablingTop = 145.dp
+    val AgentFailureTop = 167.dp
+    val AgentProgressHeight = 5.dp
+    val ProjectDomainsBody = 421.dp
+    val UsageSparklineWidth = 40.dp
+    val UsageStudyInlineBar = 156.dp
+    val UsageStudyChartWidth = 49.dp
+    val UsageStudyQuantityColumn = 91.dp
+    val UsageStudyChargeColumn = 76.dp
+    val BranchFilterWidth = 184.dp
+    val BranchClearFace = 30.dp
+    val DomainVerificationBody = 521.dp
+    val DomainRestrictedBody = 388.dp
+    val DomainStatusRow = 61.dp
+    val DomainStatusWidth = 92.dp
+    val DomainVerifiedWidth = 78.dp
+    val ProjectDomainRowHeight = 66.dp
+    val DnsRecordRow = 51.dp
+    val SettingsGeneralRow = 52.dp
+    val SettingsOwnershipRow = 49.dp
+    val SettingsOwnershipGap = 30.dp
+    val TransferSelectionBody = 469.dp
+    val TransferReviewBody = 563.dp
+    val TransferProgressBody = 315.dp
+    val TransferCompleteBody = 325.dp
+    val TransferFailureBody = 352.dp
+    val TransferDestinationRow = 64.dp
+    val TransferProgressRow = 52.dp
+    val TransferResultAction = 42.dp
+    val TransferSuccessGlyph = 26.dp
+    val FeedbackTitleGap = 17.dp
+    val FeedbackActionGap = 23.dp
+    val FeedbackExplanationWidth = 301.dp
+    val FeedbackIconSize = 52.dp
+    val FeedbackExplanationGap = 13.dp
+    val BrowserPreviewBody = 323.dp
+    val ProtectedPreviewBody = 381.dp
+    val CompactPreviewBody = 268.dp
+    val PreviewRecordRow = 68.dp
+    val PreviewActionRow = 50.dp
+    val EarlierRecentsTimestamp = 42.dp
+    val EarlierRecentsMenuRow = 46.dp
+    val UsagePeriodTabHeight = 28.dp
+    val UsageWeeklyBarWidth = 25.dp
+    val UsageMonthlyBarWidth = 41.dp
+    val UsageEmptyCreditHeight = 104.dp
+    val UsageEmptyMessageHeight = 94.dp
+    val AnalyticsFeedbackClearance = 156.dp
+    val AnalyticsFeedbackActionWidth = 178.dp
+    val WorkspaceTimeRangeWidth = 138.dp
+    val HelpActionHeight = 65.dp
+    val LogErrorFeedbackGap = 60.dp
+    val LogEmptyFeedbackGap = 43.dp
+    val ThemeChoiceHeight = 47.dp
+    val LogEventBody = 501.dp
+    val LogEventMessageHeight = 75.dp
+    val ProfilePhotoTop = 27.dp
+    val ProfilePhotoCaptionGap = 25.dp
+    val ScopeDescriptionTop = 11.dp
+    val ScopeTeamBottom = 39.dp
+    val ScopeLandingBottom = 19.dp
+    val ScopeGroupRadius = 19.dp
+    val LightThemeTop = 19.dp
+    val LightThemeBottom = 26.dp
+    val LightThemeChoiceHeight = 51.dp
+    val AccountSheetRadius = 26.dp
+    val UsageStudyChargeStack = 120.dp
+    val UsageStudyChartColumn = 140.dp
+    val UsageStudySparklineLabel = 63.dp
+    val UsageStudySparklineSlot = 71.dp
+    val ChartTitleGap = 11.dp
+    val ChartTickWidth = 31.dp
+    val ChartDateWidth = 58.dp
+    val ChartDateGap = 3.dp
+    val AnalyticsTicksHeight = 131.dp
+    val CompactChartTicksHeight = 109.dp
+    val FirewallTicksHeight = 119.dp
+    val ObservabilityTickWidth = 27.dp
+    val ObservabilityDateWidth = 43.dp
+    val ObservabilityRangeWidth = 137.dp
+    val ObservabilityMetricsHeight = 84.dp
+    val ObservabilityTicksHeight = 114.dp
+    val ObservabilityBarWidth = 11.dp
+    val FirewallBarWidth = 14.dp
+    val WorkspaceToolRow = 49.dp
+    val WorkspaceFirewallRow = 57.dp
+    val UsageTrendWidth = 38.dp
+    val RecentsRemoveBody = 241.dp
+    val ProfilePrefixWidth = 77.dp
+    val UsageStudyFirstGroupGap = 18.dp
     val Caption = 11.sp
     val Metadata = 12.sp
     val Body = 15.sp
@@ -152,6 +263,9 @@ internal object DashboardTokens {
     val ProjectOptionsLine = 21.sp
     val RootTitleTracking = -0.36.sp
     val DockLabelTracking = -0.28.sp
+    val StandardTracking = 0.sp
+    val DeploymentDetailTitle = 20.sp
+    val DeploymentDetailTitleLine = 25.sp
     val RecentMetadata = 13.sp
     val RecentMetadataLine = 18.sp
     val AlertProjectSize = 13.sp
@@ -162,6 +276,7 @@ internal object DashboardTokens {
     val AlertDetailTitleLine = 30.sp
     val AlertMetricLine = 32.sp
     val MetadataLine = 17.sp
+    val LogMessageLine = 18.sp
     val EmptyTitleLine = 23.sp
     val ChartCaption = 10.sp
     val PlanTitleLine = 28.sp
@@ -171,11 +286,19 @@ internal object DashboardTokens {
     val UsageTitle = 23.sp
     val UsageTitleLine = 29.sp
     val ProfileHeadingLine = 23.sp
+    val AccountSheetTitleLine = 25.sp
+    val UsageStudyValueLine = 17.sp
+    val ChartTickLine = 16.sp
+    val ChartDateLine = 15.sp
+    val UsageDateLine = 14.sp
+    val WorkspaceMetricTitle = 21.sp
     const val ScreenFadeMillis = 150
-    const val ScrimOpacity = 0.62f
+    const val ScrimOpacity = 0.66f
+    const val LightSheetScrimOpacity = 0.22f
     const val ProjectSheetFraction = 0.98f
     const val SidebarScrimOpacity = 0.55f
     const val AlertLoadingRows = 6
+    const val RecentsFeedbackMillis = 3500L
 }
 
 internal data class DashboardPalette(
@@ -221,6 +344,55 @@ internal data class DashboardPalette(
     val workspaceBadgeInk: Color,
     val previewPaper: Color,
     val previewInk: Color,
+    val projectSheetHandle: Color,
+    val sheetHandle: Color,
+    val logFilterHandle: Color,
+    val domainVerifiedSurface: Color,
+    val domainUnverifiedSurface: Color,
+    val projectSheetGroup: Color,
+    val projectSyncDot: Color,
+    val previewReadyDot: Color,
+    val previewReadyBorder: Color,
+    val usageDailyGreen: Color,
+    val usageDailyGold: Color,
+    val usagePeriodGreen: Color,
+    val studyPanel: Color,
+    val studyCategory: Color,
+    val studyRule: Color,
+    val studyTrack: Color,
+    val studyDeliveryInk: Color,
+    val studyDeliveryPaper: Color,
+    val studyFunctionsInk: Color,
+    val studyFunctionsPaper: Color,
+    val studyCpuInk: Color,
+    val studyMemoryInk: Color,
+    val studyCachingPaper: Color,
+    val studyObservabilityPaper: Color,
+    val studyBuildPaper: Color,
+    val studySubscriptionPaper: Color,
+    val themeLightSheet: Color,
+    val studySparklineBlue: Color,
+    val studySparklineDelivery: Color,
+    val studySparklinePurple: Color,
+    val studySparklinePink: Color,
+    val studySparklineRed: Color,
+    val studySparklineGold: Color,
+    val studySparklineYellow: Color,
+    val studySparklineTeal: Color,
+    val studySparklineCaching: Color,
+    val studySparklineObservability: Color,
+    val accountCanvas: Color,
+    val observabilityChart: Color,
+    val plotGrid: Color,
+    val plotInk: Color,
+    val speedChart: Color,
+    val studyBuildInk: Color,
+    val studySubscriptionInk: Color,
+    val profileDivider: Color,
+    val profileField: Color,
+    val profileFieldBorder: Color,
+    val profileConflictBorder: Color,
+    val profileCaption: Color,
 ) {
     companion object {
         val Dark = DashboardPalette(
@@ -266,6 +438,55 @@ internal data class DashboardPalette(
             workspaceBadgeInk = Color(0xFFC7C7C7),
             previewPaper = Color(0xFFECEAE7),
             previewInk = Color(0xFF242323),
+            projectSheetHandle = Color(0xFF717171),
+            sheetHandle = Color(0xFF9B9B9B),
+            logFilterHandle = Color(0xFF757575),
+            domainVerifiedSurface = Color(0xFF303B33),
+            domainUnverifiedSurface = Color(0xFF433A2C),
+            projectSheetGroup = Color(0xFF202020),
+            projectSyncDot = Color(0xFF408849),
+            previewReadyDot = Color(0xFF77BA69),
+            previewReadyBorder = Color(0xFF739678),
+            usageDailyGreen = Color(0xFF46B889),
+            usageDailyGold = Color(0xFFF4B844),
+            usagePeriodGreen = Color(0xFF6FCF9F),
+            studyPanel = Color(0xFF171717),
+            studyCategory = Color(0xFF191919),
+            studyRule = Color(0xFF2C2C2C),
+            studyTrack = Color(0xFF303339),
+            studyDeliveryInk = Color(0xFFA7BCE6),
+            studyDeliveryPaper = Color(0xFF273448),
+            studyFunctionsInk = Color(0xFF88C5A9),
+            studyFunctionsPaper = Color(0xFF20372F),
+            studyCpuInk = Color(0xFF9F82D7),
+            studyMemoryInk = Color(0xFFB76993),
+            studyCachingPaper = Color(0xFF3B2F26),
+            studyObservabilityPaper = Color(0xFF31283E),
+            studyBuildPaper = Color(0xFF22373B),
+            studySubscriptionPaper = Color(0xFF382834),
+            themeLightSheet = Color(0xFF171717),
+            studySparklineBlue = Color(0xFF52A9FF),
+            studySparklineDelivery = Color(0xFFA8BDE9),
+            studySparklinePurple = Color(0xFFA878F2),
+            studySparklinePink = Color(0xFFD96AAD),
+            studySparklineRed = Color(0xFFED6B74),
+            studySparklineGold = Color(0xFFE8A64B),
+            studySparklineYellow = Color(0xFFEFC258),
+            studySparklineTeal = Color(0xFF41B69B),
+            studySparklineCaching = Color(0xFFE2BA80),
+            studySparklineObservability = Color(0xFFB99BD8),
+            accountCanvas = Color(0xFF0D0D0D),
+            observabilityChart = Color(0xFFA2B9E5),
+            plotGrid = Color(0xFF262626),
+            plotInk = Color(0xFF929292),
+            speedChart = Color(0xFF7ABB8E),
+            studyBuildInk = Color(0xFFA1C9CF),
+            studySubscriptionInk = Color(0xFFCB9AAC),
+            profileDivider = Color(0xFF282828),
+            profileField = Color(0xFF101010),
+            profileFieldBorder = Color(0xFF3A3A3A),
+            profileConflictBorder = Color(0xFF75474A),
+            profileCaption = Color(0xFFB0B0B0),
         )
 
         val Light = DashboardPalette(
@@ -311,6 +532,55 @@ internal data class DashboardPalette(
             workspaceBadgeInk = Color(0xFF525252),
             previewPaper = Color(0xFFECEAE7),
             previewInk = Color(0xFF242323),
+            projectSheetHandle = Color(0xFFA1A1A1),
+            sheetHandle = Color(0xFF848484),
+            logFilterHandle = Color(0xFF848484),
+            domainVerifiedSurface = Color(0xFFE5F4E8),
+            domainUnverifiedSurface = Color(0xFFFDF2DE),
+            projectSheetGroup = Color(0xFFF4F4F4),
+            projectSyncDot = Color(0xFF408849),
+            previewReadyDot = Color(0xFF77BA69),
+            previewReadyBorder = Color(0xFF739678),
+            usageDailyGreen = Color(0xFF287754),
+            usageDailyGold = Color(0xFF8A5A0A),
+            usagePeriodGreen = Color(0xFF287754),
+            studyPanel = Color(0xFFF4F4F4),
+            studyCategory = Color(0xFFECECEC),
+            studyRule = Color(0xFFDEDEDE),
+            studyTrack = Color(0xFFE1E5EB),
+            studyDeliveryInk = Color(0xFF365684),
+            studyDeliveryPaper = Color(0xFFE3EBF9),
+            studyFunctionsInk = Color(0xFF2D6A54),
+            studyFunctionsPaper = Color(0xFFDCEEE5),
+            studyCpuInk = Color(0xFF604285),
+            studyMemoryInk = Color(0xFF804963),
+            studyCachingPaper = Color(0xFFF8EBDF),
+            studyObservabilityPaper = Color(0xFFEFE8F7),
+            studyBuildPaper = Color(0xFFE1F2F3),
+            studySubscriptionPaper = Color(0xFFF6E7F0),
+            themeLightSheet = Color(0xFFF8F8F8),
+            studySparklineBlue = Color(0xFF365684),
+            studySparklineDelivery = Color(0xFF365684),
+            studySparklinePurple = Color(0xFF604285),
+            studySparklinePink = Color(0xFF804963),
+            studySparklineRed = Color(0xFFA22C34),
+            studySparklineGold = Color(0xFF8A5A0A),
+            studySparklineYellow = Color(0xFF8A5A0A),
+            studySparklineTeal = Color(0xFF287754),
+            studySparklineCaching = Color(0xFF8A5A0A),
+            studySparklineObservability = Color(0xFF604285),
+            accountCanvas = Color(0xFFFFFFFF),
+            observabilityChart = Color(0xFF415E8A),
+            plotGrid = Color(0xFFD6D6D6),
+            plotInk = Color(0xFF525252),
+            speedChart = Color(0xFF326D46),
+            studyBuildInk = Color(0xFF2C626B),
+            studySubscriptionInk = Color(0xFF8C4664),
+            profileDivider = Color(0xFFE6E6E6),
+            profileField = Color(0xFFFFFFFF),
+            profileFieldBorder = Color(0xFFD6D6D6),
+            profileConflictBorder = Color(0xFFA92C32),
+            profileCaption = Color(0xFF525252),
         )
     }
 }
