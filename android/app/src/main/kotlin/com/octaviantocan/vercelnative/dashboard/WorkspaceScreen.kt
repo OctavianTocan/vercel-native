@@ -80,22 +80,24 @@ internal fun WorkspaceRail(route: DashboardRoute, navigation: DashboardNavigatio
                             for ((destination, icon) in workspaceRoutes) {
                                 WorkspaceMenuRow(destination.label, icon) { navigation.show(destination) }
                             }
-                            if (failed) DashboardNotice(
-                                "Can’t access Studio", tone = Tone.Error,
-                                modifier = Modifier.padding(horizontal = Tokens.WorkspaceRowInset),
-                                retry = {
-                                    failed = false
-                                    navigation.chooseWorkspace(DashboardFixtures.studioWorkspace)
-                                },
-                            )
                         }
                         WorkspaceMenuRow("Theme", R.drawable.dashboard_icon_theme) { navigation.show(Destination.Theme) }
                         Spacer(Modifier.height(Tokens.Space8))
-                        WorkspaceMenuRow("Account Settings", R.drawable.dashboard_icon_account) { navigation.show(Destination.Profile) }
+                        WorkspaceMenuRow("Account Settings", R.drawable.dashboard_icon_account,
+                            selected = route.variant in setOf("account", "workspace", "workspace-failed")) { navigation.show(Destination.Profile) }
                     }
                 }
                 Box(Modifier.fillMaxHeight().width(Tokens.Stroke).background(palette.insetSurface))
             }
+        }
+        if (failed) {
+            DashboardGlassNotice("Can’t access Studio", error = true, retryLabel = "Retry",
+                modifier = Modifier.align(Alignment.BottomCenter).windowInsetsPadding(verticalInsets.only(WindowInsetsSides.Bottom))
+                    .padding(horizontal = Tokens.Inset).padding(bottom = Tokens.DockScrollClearance),
+                onRetry = {
+                    failed = false
+                    navigation.chooseWorkspace(DashboardFixtures.studioWorkspace)
+                })
         }
     }
 }
@@ -113,7 +115,8 @@ private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: Graphic
                 .padding(top = Tokens.WorkspaceBadgeTop).selectableGroup(),
             verticalArrangement = Arrangement.spacedBy(Tokens.WorkspaceBadgeGap),
         ) {
-            for (workspace in DashboardFixtures.workspaces) {
+            val workspaces = (DashboardFixtures.workspaces + navigation.currentWorkspace).distinct()
+            for (workspace in workspaces) {
                 val selected = workspace.id == navigation.workspaceId
                 Box(Modifier.fillMaxWidth().height(Tokens.WorkspaceBadgeSize)) {
                     if (selected) Box(
@@ -149,17 +152,19 @@ private fun WorkspaceSwitcher(navigation: DashboardNavigation, backdrop: Graphic
 }
 
 @Composable
-private fun WorkspaceMenuRow(label: String, @DrawableRes icon: Int, onClick: () -> Unit) {
+private fun WorkspaceMenuRow(label: String, @DrawableRes icon: Int, selected: Boolean = false, onClick: () -> Unit) {
     val palette = LocalDashboardPalette.current
+    val ink = if (selected) palette.canvas else palette.glassInk
     Row(
         Modifier.fillMaxWidth().padding(horizontal = Tokens.WorkspaceRowInset).heightIn(min = Tokens.Touch)
+            .then(if (selected) Modifier.background(palette.glassInk, RoundedCornerShape(Tokens.SmallRadius)) else Modifier)
             .clickable(role = Role.Button, onClick = onClick).padding(horizontal = Tokens.Space24 - Tokens.WorkspaceRowInset),
         horizontalArrangement = Arrangement.spacedBy(Tokens.Inset),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DashboardArtwork(icon, Tokens.Inset, palette.glassInk)
+        DashboardArtwork(icon, Tokens.Inset, ink)
         Text(
-            label, style = GeistText, color = palette.glassInk,
+            label, style = GeistText, color = ink,
             fontSize = Tokens.ListTitle, lineHeight = Tokens.ListTitleLine, fontWeight = FontWeight.Medium,
             maxLines = 2, overflow = TextOverflow.Ellipsis,
         )
@@ -169,17 +174,22 @@ private fun WorkspaceMenuRow(label: String, @DrawableRes icon: Int, onClick: () 
 @Composable
 internal fun WorkspaceScreen(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
     when (route.destination) {
-        Destination.WorkspaceDomains -> WorkspaceDomains(navigation, onBack)
+        Destination.WorkspaceDomains -> WorkspaceDomains(route, navigation, onBack)
         Destination.Observability -> ObservabilityScreen(navigation, onBack)
         else -> WorkspaceToolScreen(route, navigation, onBack)
     }
 }
 
 @Composable
-internal fun WorkspaceDomains(navigation: DashboardNavigation, onBack: () -> Unit) {
+internal fun WorkspaceDomains(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
     val palette = LocalDashboardPalette.current
     var query by rememberSaveable { mutableStateOf("") }
-    val domains = navigation.projects().flatMap { DashboardFixtures.domains(it.id) }.filter {
+    val projects = navigation.projects()
+    val shownProjects = if (route.frozen) projects.take(3) else projects
+    val domains = shownProjects.flatMapIndexed { index, project ->
+        val projectDomains = DashboardFixtures.domains(project.id)
+        if (route.frozen) projectDomains.take(if (index == 0) 2 else 1) else projectDomains
+    }.filter {
         it.hostname.contains(query.trim(), ignoreCase = true)
     }
     Column(Modifier.fillMaxSize()) {
@@ -243,9 +253,9 @@ internal fun ObservabilityScreen(navigation: DashboardNavigation, onBack: () -> 
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(
-                Modifier.heightIn(min = Tokens.LogActionSize).dashboardGlass().clickable { shortRange = !shortRange }
-                    .padding(horizontal = Tokens.Space12),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
+                Modifier.width(Tokens.ObservabilityRangeWidth).heightIn(min = Tokens.LogActionSize).dashboardGlass()
+                    .clickable { shortRange = !shortRange }.padding(horizontal = Tokens.BodyInset),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(if (shortRange) "Last 30 min" else "Last 24 hours", fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine)
                 DashboardIcon(Glyph.Chevron, palette.secondary, modifier = Modifier.rotate(90f))
@@ -254,51 +264,67 @@ internal fun ObservabilityScreen(navigation: DashboardNavigation, onBack: () -> 
         }
         DashboardList(
             Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = Tokens.Inset, end = Tokens.Inset, bottom = Tokens.DockScrollClearance),
+            contentPadding = PaddingValues(start = Tokens.Space24, end = Tokens.Space24, bottom = Tokens.DockScrollClearance),
             verticalArrangement = Arrangement.spacedBy(Tokens.Inset),
         ) {
             item {
-                Text("Production traffic", Modifier.padding(horizontal = Tokens.Space8, vertical = Tokens.Space12),
+                Text("Production traffic", Modifier.padding(top = Tokens.DeploymentEnvironmentGap),
                     fontSize = Tokens.UsageTitle, lineHeight = Tokens.UsageTitleLine, fontWeight = FontWeight.SemiBold)
             }
             item {
                 Row(
-                    Modifier.fillMaxWidth().heightIn(min = Tokens.AlertMetricsHeight)
-                        .background(palette.control, shape).border(Tokens.Stroke, palette.quietBorder, shape).padding(Tokens.Inset),
+                    Modifier.fillMaxWidth().heightIn(min = Tokens.ObservabilityMetricsHeight)
+                        .background(palette.control, shape).border(Tokens.Stroke, palette.quietBorder, shape).padding(horizontal = Tokens.Inset),
                     horizontalArrangement = Arrangement.spacedBy(Tokens.Inset), verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Column(Modifier.weight(1f)) {
-                        MutedText("Requests")
-                        Text(if (shortRange) "2.3k" else "18.4k", fontSize = Tokens.UsageTitle, fontWeight = FontWeight.Medium)
-                    }
-                    Box(Modifier.width(Tokens.Stroke).height(Tokens.Touch).background(palette.quietBorder))
-                    Column(Modifier.weight(1f)) {
-                        MutedText("Error rate")
-                        Text(if (shortRange) "0.18%" else "0.27%", fontSize = Tokens.UsageTitle, fontWeight = FontWeight.Medium)
-                    }
+                    ObservabilityMetric("Requests", if (shortRange) "2.3k" else "18.4k", Modifier.weight(1f))
+                    Box(Modifier.width(Tokens.Stroke).height(Tokens.TopBar).background(palette.quietBorder))
+                    ObservabilityMetric("Error rate", if (shortRange) "0.18%" else "0.27%", Modifier.weight(1f))
                 }
             }
             item {
                 Column(
                     Modifier.fillMaxWidth().heightIn(min = Tokens.ObservabilityChartPanel)
-                        .border(Tokens.Stroke, palette.quietBorder, shape).padding(Tokens.Inset),
-                    verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
+                        .border(Tokens.Stroke, palette.quietBorder, shape).padding(Tokens.BodyInset),
+                    verticalArrangement = Arrangement.spacedBy(Tokens.Inset),
                 ) {
-                    Text("Requests over time", fontSize = Tokens.Body, lineHeight = Tokens.ProjectOptionsLine, fontWeight = FontWeight.SemiBold)
-                    DashboardChart(List(12) { i -> (40 + (i * 17 + refresh * 5) % 52) / 100f })
+                    Text("Requests over time", fontSize = Tokens.ListTitle, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.SemiBold)
+                    val readings = listOf(.60f, .68f, .82f, .71f, .85f, .96f, .87f, .84f, .80f, .76f, .70f, .63f)
+                    DashboardChart(
+                        readings.mapIndexed { index, value ->
+                            val sample = if (refresh == 0) value else value + ((index + refresh) % 5 - 2) * .025f
+                            if (shortRange) sample * .72f else sample
+                        },
+                        ticks = listOf("2k", "1k", "0"), dates = listOf("00:00", "06:00", "12:00", "18:00", "24:00"),
+                        height = Tokens.ObservabilityTicksHeight, bars = Tokens.ObservabilityBarWidth,
+                        observability = true, color = palette.observabilityChart,
+                    )
                 }
             }
             item {
-                Column {
+                Column(Modifier.padding(top = Tokens.Space8)) {
                     Text("Investigate", Modifier.fillMaxWidth().background(palette.control).padding(Tokens.Space8),
-                        fontSize = Tokens.Metadata, fontWeight = FontWeight.Medium)
+                        fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium)
                     for (destination in listOf(Destination.Logs, Destination.Analytics, Destination.Speed)) {
-                        DashboardRow(destination.label, onClick = { navigation.show(destination) }, minHeight = Tokens.Touch)
+                        Row(Modifier.fillMaxWidth().heightIn(min = Tokens.WorkspaceToolRow)
+                            .clickable { navigation.show(destination) }.padding(start = Tokens.Space8, end = Tokens.Space12),
+                            horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text(destination.label, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine)
+                            DashboardIcon(Glyph.Chevron, palette.secondary)
+                        }
                         DividerLine()
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ObservabilityMetric(label: String, value: String, modifier: Modifier = Modifier) {
+    Column(modifier.padding(bottom = Tokens.Space8), verticalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
+        Text(label, fontSize = Tokens.Metadata, lineHeight = Tokens.ChartTickLine, color = LocalDashboardPalette.current.secondary)
+        Text(value, fontSize = Tokens.Heading, lineHeight = Tokens.PlanTitleLine, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -318,7 +344,7 @@ private data class FirewallActivity(
 }
 
 private val dailyFirewall = FirewallActivity(
-    18_400, 28, listOf(4, 5, 6, 9, 9, 12, 17, 11, 9, 7, 6, 5),
+    18_400, 28, listOf(3, 5, 7, 9, 8, 11, 15, 12, 10, 8, 7, 5),
     listOf("00:00", "06:00", "12:00", "18:00", "24:00"),
 )
 private val monthlyFirewall = FirewallActivity(
@@ -344,22 +370,34 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
         Destination.Firewall -> firewall.stats
         else -> emptyList()
     }
+    val projectName = navigation.projectName(navigation.project(null))
     val metricHeading = when (destination) {
         Destination.Analytics -> "Traffic"
         Destination.Speed -> "Real Experience Score"
         else -> "Request activity"
     }
-    val records = remember(destination) { toolRecords(destination) }
+    val recordCount = if (route.frozen) 3 else 27
+    val records = remember(destination, recordCount) { toolRecords(destination, recordCount) }
     Column(Modifier.fillMaxSize()) {
-        val subtitle = if (integration) scope.name else "${navigation.projectName(navigation.project(null))} · Production"
+        val subtitle = when {
+            integration || restricted -> scope.name
+            else -> "$projectName · Production"
+        }
         DashboardHeader(destination.label, onBack, subtitle = subtitle,
             modifier = Modifier.padding(top = Tokens.AlertDetailHeaderInset), titleSize = Tokens.DetailTitle)
         if (empty || restricted) {
-            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                if (empty) DashboardEmpty("No visitors in this period", "Try a different range to view traffic.", Glyph.Usage,
-                    action = { empty = false }, actionLabel = "Change time range")
-                else DashboardEmpty("Firewall access required", "Ask a workspace owner to grant you access.", Glyph.Lock,
-                    action = onBack, actionLabel = "Go back")
+            if (empty) Box(Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset, vertical = Tokens.Inset)) {
+                WorkspaceTimeRange("Last 7 days") { empty = false; alternateRange = true }
+            }
+            val feedbackClearance = if (empty) Tokens.AnalyticsFeedbackClearance else Tokens.DockScrollClearance
+            Box(Modifier.weight(1f).fillMaxWidth().padding(bottom = feedbackClearance), contentAlignment = Alignment.Center) {
+                if (empty) DashboardEmpty("No visitors in this period", "Analytics is active for $projectName. Try a different time range to see recorded traffic.",
+                    Glyph.Usage, action = { empty = false; alternateRange = true }, actionLabel = "Change time range",
+                    illustration = R.drawable.dashboard_figma_workspace_empty, glassAction = true, prominentTitle = true,
+                    actionWidth = Tokens.AnalyticsFeedbackActionWidth)
+                else DashboardEmpty("Firewall access required", "Ask a workspace owner to grant you access to Firewall.", Glyph.Lock,
+                    action = onBack, actionLabel = "Go back", illustration = R.drawable.dashboard_figma_workspace_access,
+                    glassAction = true, prominentTitle = true)
             }
         } else DashboardList(
             Modifier.weight(1f),
@@ -370,42 +408,39 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Tokens.Space6),
                         verticalAlignment = Alignment.CenterVertically) {
                         val range = if (alternateRange) "Last 30 days" else if (destination == Destination.Firewall) "Last 24 hours" else "Last 7 days"
-                        Row(
-                            Modifier.heightIn(min = Tokens.LogActionSize).dashboardGlass().clickable { alternateRange = !alternateRange }
-                                .padding(horizontal = Tokens.Space12),
-                            horizontalArrangement = Arrangement.spacedBy(Tokens.Space6), verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(range, fontSize = Tokens.SearchDetailSize, fontWeight = FontWeight.Medium)
-                            DashboardIcon(Glyph.Chevron, palette.secondary, Modifier.rotate(90f))
+                        WorkspaceTimeRange(range, if (destination == Destination.Speed) Modifier.padding(end = Tokens.Space8) else Modifier) {
+                            alternateRange = !alternateRange
                         }
                         if (destination == Destination.Speed) {
                             for ((isMobile, label) in listOf(true to "Mobile", false to "Desktop")) {
                                 Box(
                                     Modifier.weight(1f).height(Tokens.LogActionSize).clip(CircleShape)
-                                        .background(if (mobile == isMobile) palette.selected else palette.control)
+                                        .background(if (mobile == isMobile) palette.insetSurface else palette.control)
+                                        .border(Tokens.Stroke, palette.border, CircleShape)
                                         .clickable { mobile = isMobile },
                                     contentAlignment = Alignment.Center,
-                                ) { Text(label, fontSize = Tokens.SearchDetailSize, fontWeight = FontWeight.Medium) }
+                                ) { Text(label, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.ListSubtitleLine,
+                                    fontWeight = if (mobile == isMobile) FontWeight.SemiBold else FontWeight.Medium) }
                             }
                         }
                     }
                     Text(metricHeading, Modifier.padding(top = Tokens.Space8, start = Tokens.Space8),
-                        fontSize = Tokens.UsageTitle, lineHeight = Tokens.UsageTitleLine, fontWeight = FontWeight.SemiBold)
+                        fontSize = Tokens.WorkspaceMetricTitle, lineHeight = Tokens.UsageTitleLine, fontWeight = FontWeight.SemiBold)
                     val shape = RoundedCornerShape(Tokens.ControlRadius)
                     Row(
                         Modifier.fillMaxWidth().heightIn(min = Tokens.AlertMetricsHeight)
                             .background(palette.control, shape).border(Tokens.Stroke, palette.quietBorder, shape)
-                            .padding(Tokens.Space12),
+                            .padding(horizontal = Tokens.AlertMeasurePad, vertical = Tokens.Space12),
                         horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         stats.forEachIndexed { index, (label, value) ->
                             if (index > 0) Box(Modifier.height(Tokens.Touch).width(Tokens.Stroke).background(palette.quietBorder))
                             Column(Modifier.weight(1f)) {
-                                Text(label, color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine)
+                                Text(label, color = palette.projectOptionsGlyph, fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine)
                                 Text(value, fontSize = Tokens.AlertDetailTitle, lineHeight = Tokens.AlertMetricLine, fontWeight = FontWeight.Medium,
                                     color = when (label) {
-                                        "Mobile score", "Desktop score" -> palette.ready
+                                        "Mobile score", "Desktop score" -> palette.speedChart
                                         "Challenged" -> palette.warning
                                         "Blocked" -> palette.error
                                         else -> palette.ink
@@ -413,7 +448,7 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
                             }
                         }
                     }
-                    ToolTrend(destination, alternateRange, mobile, firewall)
+                    Box(Modifier.padding(top = Tokens.Space6)) { ToolTrend(destination, alternateRange, mobile, firewall) }
                 }
             }
             item {
@@ -425,8 +460,11 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
                 }
                 if (integration) Text(label, Modifier.padding(start = Tokens.Space8, top = Tokens.Space12, bottom = Tokens.Inset),
                     fontSize = Tokens.UsageTitle, lineHeight = Tokens.UsageTitleLine, fontWeight = FontWeight.SemiBold)
-                else Text(label, Modifier.padding(start = Tokens.Space12, top = Tokens.Space24, bottom = Tokens.Space8),
-                    color = palette.secondary, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine)
+                else Text(label, Modifier.padding(start = Tokens.AlertMeasurePad,
+                    top = Tokens.Space24 + if (destination == Destination.Speed) Tokens.Space8 else Tokens.Space4,
+                    bottom = Tokens.Space8 + Tokens.Space2),
+                    color = palette.projectOptionsGlyph, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ProjectSectionLine,
+                    fontWeight = FontWeight.Medium)
             }
             items(records, key = ToolRecord::id) { record ->
                 val top = record == records.first()
@@ -438,7 +476,12 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
                 val event = destination == Destination.Firewall
                 Column(Modifier.fillMaxWidth().clip(shape).background(palette.group)) {
                     Row(
-                        Modifier.fillMaxWidth().heightIn(min = if (integration) Tokens.WorkspaceDomainRow else Tokens.Touch)
+                        Modifier.fillMaxWidth().heightIn(min = when {
+                            integration -> Tokens.WorkspaceDomainRow
+                            event -> Tokens.WorkspaceFirewallRow
+                            destination == Destination.Analytics -> Tokens.WorkspaceToolRow + Tokens.Stroke
+                            else -> Tokens.WorkspaceToolRow
+                        })
                             .clickable { expanded = if (expanded == record.id) null else record.id }
                             .padding(horizontal = Tokens.Inset, vertical = Tokens.Space8),
                         horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
@@ -456,15 +499,17 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
                             )
                         }
                         Column(Modifier.weight(1f)) {
-                            Text(record.title, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine)
-                            if (event || integration) Text(record.subtitle, color = palette.secondary, lineHeight = Tokens.SearchDetailLine,
-                                fontSize = Tokens.SearchDetailSize)
+                            Text(record.title, fontSize = if (integration) Tokens.ListSubtitle else Tokens.Body,
+                                lineHeight = if (integration) Tokens.ListSubtitleLine else Tokens.ProjectOptionsLine)
+                            if (event || integration) Text(record.subtitle, color = palette.secondary,
+                                lineHeight = if (event) Tokens.ChartTickLine else Tokens.SearchDetailLine,
+                                fontSize = if (event) Tokens.Metadata else Tokens.SearchDetailSize)
                         }
                         if (integration) Box(Modifier.size(Tokens.Space6)
                             .background(if (record.id % 4 == 2) palette.warning else palette.ready, CircleShape))
                         if (event || integration) DashboardIcon(Glyph.Chevron, palette.secondary)
-                        else Text(record.subtitle, color = if (destination == Destination.Speed) palette.ready else palette.secondary,
-                            fontSize = Tokens.SearchDetailSize, textAlign = TextAlign.End)
+                        else Text(record.subtitle, color = if (destination == Destination.Speed) palette.speedChart else palette.projectOptionsGlyph,
+                            fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.ListSubtitleLine, textAlign = TextAlign.End)
                     }
                     if (expanded == record.id) MutedText(record.detail, Modifier.padding(horizontal = Tokens.Inset, vertical = Tokens.Space8))
                     if (!bottom) DividerLine(Modifier.padding(horizontal = Tokens.Inset))
@@ -475,48 +520,55 @@ internal fun WorkspaceToolScreen(route: DashboardRoute, navigation: DashboardNav
 }
 
 @Composable
+private fun WorkspaceTimeRange(range: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Row(
+        modifier.width(Tokens.WorkspaceTimeRangeWidth).heightIn(min = Tokens.LogActionSize).dashboardGlass()
+            .clickable(onClick = onClick).padding(horizontal = Tokens.Space8 + Tokens.Space2),
+        horizontalArrangement = Arrangement.spacedBy(Tokens.DockLabelGap), verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(range, Modifier.weight(1f), fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.ListSubtitleLine,
+            fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+        DashboardIcon(Glyph.Chevron, LocalDashboardPalette.current.secondary, Modifier.rotate(90f))
+    }
+}
+
+@Composable
 private fun ToolTrend(destination: Destination, alternateRange: Boolean, mobile: Boolean, firewall: FirewallActivity) {
     val palette = LocalDashboardPalette.current
     val shape = RoundedCornerShape(Tokens.ControlRadius)
     val (title, color) = when (destination) {
-        Destination.Analytics -> "Visitors by day" to palette.chart
-        Destination.Speed -> "Score by day" to palette.ready
+        Destination.Analytics -> "Visitors by day" to palette.studyDeliveryInk
+        Destination.Speed -> "Score by day" to palette.speedChart
         else -> "Mitigated requests" to palette.warning
     }
     Column(
-        Modifier.fillMaxWidth().heightIn(min = Tokens.ObservabilityChartPanel)
-            .border(Tokens.Stroke, palette.quietBorder, shape).padding(Tokens.Space12),
-        verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
+        Modifier.fillMaxWidth().border(Tokens.Stroke, palette.quietBorder, shape)
+            .padding(start = Tokens.AlertMeasurePad, end = Tokens.AlertMeasurePad,
+                top = Tokens.ProjectOptionsInset, bottom = Tokens.PreviewStatusInset),
+        verticalArrangement = Arrangement.spacedBy(Tokens.ChartTitleGap),
     ) {
         Text(title, fontSize = Tokens.Body, lineHeight = Tokens.ProjectOptionsLine, fontWeight = FontWeight.SemiBold)
         if (destination == Destination.Firewall) {
-            val ceiling = firewall.mitigated.max() * 1.2f
-            DashboardChart(firewall.mitigated.map { it / ceiling }, color = color)
-        } else Canvas(Modifier.fillMaxWidth().height(Tokens.ChartHeight)) {
-            for (i in 0..4) {
-                val y = size.height * i / 4f
-                drawLine(palette.quietBorder, Offset(0f, y), Offset(size.width, y), Tokens.Stroke.toPx())
-            }
-            val values = if (destination == Destination.Analytics) listOf(.40f, .51f, .46f, .63f, .77f, .83f, .87f)
-            else if (mobile) listOf(.72f, .76f, .75f, .87f, .86f, .91f, .92f)
+            val step = if (alternateRange) ((firewall.mitigated.max() + 3) / 4) else 5
+            val ticks = (4 downTo 0).map { (it * step).toString() }
+            DashboardChart(firewall.mitigated.map { it / (step * 4f) }, ticks, firewall.labels, color = color,
+                height = Tokens.FirewallTicksHeight)
+        } else {
+            val ticks = if (destination == Destination.Analytics) listOf("300", "200", "100", "0")
+            else listOf("100", "75", "50", "25", "0")
+            val values = if (destination == Destination.Analytics) listOf(46, 58, 52, 71, 87, 93, 96).map { it / 115f }
+            else if (mobile) listOf(65, 70, 68, 81, 79, 85, 86).map { it / 93f }
             else listOf(.84f, .82f, .85f, .88f, .91f, .94f, .97f)
-            val path = Path()
-            values.forEachIndexed { i, value ->
-                val x = i * size.width / values.lastIndex
-                val y = (1f - value * if (alternateRange) .92f else 1f) * size.height
-                if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
-            }
-            drawPath(path, color, style = Stroke(Tokens.Space2.toPx()))
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            val labels = if (destination == Destination.Firewall) firewall.labels
+            val dates = if (alternateRange) listOf("Nov 1", "Nov 8", "Nov 15", "Nov 21")
             else listOf("Nov 15", "Nov 17", "Nov 19", "Nov 21")
-            labels.forEach { Text(it, color = palette.secondary, fontSize = Tokens.ChartCaption, fontFamily = GeistMono) }
+            val data = if (alternateRange) values.map { it * .92f } else values
+            DashboardChart(data, ticks, dates, color = color, line = true,
+                height = if (destination == Destination.Analytics) Tokens.AnalyticsTicksHeight else Tokens.CompactChartTicksHeight)
         }
     }
 }
 
-private fun toolRecords(destination: Destination) = List(27) { index ->
+private fun toolRecords(destination: Destination, count: Int) = List(count) { index ->
     val pages = listOf("/", "/components", "/docs", "/checkout", "/catalog")
     val page = pages[index % pages.size]
     val number = index + 1
@@ -532,7 +584,13 @@ private fun toolRecords(destination: Destination) = List(27) { index ->
         }
         Destination.Firewall -> {
             val action = listOf("Blocked request", "Challenge issued", "Blocked request")[index % 3]
-            ToolRecord(index, action, "$page · $number min ago", "Request firewall-$number · Production")
+            val event = when (index) {
+                0 -> "/api/search · 2 min ago"
+                1 -> "/login · 8 min ago"
+                2 -> "/api/catalog · 15 min ago"
+                else -> "$page · ${index + 14} min ago"
+            }
+            ToolRecord(index, action, event, "Request firewall-$number · Production")
         }
         else -> {
             val integration = listOf("Sentry", "Upstash", "Slack", "Analytics export")[index % 4]
@@ -546,11 +604,16 @@ private fun toolRecords(destination: Destination) = List(27) { index ->
 @Composable
 internal fun HelpSheet(onBack: () -> Unit, docsOnly: Boolean = false) {
     DashboardHeader(if (docsOnly) "Docs" else "Help", onBack)
-    Column(Modifier.padding(Tokens.Inset)) {
-        if (!docsOnly) {
-            DashboardRow("Contact Support", "Vercel Support", glyph = Glyph.Help)
-            DividerLine()
+    Column(Modifier.fillMaxWidth().dashboardScroll().padding(horizontal = Tokens.Inset).padding(top = Tokens.Inset, bottom = Tokens.Space8)) {
+        val palette = LocalDashboardPalette.current
+        DashboardGroup {
+            if (!docsOnly) {
+                DashboardRow("Contact Support", "Open Vercel Support in your browser", minHeight = Tokens.HelpActionHeight,
+                    trailing = { DashboardIcon(Glyph.Outbound, palette.secondary) })
+                DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
+            }
+            DashboardRow("Documentation", "Open Vercel Docs in your browser", minHeight = Tokens.HelpActionHeight,
+                trailing = { DashboardIcon(Glyph.Outbound, palette.secondary) })
         }
-        DashboardRow("Documentation", "Vercel Docs", glyph = Glyph.Globe)
     }
 }

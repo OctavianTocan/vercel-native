@@ -168,7 +168,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "468:4699",
@@ -183,7 +183,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "604:3083",
@@ -198,7 +198,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "GitHubSync",
       "libraryComponentId": "659:8224",
-      "sourceLine": 347
+      "sourceLine": 519
     },
     {
       "id": "604:938",
@@ -213,7 +213,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectDomainsScreen",
       "libraryComponentId": "659:8365",
-      "sourceLine": 285
+      "sourceLine": 360
     },
     {
       "id": "604:1084",
@@ -228,7 +228,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "DomainDetails",
       "libraryComponentId": "659:8501",
-      "sourceLine": 309
+      "sourceLine": 426
     },
     {
       "id": "604:3224",
@@ -243,7 +243,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "DomainDetails",
       "libraryComponentId": "659:8501",
-      "sourceLine": 309
+      "sourceLine": 426
     },
     {
       "id": "584:2553",
@@ -258,7 +258,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 358
+      "sourceLine": 540
     },
     {
       "id": "535:1457",
@@ -273,7 +273,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 358
+      "sourceLine": 540
     },
     {
       "id": "535:1680",
@@ -288,7 +288,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 358
+      "sourceLine": 540
     },
     {
       "id": "552:2113",
@@ -303,7 +303,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 358
+      "sourceLine": 540
     },
     {
       "id": "535:2057",
@@ -318,7 +318,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "604:3363",
@@ -333,7 +333,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "TransferSheet",
       "libraryComponentId": "659:8675",
-      "sourceLine": 358
+      "sourceLine": 540
     },
     {
       "id": "511:701",
@@ -348,7 +348,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectSettingsScreen",
       "libraryComponentId": "659:8731",
-      "sourceLine": 231
+      "sourceLine": 282
     },
     {
       "id": "511:775",
@@ -363,7 +363,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectSettingsScreen",
       "libraryComponentId": "659:8731",
-      "sourceLine": 231
+      "sourceLine": 282
     },
     {
       "id": "552:1922",
@@ -378,7 +378,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectSettingsScreen",
       "libraryComponentId": "659:8731",
-      "sourceLine": 231
+      "sourceLine": 282
     },
     {
       "id": "468:4800",
@@ -393,7 +393,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "604:1231",
@@ -408,7 +408,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "535:2969",
@@ -423,7 +423,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "512:1592",
@@ -438,7 +438,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ProjectScreen.kt",
       "symbol": "ProjectScreen",
       "libraryComponentId": "659:8097",
-      "sourceLine": 43
+      "sourceLine": 56
     },
     {
       "id": "535:3264",
@@ -453,7 +453,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentScreen",
       "libraryComponentId": "659:8799",
-      "sourceLine": 191
+      "sourceLine": 252
     },
     {
       "id": "468:6631",
@@ -468,7 +468,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentScreen",
       "libraryComponentId": "659:8799",
-      "sourceLine": 191
+      "sourceLine": 252
     },
     {
       "id": "586:176",
@@ -483,7 +483,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 243
+      "sourceLine": 326
     },
     {
       "id": "586:274",
@@ -498,7 +498,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 243
+      "sourceLine": 326
     },
     {
       "id": "604:3774",
@@ -513,7 +513,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 243
+      "sourceLine": 326
     },
     {
       "id": "552:2311",
@@ -528,7 +528,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 243
+      "sourceLine": 326
     },
     {
       "id": "225:2",
@@ -543,7 +543,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 104
+      "sourceLine": 109
     },
     {
       "id": "479:3051",
@@ -558,7 +558,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 104
+      "sourceLine": 109
     },
     {
       "id": "512:976",
@@ -573,7 +573,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 104
+      "sourceLine": 109
     },
     {
       "id": "468:6678",
@@ -588,7 +588,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 104
+      "sourceLine": 109
     },
     {
       "id": "339:740",
@@ -603,7 +603,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 104
+      "sourceLine": 109
     },
     {
       "id": "604:3882",
@@ -618,7 +618,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/DeploymentScreen.kt",
       "symbol": "DeploymentSheetContent",
       "libraryComponentId": "660:6832",
-      "sourceLine": 243
+      "sourceLine": 326
     },
     {
       "id": "586:708",
@@ -633,7 +633,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "RecentsList",
       "libraryComponentId": "660:6987",
-      "sourceLine": 104
+      "sourceLine": 109
     },
     {
       "id": "225:257",
@@ -648,7 +648,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 405
+      "sourceLine": 509
     },
     {
       "id": "604:4355",
@@ -663,7 +663,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 405
+      "sourceLine": 509
     },
     {
       "id": "479:3118",
@@ -678,7 +678,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 405
+      "sourceLine": 509
     },
     {
       "id": "604:4529",
@@ -693,7 +693,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertsList",
       "libraryComponentId": "660:7059",
-      "sourceLine": 405
+      "sourceLine": 509
     },
     {
       "id": "587:1267",
@@ -708,7 +708,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertScreen",
       "libraryComponentId": "660:7350",
-      "sourceLine": 503
+      "sourceLine": 607
     },
     {
       "id": "587:1391",
@@ -723,7 +723,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertScreen",
       "libraryComponentId": "660:7350",
-      "sourceLine": 503
+      "sourceLine": 607
     },
     {
       "id": "587:1515",
@@ -738,7 +738,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "AlertScreen",
       "libraryComponentId": "660:7350",
-      "sourceLine": 503
+      "sourceLine": 607
     },
     {
       "id": "225:163",
@@ -753,7 +753,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "587:484",
@@ -768,7 +768,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "587:718",
@@ -783,7 +783,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "513:2445",
@@ -798,7 +798,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "587:949",
@@ -813,7 +813,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "604:4293",
@@ -828,7 +828,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "479:1344",
@@ -858,7 +858,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "513:1112",
@@ -873,7 +873,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "479:1876",
@@ -888,7 +888,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "479:2571",
@@ -903,7 +903,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "513:1485",
@@ -918,7 +918,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "479:2249",
@@ -933,7 +933,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "604:4113",
@@ -948,7 +948,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "552:2673",
@@ -963,7 +963,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/SearchOverlay.kt",
       "symbol": "SearchOverlay",
       "libraryComponentId": "660:8860",
-      "sourceLine": 53
+      "sourceLine": 54
     },
     {
       "id": "513:2132",
@@ -1038,7 +1038,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "HelpSheet",
       "libraryComponentId": "660:9524",
-      "sourceLine": 523
+      "sourceLine": 605
     },
     {
       "id": "513:2989",
@@ -1053,7 +1053,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "ObservabilityScreen",
       "libraryComponentId": "660:9767",
-      "sourceLine": 233
+      "sourceLine": 243
     },
     {
       "id": "588:927",
@@ -1068,7 +1068,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 308
+      "sourceLine": 356
     },
     {
       "id": "588:1052",
@@ -1083,7 +1083,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 308
+      "sourceLine": 356
     },
     {
       "id": "588:1181",
@@ -1098,7 +1098,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 308
+      "sourceLine": 356
     },
     {
       "id": "588:1333",
@@ -1113,7 +1113,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceDomains",
       "libraryComponentId": "661:7834",
-      "sourceLine": 179
+      "sourceLine": 184
     },
     {
       "id": "604:4587",
@@ -1128,7 +1128,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 308
+      "sourceLine": 356
     },
     {
       "id": "604:4656",
@@ -1143,7 +1143,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 308
+      "sourceLine": 356
     },
     {
       "id": "604:4704",
@@ -1158,7 +1158,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/WorkspaceScreen.kt",
       "symbol": "WorkspaceToolScreen",
       "libraryComponentId": "660:9835",
-      "sourceLine": 308
+      "sourceLine": 356
     },
     {
       "id": "468:6875",
@@ -1173,7 +1173,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "468:6985",
@@ -1188,7 +1188,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "468:7128",
@@ -1203,7 +1203,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogFilters",
       "libraryComponentId": "661:8241",
-      "sourceLine": 237
+      "sourceLine": 357
     },
     {
       "id": "468:7051",
@@ -1218,7 +1218,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "468:7260",
@@ -1233,7 +1233,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "468:7380",
@@ -1248,7 +1248,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "468:7516",
@@ -1263,7 +1263,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogFilters",
       "libraryComponentId": "661:8241",
-      "sourceLine": 237
+      "sourceLine": 357
     },
     {
       "id": "468:7448",
@@ -1278,7 +1278,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "590:1355",
@@ -1293,7 +1293,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogSheetContent",
       "libraryComponentId": "661:8399",
-      "sourceLine": 211
+      "sourceLine": 290
     },
     {
       "id": "590:1520",
@@ -1308,7 +1308,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "624:1304",
@@ -1323,7 +1323,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "590:1752",
@@ -1338,7 +1338,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogDownload",
       "libraryComponentId": "661:8507",
-      "sourceLine": 258
+      "sourceLine": 405
     },
     {
       "id": "590:1867",
@@ -1353,7 +1353,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "604:4840",
@@ -1368,7 +1368,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/LogsScreen.kt",
       "symbol": "LogsScreen",
       "libraryComponentId": "661:8114",
-      "sourceLine": 24
+      "sourceLine": 32
     },
     {
       "id": "344:494",
@@ -1383,7 +1383,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "ProfileScreen",
       "libraryComponentId": "661:8578",
-      "sourceLine": 38
+      "sourceLine": 51
     },
     {
       "id": "589:1046",
@@ -1398,7 +1398,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 173
+      "sourceLine": 215
     },
     {
       "id": "589:1117",
@@ -1413,7 +1413,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "ProfileScreen",
       "libraryComponentId": "661:8578",
-      "sourceLine": 38
+      "sourceLine": 51
     },
     {
       "id": "605:1910",
@@ -1428,7 +1428,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "ProfileScreen",
       "libraryComponentId": "661:8578",
-      "sourceLine": 38
+      "sourceLine": 51
     },
     {
       "id": "605:2118",
@@ -1443,7 +1443,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 173
+      "sourceLine": 215
     },
     {
       "id": "605:2226",
@@ -1458,7 +1458,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 173
+      "sourceLine": 215
     },
     {
       "id": "552:3001",
@@ -1473,7 +1473,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 173
+      "sourceLine": 215
     },
     {
       "id": "605:2334",
@@ -1488,7 +1488,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AccountSheetContent",
       "libraryComponentId": "661:9048",
-      "sourceLine": 173
+      "sourceLine": 215
     },
     {
       "id": "605:2516",
@@ -1503,7 +1503,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 231
+      "sourceLine": 339
     },
     {
       "id": "589:2085",
@@ -1518,7 +1518,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 231
+      "sourceLine": 339
     },
     {
       "id": "605:2543",
@@ -1533,7 +1533,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 231
+      "sourceLine": 339
     },
     {
       "id": "605:2570",
@@ -1548,7 +1548,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/AccountScreen.kt",
       "symbol": "AgentScreen",
       "libraryComponentId": "661:9150",
-      "sourceLine": 231
+      "sourceLine": 339
     },
     {
       "id": "606:634",
@@ -1563,7 +1563,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:865",
@@ -1578,7 +1578,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:1103",
@@ -1593,7 +1593,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:1341",
@@ -1608,7 +1608,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:1566",
@@ -1623,7 +1623,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:1791",
@@ -1638,7 +1638,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:2009",
@@ -1653,7 +1653,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:2230",
@@ -1668,7 +1668,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:2471",
@@ -1683,7 +1683,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:2696",
@@ -1698,7 +1698,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:2882",
@@ -1713,7 +1713,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:3116",
@@ -1728,7 +1728,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:3376",
@@ -1743,7 +1743,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:3610",
@@ -1758,7 +1758,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:3851",
@@ -1773,7 +1773,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:4092",
@@ -1788,7 +1788,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:4333",
@@ -1803,7 +1803,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:4558",
@@ -1818,7 +1818,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:4796",
@@ -1833,7 +1833,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     },
     {
       "id": "606:5017",
@@ -1848,7 +1848,7 @@
       "source": "android/app/src/main/kotlin/com/octaviantocan/vercelnative/dashboard/ActivityScreen.kt",
       "symbol": "UsageScreen",
       "libraryComponentId": "660:7651",
-      "sourceLine": 166
+      "sourceLine": 200
     }
   ],
   "components": [
@@ -2381,6 +2381,300 @@
         "dark": "242323",
         "light": "242323",
         "figmaFrame": "535:3158"
+      },
+      {
+        "name": "projectSheetHandle",
+        "figmaFrame": "535:3158",
+        "dark": "717171",
+        "light": "a1a1a1"
+      },
+      {
+        "name": "sheetHandle",
+        "figmaFrame": "604:1084",
+        "dark": "9b9b9b",
+        "light": "848484"
+      },
+      {
+        "name": "logFilterHandle",
+        "figmaFrame": "468:7128",
+        "dark": "757575",
+        "light": "848484"
+      },
+      {
+        "name": "domainVerifiedSurface",
+        "figmaFrame": "604:3224",
+        "dark": "303b33",
+        "light": "e5f4e8"
+      },
+      {
+        "name": "domainUnverifiedSurface",
+        "figmaFrame": "604:1084",
+        "dark": "433a2c",
+        "light": "fdf2de"
+      },
+      {
+        "name": "projectSheetGroup",
+        "figmaFrame": "535:3158",
+        "dark": "202020",
+        "light": "f4f4f4"
+      },
+      {
+        "name": "projectSyncDot",
+        "figmaFrame": "535:3158",
+        "dark": "408849",
+        "light": "408849"
+      },
+      {
+        "name": "previewReadyDot",
+        "figmaFrame": "535:3158",
+        "dark": "77ba69",
+        "light": "77ba69"
+      },
+      {
+        "name": "previewReadyBorder",
+        "figmaFrame": "535:3158",
+        "dark": "739678",
+        "light": "739678"
+      },
+      {
+        "name": "usageDailyGreen",
+        "figmaFrame": "225:163",
+        "dark": "46b889",
+        "light": "287754"
+      },
+      {
+        "name": "usageDailyGold",
+        "figmaFrame": "225:163",
+        "dark": "f4b844",
+        "light": "8a5a0a"
+      },
+      {
+        "name": "usagePeriodGreen",
+        "figmaFrame": "587:484",
+        "dark": "6fcf9f",
+        "light": "287754"
+      },
+      {
+        "name": "studyPanel",
+        "figmaFrame": "606:865",
+        "dark": "171717",
+        "light": "f4f4f4"
+      },
+      {
+        "name": "studyCategory",
+        "figmaFrame": "606:634",
+        "dark": "191919",
+        "light": "ececec"
+      },
+      {
+        "name": "studyRule",
+        "figmaFrame": "606:1103",
+        "dark": "2c2c2c",
+        "light": "dedede"
+      },
+      {
+        "name": "studyTrack",
+        "figmaFrame": "606:3610",
+        "dark": "303339",
+        "light": "e1e5eb"
+      },
+      {
+        "name": "studyDeliveryInk",
+        "figmaFrame": "606:634",
+        "dark": "a7bce6",
+        "light": "365684"
+      },
+      {
+        "name": "studyDeliveryPaper",
+        "figmaFrame": "606:634",
+        "dark": "273448",
+        "light": "e3ebf9"
+      },
+      {
+        "name": "studyFunctionsInk",
+        "figmaFrame": "606:1103",
+        "dark": "88c5a9",
+        "light": "2d6a54"
+      },
+      {
+        "name": "studyFunctionsPaper",
+        "figmaFrame": "606:1103",
+        "dark": "20372f",
+        "light": "dceee5"
+      },
+      {
+        "name": "studyCpuInk",
+        "figmaFrame": "606:3116",
+        "dark": "9f82d7",
+        "light": "604285"
+      },
+      {
+        "name": "studyMemoryInk",
+        "figmaFrame": "606:3116",
+        "dark": "b76993",
+        "light": "804963"
+      },
+      {
+        "name": "studyCachingPaper",
+        "figmaFrame": "606:865",
+        "dark": "3b2f26",
+        "light": "f8ebdf"
+      },
+      {
+        "name": "studyObservabilityPaper",
+        "figmaFrame": "606:865",
+        "dark": "31283e",
+        "light": "efe8f7"
+      },
+      {
+        "name": "studyBuildPaper",
+        "figmaFrame": "606:865",
+        "dark": "22373b",
+        "light": "e1f2f3"
+      },
+      {
+        "name": "studySubscriptionPaper",
+        "figmaFrame": "606:865",
+        "dark": "382834",
+        "light": "f6e7f0"
+      },
+      {
+        "name": "themeLightSheet",
+        "figmaFrame": "605:2334",
+        "dark": "171717",
+        "light": "f8f8f8"
+      },
+      {
+        "name": "studySparklineBlue",
+        "figmaFrame": "606:2882",
+        "dark": "52a9ff",
+        "light": "365684"
+      },
+      {
+        "name": "studySparklineDelivery",
+        "figmaFrame": "606:3376",
+        "dark": "a8bde9",
+        "light": "365684"
+      },
+      {
+        "name": "studySparklinePurple",
+        "figmaFrame": "606:2882",
+        "dark": "a878f2",
+        "light": "604285"
+      },
+      {
+        "name": "studySparklinePink",
+        "figmaFrame": "606:2882",
+        "dark": "d96aad",
+        "light": "804963"
+      },
+      {
+        "name": "studySparklineRed",
+        "figmaFrame": "606:2882",
+        "dark": "ed6b74",
+        "light": "a22c34"
+      },
+      {
+        "name": "studySparklineGold",
+        "figmaFrame": "606:2882",
+        "dark": "e8a64b",
+        "light": "8a5a0a"
+      },
+      {
+        "name": "studySparklineYellow",
+        "figmaFrame": "606:2882",
+        "dark": "efc258",
+        "light": "8a5a0a"
+      },
+      {
+        "name": "studySparklineTeal",
+        "figmaFrame": "606:2882",
+        "dark": "41b69b",
+        "light": "287754"
+      },
+      {
+        "name": "studySparklineCaching",
+        "figmaFrame": "606:3376",
+        "dark": "e2ba80",
+        "light": "8a5a0a"
+      },
+      {
+        "name": "studySparklineObservability",
+        "figmaFrame": "606:3376",
+        "dark": "b99bd8",
+        "light": "604285"
+      },
+      {
+        "name": "accountCanvas",
+        "figmaFrame": "605:2543",
+        "dark": "0d0d0d",
+        "light": "ffffff"
+      },
+      {
+        "name": "observabilityChart",
+        "figmaFrame": "513:2989",
+        "dark": "a2b9e5",
+        "light": "415e8a"
+      },
+      {
+        "name": "plotGrid",
+        "figmaFrame": "588:927",
+        "dark": "262626",
+        "light": "d6d6d6"
+      },
+      {
+        "name": "plotInk",
+        "figmaFrame": "588:927",
+        "dark": "929292",
+        "light": "525252"
+      },
+      {
+        "name": "speedChart",
+        "figmaFrame": "588:1052",
+        "dark": "7abb8e",
+        "light": "326d46"
+      },
+      {
+        "name": "studyBuildInk",
+        "figmaFrame": "606:3376",
+        "dark": "a1c9cf",
+        "light": "2c626b"
+      },
+      {
+        "name": "studySubscriptionInk",
+        "figmaFrame": "606:3376",
+        "dark": "cb9aac",
+        "light": "8c4664"
+      },
+      {
+        "name": "profileDivider",
+        "figmaFrame": "344:494",
+        "dark": "282828",
+        "light": "e6e6e6"
+      },
+      {
+        "name": "profileField",
+        "figmaFrame": "344:494",
+        "dark": "101010",
+        "light": "ffffff"
+      },
+      {
+        "name": "profileFieldBorder",
+        "figmaFrame": "344:494",
+        "dark": "3a3a3a",
+        "light": "d6d6d6"
+      },
+      {
+        "name": "profileConflictBorder",
+        "figmaFrame": "605:1910",
+        "dark": "75474a",
+        "light": "a92c32"
+      },
+      {
+        "name": "profileCaption",
+        "figmaFrame": "344:494",
+        "dark": "b0b0b0",
+        "light": "525252"
       }
     ],
     "dimensions": [
@@ -2864,8 +3158,23 @@
         "figmaFrame": "513:1112"
       },
       {
-        "name": "SearchBackdropBlur",
+        "name": "GlassShadowRadius",
+        "value": 16,
+        "figmaFrame": "479:1505"
+      },
+      {
+        "name": "ReadyGlassBlur",
         "value": 4,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "ReadyGlassDepth",
+        "value": 6,
+        "figmaFrame": "535:3158"
+      },
+      {
+        "name": "SearchBackdropBlur",
+        "value": 3,
         "figmaFrame": "513:1112"
       },
       {
@@ -2965,7 +3274,7 @@
       },
       {
         "name": "ProfileFieldHeight",
-        "value": 40,
+        "value": 46,
         "figmaFrame": "344:494"
       },
       {
@@ -2975,12 +3284,22 @@
       },
       {
         "name": "ProfilePickerHeight",
-        "value": 45,
+        "value": 46,
         "figmaFrame": "344:494"
       },
       {
         "name": "LogActionSize",
         "value": 42,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogRangeWidth",
+        "value": 125,
+        "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogLiveWidth",
+        "value": 75,
         "figmaFrame": "468:6875"
       },
       {
@@ -3002,6 +3321,11 @@
         "name": "LogRowHeight",
         "value": 60,
         "figmaFrame": "468:6875"
+      },
+      {
+        "name": "LogWorkspaceRowHeight",
+        "value": 78,
+        "figmaFrame": "468:7260"
       },
       {
         "name": "UsageCreditHeight",
@@ -3077,6 +3401,531 @@
         "name": "ProjectSettingsButton",
         "value": 52,
         "figmaFrame": "535:3158"
+      },
+      {
+        "name": "SheetHandleWidth",
+        "figmaFrame": "535:3158",
+        "value": 41
+      },
+      {
+        "name": "PreviewStatusInset",
+        "figmaFrame": "535:3158",
+        "value": 9
+      },
+      {
+        "name": "ProjectDetailGap",
+        "figmaFrame": "535:3158",
+        "value": 7
+      },
+      {
+        "name": "PreviewStatusHeight",
+        "figmaFrame": "535:3158",
+        "value": 26
+      },
+      {
+        "name": "UsageStudyScroll",
+        "figmaFrame": "606:634",
+        "value": 551
+      },
+      {
+        "name": "UsageStudyColumnScroll",
+        "figmaFrame": "606:1791",
+        "value": 550
+      },
+      {
+        "name": "PreviewStatusWidth",
+        "figmaFrame": "535:3158",
+        "value": 72
+      },
+      {
+        "name": "DeploymentPreviewGap",
+        "figmaFrame": "535:3264",
+        "value": 5
+      },
+      {
+        "name": "DeploymentEnvironmentGap",
+        "figmaFrame": "535:3264",
+        "value": 17
+      },
+      {
+        "name": "RecentsFeedbackHeight",
+        "figmaFrame": "586:708",
+        "value": 60
+      },
+      {
+        "name": "LogFilterRowHeight",
+        "figmaFrame": "468:7128",
+        "value": 57
+      },
+      {
+        "name": "ProfilePhotoPreviewSize",
+        "figmaFrame": "589:1046",
+        "value": 123
+      },
+      {
+        "name": "ProfilePhotoPreviewBody",
+        "figmaFrame": "589:1046",
+        "value": 344
+      },
+      {
+        "name": "AgentComposerHeight",
+        "figmaFrame": "589:2085",
+        "value": 84
+      },
+      {
+        "name": "AgentProgressWidth",
+        "figmaFrame": "605:2516",
+        "value": 185
+      },
+      {
+        "name": "AgentEnablingTop",
+        "figmaFrame": "605:2516",
+        "value": 145
+      },
+      {
+        "name": "AgentFailureTop",
+        "figmaFrame": "605:2543",
+        "value": 167
+      },
+      {
+        "name": "AgentProgressHeight",
+        "figmaFrame": "605:2516",
+        "value": 5
+      },
+      {
+        "name": "ProjectDomainsBody",
+        "figmaFrame": "604:938",
+        "value": 421
+      },
+      {
+        "name": "UsageSparklineWidth",
+        "figmaFrame": "225:163",
+        "value": 40
+      },
+      {
+        "name": "UsageStudyInlineBar",
+        "figmaFrame": "606:3610",
+        "value": 156
+      },
+      {
+        "name": "UsageStudyChartWidth",
+        "figmaFrame": "606:2882",
+        "value": 49
+      },
+      {
+        "name": "UsageStudyQuantityColumn",
+        "figmaFrame": "606:2009",
+        "value": 91
+      },
+      {
+        "name": "UsageStudyChargeColumn",
+        "figmaFrame": "606:4796",
+        "value": 76
+      },
+      {
+        "name": "BranchFilterWidth",
+        "figmaFrame": "535:2969",
+        "value": 184
+      },
+      {
+        "name": "BranchClearFace",
+        "figmaFrame": "535:2969",
+        "value": 30
+      },
+      {
+        "name": "DomainVerificationBody",
+        "figmaFrame": "604:1084",
+        "value": 521
+      },
+      {
+        "name": "DomainRestrictedBody",
+        "figmaFrame": "604:3224",
+        "value": 388
+      },
+      {
+        "name": "DomainStatusRow",
+        "figmaFrame": "604:1084",
+        "value": 61
+      },
+      {
+        "name": "DomainStatusWidth",
+        "figmaFrame": "604:1084",
+        "value": 92
+      },
+      {
+        "name": "DomainVerifiedWidth",
+        "figmaFrame": "604:3224",
+        "value": 78
+      },
+      {
+        "name": "ProjectDomainRowHeight",
+        "figmaFrame": "604:938",
+        "value": 66
+      },
+      {
+        "name": "DnsRecordRow",
+        "figmaFrame": "604:1084",
+        "value": 51
+      },
+      {
+        "name": "SettingsGeneralRow",
+        "figmaFrame": "511:701",
+        "value": 52
+      },
+      {
+        "name": "SettingsOwnershipRow",
+        "figmaFrame": "511:701",
+        "value": 49
+      },
+      {
+        "name": "SettingsOwnershipGap",
+        "figmaFrame": "511:701",
+        "value": 30
+      },
+      {
+        "name": "TransferSelectionBody",
+        "figmaFrame": "584:2553",
+        "value": 469
+      },
+      {
+        "name": "TransferReviewBody",
+        "figmaFrame": "535:1457",
+        "value": 563
+      },
+      {
+        "name": "TransferProgressBody",
+        "figmaFrame": "535:1680",
+        "value": 315
+      },
+      {
+        "name": "TransferCompleteBody",
+        "figmaFrame": "552:2113",
+        "value": 325
+      },
+      {
+        "name": "TransferFailureBody",
+        "figmaFrame": "604:3363",
+        "value": 352
+      },
+      {
+        "name": "TransferDestinationRow",
+        "figmaFrame": "584:2553",
+        "value": 64
+      },
+      {
+        "name": "TransferProgressRow",
+        "figmaFrame": "535:1680",
+        "value": 52
+      },
+      {
+        "name": "TransferResultAction",
+        "figmaFrame": "552:2113",
+        "value": 42
+      },
+      {
+        "name": "TransferSuccessGlyph",
+        "figmaFrame": "552:2113",
+        "value": 26
+      },
+      {
+        "name": "FeedbackTitleGap",
+        "figmaFrame": "604:893",
+        "value": 17
+      },
+      {
+        "name": "FeedbackActionGap",
+        "figmaFrame": "604:893",
+        "value": 23
+      },
+      {
+        "name": "FeedbackExplanationWidth",
+        "figmaFrame": "604:893",
+        "value": 301
+      },
+      {
+        "name": "FeedbackIconSize",
+        "figmaFrame": "590:1867",
+        "value": 52
+      },
+      {
+        "name": "FeedbackExplanationGap",
+        "figmaFrame": "604:893",
+        "value": 13
+      },
+      {
+        "name": "BrowserPreviewBody",
+        "figmaFrame": "586:176",
+        "value": 323
+      },
+      {
+        "name": "ProtectedPreviewBody",
+        "figmaFrame": "586:274",
+        "value": 381
+      },
+      {
+        "name": "CompactPreviewBody",
+        "figmaFrame": "604:3774",
+        "value": 268
+      },
+      {
+        "name": "PreviewRecordRow",
+        "figmaFrame": "586:176",
+        "value": 68
+      },
+      {
+        "name": "PreviewActionRow",
+        "figmaFrame": "604:3774",
+        "value": 50
+      },
+      {
+        "name": "EarlierRecentsTimestamp",
+        "figmaFrame": "339:740",
+        "value": 42
+      },
+      {
+        "name": "EarlierRecentsMenuRow",
+        "figmaFrame": "339:740",
+        "value": 46
+      },
+      {
+        "name": "UsagePeriodTabHeight",
+        "figmaFrame": "225:163",
+        "value": 28
+      },
+      {
+        "name": "UsageWeeklyBarWidth",
+        "figmaFrame": "587:484",
+        "value": 25
+      },
+      {
+        "name": "UsageMonthlyBarWidth",
+        "figmaFrame": "587:718",
+        "value": 41
+      },
+      {
+        "name": "UsageEmptyCreditHeight",
+        "figmaFrame": "587:949",
+        "value": 104
+      },
+      {
+        "name": "UsageEmptyMessageHeight",
+        "figmaFrame": "587:949",
+        "value": 94
+      },
+      {
+        "name": "AnalyticsFeedbackClearance",
+        "figmaFrame": "604:4656",
+        "value": 156
+      },
+      {
+        "name": "AnalyticsFeedbackActionWidth",
+        "figmaFrame": "604:4656",
+        "value": 178
+      },
+      {
+        "name": "WorkspaceTimeRangeWidth",
+        "figmaFrame": "604:4656",
+        "value": 138
+      },
+      {
+        "name": "HelpActionHeight",
+        "figmaFrame": "513:3535",
+        "value": 65
+      },
+      {
+        "name": "LogErrorFeedbackGap",
+        "figmaFrame": "604:4840",
+        "value": 60
+      },
+      {
+        "name": "LogEmptyFeedbackGap",
+        "figmaFrame": "590:1867",
+        "value": 43
+      },
+      {
+        "name": "ThemeChoiceHeight",
+        "figmaFrame": "552:3001",
+        "value": 47
+      },
+      {
+        "name": "LogEventBody",
+        "figmaFrame": "590:1355",
+        "value": 501
+      },
+      {
+        "name": "LogEventMessageHeight",
+        "figmaFrame": "590:1355",
+        "value": 75
+      },
+      {
+        "name": "ProfilePhotoTop",
+        "figmaFrame": "589:1046",
+        "value": 27
+      },
+      {
+        "name": "ProfilePhotoCaptionGap",
+        "figmaFrame": "589:1046",
+        "value": 25
+      },
+      {
+        "name": "ScopeDescriptionTop",
+        "figmaFrame": "605:2118",
+        "value": 11
+      },
+      {
+        "name": "ScopeTeamBottom",
+        "figmaFrame": "605:2118",
+        "value": 39
+      },
+      {
+        "name": "ScopeLandingBottom",
+        "figmaFrame": "605:2226",
+        "value": 19
+      },
+      {
+        "name": "ScopeGroupRadius",
+        "figmaFrame": "605:2118",
+        "value": 19
+      },
+      {
+        "name": "LightThemeTop",
+        "figmaFrame": "605:2334",
+        "value": 19
+      },
+      {
+        "name": "LightThemeBottom",
+        "figmaFrame": "605:2334",
+        "value": 26
+      },
+      {
+        "name": "LightThemeChoiceHeight",
+        "figmaFrame": "605:2334",
+        "value": 51
+      },
+      {
+        "name": "AccountSheetRadius",
+        "figmaFrame": "605:2118",
+        "value": 26
+      },
+      {
+        "name": "UsageStudyChargeStack",
+        "figmaFrame": "606:4558",
+        "value": 120
+      },
+      {
+        "name": "UsageStudyChartColumn",
+        "figmaFrame": "606:2882",
+        "value": 140
+      },
+      {
+        "name": "UsageStudySparklineLabel",
+        "figmaFrame": "606:4796",
+        "value": 63
+      },
+      {
+        "name": "UsageStudySparklineSlot",
+        "figmaFrame": "606:4796",
+        "value": 71
+      },
+      {
+        "name": "ChartTitleGap",
+        "figmaFrame": "588:927",
+        "value": 11
+      },
+      {
+        "name": "ChartTickWidth",
+        "figmaFrame": "588:927",
+        "value": 31
+      },
+      {
+        "name": "ChartDateWidth",
+        "figmaFrame": "588:927",
+        "value": 58
+      },
+      {
+        "name": "ChartDateGap",
+        "figmaFrame": "588:927",
+        "value": 3
+      },
+      {
+        "name": "AnalyticsTicksHeight",
+        "figmaFrame": "588:927",
+        "value": 131
+      },
+      {
+        "name": "CompactChartTicksHeight",
+        "figmaFrame": "588:1052",
+        "value": 109
+      },
+      {
+        "name": "FirewallTicksHeight",
+        "figmaFrame": "588:1181",
+        "value": 119
+      },
+      {
+        "name": "ObservabilityTickWidth",
+        "figmaFrame": "513:2989",
+        "value": 27
+      },
+      {
+        "name": "ObservabilityDateWidth",
+        "figmaFrame": "513:2989",
+        "value": 43
+      },
+      {
+        "name": "ObservabilityRangeWidth",
+        "figmaFrame": "513:2989",
+        "value": 137
+      },
+      {
+        "name": "ObservabilityMetricsHeight",
+        "figmaFrame": "513:2989",
+        "value": 84
+      },
+      {
+        "name": "ObservabilityTicksHeight",
+        "figmaFrame": "513:2989",
+        "value": 114
+      },
+      {
+        "name": "ObservabilityBarWidth",
+        "figmaFrame": "513:2989",
+        "value": 11
+      },
+      {
+        "name": "FirewallBarWidth",
+        "figmaFrame": "588:1181",
+        "value": 14
+      },
+      {
+        "name": "WorkspaceToolRow",
+        "figmaFrame": "588:1052",
+        "value": 49
+      },
+      {
+        "name": "WorkspaceFirewallRow",
+        "figmaFrame": "588:1181",
+        "value": 57
+      },
+      {
+        "name": "UsageTrendWidth",
+        "figmaFrame": "225:163",
+        "value": 38
+      },
+      {
+        "name": "RecentsRemoveBody",
+        "figmaFrame": "604:3882",
+        "value": 241
+      },
+      {
+        "name": "ProfilePrefixWidth",
+        "figmaFrame": "344:494",
+        "value": 77
+      },
+      {
+        "name": "UsageStudyFirstGroupGap",
+        "figmaFrame": "606:634",
+        "value": 18
       }
     ],
     "type": [
@@ -3170,6 +4019,21 @@
         "value": -0.28
       },
       {
+        "name": "StandardTracking",
+        "figmaFrame": "468:4699",
+        "value": 0
+      },
+      {
+        "name": "DeploymentDetailTitle",
+        "figmaFrame": "535:3264",
+        "value": 20
+      },
+      {
+        "name": "DeploymentDetailTitleLine",
+        "figmaFrame": "535:3264",
+        "value": 25
+      },
+      {
         "name": "RecentMetadata",
         "figmaId": "VariableID:655:47",
         "figmaName": "Font size/13",
@@ -3221,6 +4085,11 @@
         "figmaFrame": "587:1267"
       },
       {
+        "name": "LogMessageLine",
+        "value": 18,
+        "figmaFrame": "468:6875"
+      },
+      {
         "name": "EmptyTitleLine",
         "value": 23,
         "figmaFrame": "479:3118"
@@ -3264,6 +4133,36 @@
         "name": "ProfileHeadingLine",
         "value": 23,
         "figmaFrame": "344:494"
+      },
+      {
+        "name": "AccountSheetTitleLine",
+        "figmaFrame": "605:2118",
+        "value": 25
+      },
+      {
+        "name": "UsageStudyValueLine",
+        "figmaFrame": "606:2882",
+        "value": 17
+      },
+      {
+        "name": "ChartTickLine",
+        "figmaFrame": "587:1391",
+        "value": 16
+      },
+      {
+        "name": "ChartDateLine",
+        "figmaFrame": "587:1391",
+        "value": 15
+      },
+      {
+        "name": "UsageDateLine",
+        "figmaFrame": "587:484",
+        "value": 14
+      },
+      {
+        "name": "WorkspaceMetricTitle",
+        "figmaFrame": "588:927",
+        "value": 21
       }
     ],
     "numbers": [
@@ -3273,7 +4172,11 @@
       },
       {
         "name": "ScrimOpacity",
-        "kotlin": "0.62f"
+        "kotlin": "0.66f"
+      },
+      {
+        "name": "LightSheetScrimOpacity",
+        "kotlin": "0.22f"
       },
       {
         "name": "ProjectSheetFraction",
@@ -3286,6 +4189,10 @@
       {
         "name": "AlertLoadingRows",
         "kotlin": "6"
+      },
+      {
+        "name": "RecentsFeedbackMillis",
+        "kotlin": "3500L"
       }
     ]
   },

@@ -10,14 +10,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 
@@ -27,17 +40,25 @@ internal fun DeploymentRow(
     project: Project?,
     onOpen: () -> Unit,
     options: (@Composable () -> Unit)? = null,
+    first: Boolean = false,
+    last: Boolean = false,
 ) {
     if (project != null) {
         RecentDeploymentRow(deployment, project, onOpen, options)
         return
     }
     val palette = LocalDashboardPalette.current
-    Box(Modifier.fillMaxWidth().background(palette.group)) {
+    val shape = RoundedCornerShape(
+        topStart = if (first) Tokens.CardRadius else Dp.Hairline,
+        topEnd = if (first) Tokens.CardRadius else Dp.Hairline,
+        bottomStart = if (last) Tokens.CardRadius else Dp.Hairline,
+        bottomEnd = if (last) Tokens.CardRadius else Dp.Hairline,
+    )
+    Box(Modifier.fillMaxWidth().clip(shape).background(palette.projectSheetGroup)) {
         Row(
             Modifier.fillMaxWidth().clickable(onClick = onOpen)
                 .heightIn(min = Tokens.ProjectDeploymentRow)
-                .padding(start = Tokens.Inset, end = Tokens.Space8),
+                .padding(start = Tokens.Inset, end = Tokens.Space8 + Tokens.Space2),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Tokens.RecentTitleGap),
         ) {
@@ -46,30 +67,40 @@ internal fun DeploymentRow(
                 contentDescription = deployment.author,
                 modifier = Modifier.size(Tokens.Icon).clip(CircleShape),
             )
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
                 Text(
                     deployment.title,
                     fontSize = Tokens.ListTitle, lineHeight = Tokens.ListSubtitleLine,
                     fontWeight = FontWeight.Normal,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.MiddleEllipsis,
                 )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        painterResource(R.drawable.dashboard_github_mark), contentDescription = "GitHub",
-                        modifier = Modifier.size(Tokens.MetadataIcon), colorFilter = ColorFilter.tint(palette.secondary),
-                    )
-                    MutedText(deployment.pullRequest?.let { "#$it" } ?: "Source")
-                    MutedText(deployment.status.label.takeIf { deployment.pullRequest == null } ?: deployment.sha, monospace = true)
-                    MutedText(deployment.elapsed)
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        Modifier.weight(.34f), horizontalArrangement = Arrangement.spacedBy(Tokens.Space4),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            painterResource(R.drawable.dashboard_github_mark), contentDescription = "GitHub",
+                            modifier = Modifier.size(Tokens.MetadataIcon), colorFilter = ColorFilter.tint(palette.secondary),
+                        )
+                        Text(deployment.pullRequest?.let { "#$it" } ?: "Source", color = palette.secondary,
+                            fontSize = Tokens.ListTitle, lineHeight = Tokens.ProjectSectionLine, maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
+                    }
+                    Text(deployment.status.label.takeIf { deployment.pullRequest == null } ?: deployment.sha,
+                        modifier = Modifier.weight(.32f), color = palette.secondary,
+                        fontSize = Tokens.ListTitle, lineHeight = Tokens.ProjectSectionLine,
+                        fontFamily = GeistMono.takeIf { deployment.pullRequest != null }, maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
+                    Text(deployment.elapsed, Modifier.weight(.34f), color = palette.secondary, fontSize = Tokens.ListTitle,
+                        lineHeight = Tokens.ProjectSectionLine, textAlign = TextAlign.End, maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
                 }
             }
             options?.invoke()
         }
-        DividerLine(Modifier.align(Alignment.BottomCenter).padding(horizontal = Tokens.Inset))
+        if (!last) DividerLine(Modifier.align(Alignment.BottomCenter).padding(horizontal = Tokens.Inset))
     }
 }
 
@@ -77,7 +108,7 @@ internal fun DeploymentRow(
 private fun RecentDeploymentRow(
     deployment: Deployment,
     project: Project,
-    onOpen: () -> Unit,
+    onOpen: (() -> Unit)?,
     options: (@Composable () -> Unit)?,
 ) {
     val palette = LocalDashboardPalette.current
@@ -86,8 +117,10 @@ private fun RecentDeploymentRow(
     Box(Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Row(
-                Modifier.weight(1f).heightIn(min = Tokens.RecentDeploymentRow).clickable(onClick = onOpen)
-                    .padding(top = Tokens.RecentContentTop, end = Tokens.Space8, bottom = Tokens.Space8),
+                Modifier.weight(1f).heightIn(min = Tokens.RecentDeploymentRow)
+                    .then(if (onOpen == null) Modifier else Modifier.clickable(onClick = onOpen))
+                    .padding(top = Tokens.RecentContentTop,
+                        end = if (onOpen == null) Tokens.Touch + Tokens.Space8 else Tokens.Space8, bottom = Tokens.Space8),
                 horizontalArrangement = Arrangement.spacedBy(Tokens.RecentTitleGap),
             ) {
                 Box(Modifier.width(Tokens.RecentAvatarSlot).padding(top = Tokens.Stroke)) {
@@ -136,53 +169,81 @@ private fun RecentDeploymentRow(
             }
             options?.invoke()
         }
-        DividerLine(Modifier.align(Alignment.BottomCenter))
+        if (onOpen != null) DividerLine(Modifier.align(Alignment.BottomCenter))
     }
 }
 
 @Composable
 internal fun DeploymentPreviewCard(
-    project: Project, deployment: Deployment, tinted: Boolean = true, onClick: () -> Unit,
+    project: Project, deployment: Deployment, outlined: Boolean = true, onClick: () -> Unit,
 ) {
     val palette = LocalDashboardPalette.current
     val previewPaper = palette.previewPaper
     val previewInk = palette.previewInk
     val previewShape = RoundedCornerShape(Tokens.ProjectPreviewRadius)
+    val backdrop = rememberGraphicsLayer()
+    var previewOrigin by remember { mutableStateOf(Offset.Zero) }
     Box(
         Modifier.fillMaxWidth().height(Tokens.ProjectPreviewHeight).clip(previewShape).background(previewPaper)
-            .clickable(onClick = onClick).padding(Tokens.Space12),
+            .onGloballyPositioned { previewOrigin = it.positionInRoot() }.clickable(onClick = onClick),
     ) {
-        Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
-                ProjectMark(project, Modifier.size(Tokens.IconSlot))
-                Text(project.name, fontSize = Tokens.ListSubtitle, fontWeight = FontWeight.SemiBold, color = previewInk,
-                    maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-            Text("Preview", color = previewInk, fontSize = Tokens.Metadata, fontWeight = FontWeight.Medium)
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
-                repeat(3) { index ->
-                    val card = RoundedCornerShape(Tokens.SmallRadius)
-                    Column(
-                        Modifier.weight(1f).fillMaxHeight().background(Color.White, card)
-                            .border(Tokens.Stroke, Color.Black.copy(alpha = .09f), card).padding(Tokens.Space4),
-                        verticalArrangement = Arrangement.spacedBy(Tokens.Space4),
-                    ) {
-                        Box(Modifier.fillMaxWidth().weight(1f).background(
-                            if (index == 1) palette.chart.copy(alpha = .40f) else previewPaper,
-                            RoundedCornerShape(Tokens.AlertLoadingRadius),
-                        ))
-                        Box(Modifier.fillMaxWidth(.64f).height(Tokens.Space2).background(previewInk.copy(alpha = .3f), CircleShape))
+        Box(Modifier.matchParentSize().drawWithContent {
+            backdrop.record { this@drawWithContent.drawContent() }
+            drawLayer(backdrop)
+        }) {
+            Box(Modifier.fillMaxWidth().height(Tokens.Touch).background(
+                Brush.horizontalGradient(listOf(previewPaper, Color.White, previewPaper)),
+            ))
+            Row(
+                Modifier.fillMaxSize().padding(start = Tokens.Inset, top = Tokens.Space24, end = Tokens.Inset),
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
+            ) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
+                    ProjectMark(project, Modifier.size(Tokens.IconSlot))
+                    Text(project.name, fontSize = Tokens.Caption, lineHeight = Tokens.AlertPillLine,
+                        fontWeight = FontWeight.SemiBold, color = previewInk, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text("Project overview", color = previewInk, fontSize = Tokens.ChartCaption, lineHeight = Tokens.AlertPillLine)
+                    Box(Modifier.fillMaxWidth(.82f).height(Tokens.Stroke).background(previewInk.copy(alpha = .25f)))
+                }
+                Column(Modifier.weight(2f).padding(top = Tokens.Space24), verticalArrangement = Arrangement.spacedBy(Tokens.Space4)) {
+                    Text("Latest changes", color = previewInk, fontSize = Tokens.ChartCaption, lineHeight = Tokens.AlertPillLine,
+                        fontWeight = FontWeight.Medium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
+                        for ((title, fill) in listOf("Overview" to palette.badge, "Activity" to previewInk)) {
+                            Column(
+                                Modifier.weight(1f).height(Tokens.BottomBar).background(fill, RoundedCornerShape(Tokens.AlertLoadingRadius))
+                                    .padding(Tokens.Space6),
+                                verticalArrangement = Arrangement.spacedBy(Tokens.Space4),
+                            ) {
+                                Text(title, color = Color.White, fontSize = Tokens.ChartCaption, lineHeight = Tokens.AlertPillLine)
+                                Box(Modifier.fillMaxWidth(.7f).height(Tokens.Stroke).background(Color.White.copy(alpha = .48f)))
+                                Box(Modifier.fillMaxWidth(.5f).height(Tokens.Stroke).background(Color.White.copy(alpha = .26f)))
+                            }
+                        }
                     }
                 }
             }
         }
-        val tone = when (deployment.status) {
-            DeploymentStatus.Ready -> Tone.Success
-            DeploymentStatus.Error -> Tone.Error
-            DeploymentStatus.Building -> Tone.Warning
-            DeploymentStatus.Canceled -> Tone.Neutral
+        val (ink, paper) = when (deployment.status) {
+            DeploymentStatus.Ready -> palette.ready to palette.readySurface
+            DeploymentStatus.Error -> palette.error to palette.errorSurface
+            DeploymentStatus.Building -> palette.warning to palette.warningSurface
+            DeploymentStatus.Canceled -> palette.secondary to palette.control
         }
-        StatusPill(deployment.status.label, if (tinted) tone else Tone.Neutral, Modifier.align(Alignment.BottomEnd))
+        val ready = deployment.status == DeploymentStatus.Ready
+        Row(
+            Modifier.align(Alignment.BottomEnd).padding(end = Tokens.PreviewStatusInset, bottom = Tokens.Space8)
+                .widthIn(min = Tokens.PreviewStatusWidth + if (outlined) Tokens.Space2 else Dp.Hairline)
+                .heightIn(min = Tokens.PreviewStatusHeight)
+                .then(if (ready) Modifier.dashboardReadyGlass(backdrop, previewOrigin, outlined) else Modifier.background(paper, CircleShape))
+                .padding(horizontal = Tokens.PreviewStatusInset, vertical = Tokens.DockInset),
+            horizontalArrangement = Arrangement.spacedBy(Tokens.DockInset, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(Modifier.size(Tokens.ProjectDetailGap).background(if (ready) palette.previewReadyDot else ink, CircleShape))
+            Text(deployment.status.label, color = ink, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListTitle,
+                fontWeight = FontWeight.Medium, maxLines = 1)
+        }
     }
 }
 
@@ -193,18 +254,23 @@ internal fun DeploymentScreen(route: DashboardRoute, navigation: DashboardNaviga
     val project = navigation.project(deployment.projectId)
     val palette = LocalDashboardPalette.current
     Column(Modifier.fillMaxSize()) {
-        DashboardHeader(Destination.Deployment.label, onBack,
-            modifier = Modifier.padding(top = Tokens.AlertDetailHeaderInset), titleSize = Tokens.ListSubtitle)
+        DashboardHeader(Destination.Deployment.label, onBack, modifier = Modifier.padding(top = Tokens.Space8 + Tokens.Space2),
+            titleSize = Tokens.Body, titleWeight = FontWeight.Medium, titleLine = Tokens.ListSubtitleLine)
         DashboardList(
             Modifier.fillMaxSize(), contentPadding = PaddingValues(start = Tokens.Inset, end = Tokens.Inset, top = Tokens.Space8, bottom = Tokens.DockScrollClearance),
-            verticalArrangement = Arrangement.spacedBy(Tokens.Space12),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space24 + Tokens.Space2),
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
-                    MutedText(navigation.projectName(project))
-                    Text(deployment.title, fontSize = Tokens.Heading, fontWeight = FontWeight.SemiBold)
-                    MutedText("${deployment.environment} deployment")
-                    DeploymentPreviewCard(project, deployment, tinted = route.variant != "heading") {
+                Column {
+                    Text(navigation.projectName(project), Modifier.padding(start = Tokens.Space4), color = palette.secondary,
+                        fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.ProjectSectionLine)
+                    Text(deployment.title, Modifier.padding(start = Tokens.Space4, top = Tokens.Space4),
+                        fontSize = Tokens.DeploymentDetailTitle, lineHeight = Tokens.DeploymentDetailTitleLine,
+                        fontWeight = FontWeight.SemiBold)
+                    Text("${deployment.environment} deployment", Modifier.padding(start = Tokens.Space6,
+                        top = Tokens.DeploymentEnvironmentGap, bottom = Tokens.DeploymentPreviewGap), color = palette.secondary,
+                        fontWeight = FontWeight.Medium, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine)
+                    DeploymentPreviewCard(project, deployment, outlined = route.variant != "heading") {
                         navigation.show(Destination.Preview, deployment.id)
                     }
                 }
@@ -214,24 +280,26 @@ internal fun DeploymentScreen(route: DashboardRoute, navigation: DashboardNaviga
                     "Project" to navigation.projectName(project), "Status" to deployment.status.label,
                     "Created" to deployment.elapsed, "Environment" to deployment.environment, "Domain" to project.domain,
                 )
-                Column(Modifier.clip(RoundedCornerShape(Tokens.ProjectOptionsRadius)).background(palette.group)) {
+                Column(Modifier.clip(RoundedCornerShape(Tokens.ProjectOptionsRadius)).background(palette.projectSheetGroup)) {
                     rows.forEachIndexed { index, (label, value) ->
                         Box(Modifier.then(if (index == 0) Modifier.clickable { navigation.show(Destination.Project, project.id) } else Modifier)) {
-                            KeyValueRow(label, value)
+                            DeploymentDetailRow(label, value)
                         }
-                        if (index < rows.lastIndex) DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+                        if (index < rows.lastIndex) DividerLine(Modifier.padding(horizontal = Tokens.ProjectOptionsInset), palette.insetSurface)
                     }
                 }
             }
             item {
-                SectionLabel("GitHub")
-                Column(Modifier.clip(RoundedCornerShape(Tokens.ProjectOptionsRadius)).background(palette.group)) {
-                    KeyValueRow("Branch", deployment.branch, mono = true)
-                    DividerLine(Modifier.padding(horizontal = Tokens.Inset))
-                    KeyValueRow("Commit", deployment.sha, mono = true)
+                Text("GitHub", Modifier.padding(start = Tokens.Space8, bottom = Tokens.Space6), color = palette.secondary,
+                    fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine, fontWeight = FontWeight.Medium)
+                val outbound = route.variant != "heading"
+                Column(Modifier.clip(RoundedCornerShape(Tokens.ProjectOptionsRadius)).background(palette.projectSheetGroup)) {
+                    DeploymentDetailRow("Branch", deployment.branch, outbound)
+                    DividerLine(Modifier.padding(horizontal = Tokens.ProjectOptionsInset), palette.insetSurface)
+                    DeploymentDetailRow("Commit", deployment.sha, outbound)
                     deployment.pullRequest?.let {
-                        DividerLine(Modifier.padding(horizontal = Tokens.Inset))
-                        KeyValueRow("Pull request", "#$it")
+                        DividerLine(Modifier.padding(horizontal = Tokens.ProjectOptionsInset), palette.insetSurface)
+                        DeploymentDetailRow("Pull request", "#$it", outbound)
                     }
                 }
             }
@@ -240,48 +308,135 @@ internal fun DeploymentScreen(route: DashboardRoute, navigation: DashboardNaviga
 }
 
 @Composable
+private fun DeploymentDetailRow(label: String, value: String, outbound: Boolean = false) {
+    val palette = LocalDashboardPalette.current
+    Row(
+        Modifier.fillMaxWidth().heightIn(min = Tokens.Touch).padding(start = Tokens.AlertMeasurePad, end = Tokens.Inset),
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space6), verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(label, Modifier.weight(1f), fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ProjectSectionLine)
+        Text(value, Modifier.weight(2f), textAlign = TextAlign.End, color = palette.secondary,
+            fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine, fontWeight = FontWeight.Medium,
+            maxLines = 2, overflow = TextOverflow.Ellipsis)
+        if (outbound) DashboardIcon(Glyph.Outbound, palette.secondary)
+    }
+}
+
+@Composable
 internal fun DeploymentSheetContent(route: DashboardRoute, navigation: DashboardNavigation, onBack: () -> Unit) {
     val deployment = DashboardFixtures.deployment(route.target ?: DashboardFixtures.defaultDeployment)
     val project = navigation.project(deployment.projectId)
-    DashboardHeader(route.destination.label, onBack)
-    Column(Modifier.dashboardScroll().padding(Tokens.Inset), verticalArrangement = Arrangement.spacedBy(Tokens.Space12)) {
-        when (route.destination) {
-            Destination.RemoveRecent -> {
-                Text("Remove this entry from the Recents list?", fontSize = Tokens.Body)
-                DashboardRow(deployment.title, "${navigation.projectName(project)} · ${deployment.sha}", leading = { ProjectMark(project) })
-                Row(horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
-                    androidx.compose.material3.OutlinedButton(onBack, Modifier.weight(1f)) { Text("Cancel") }
-                    DashboardButton("Remove", {
-                        navigation.removeRecent(deployment.id)
-                        onBack()
-                    }, Modifier.weight(1f))
-                }
+    val palette = LocalDashboardPalette.current
+    val copy = rememberCopyText()
+    val projectName = navigation.projectName(project)
+    if (route.destination == Destination.RemoveRecent) {
+        Column(Modifier.fillMaxWidth().height(Tokens.RecentsRemoveBody)) {
+            DashboardHeader(route.destination.label, onBack, modifier = Modifier.padding(top = Tokens.Space2))
+            Column(Modifier.fillMaxWidth().weight(1f).dashboardScroll().padding(top = Tokens.Space12)) {
+                RecentDeploymentRow(deployment, project, onOpen = null, options = null)
             }
-            Destination.Toolbar -> {
-                DashboardNotice("Toolbar unavailable", tone = Tone.Warning)
-                MutedText("Toolbar is disabled for this deployment.")
-                SectionLabel("Actions")
-                DashboardRow("Open deployment preview", glyph = Glyph.Globe, onClick = {
-                    navigation.replace(route.copy(destination = Destination.Preview))
-                })
-                DashboardRow("Toolbar setup", glyph = Glyph.Settings)
+            Row(Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset).padding(bottom = Tokens.Stroke),
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
+                GlassAction("Cancel", onBack, Modifier.weight(148f).heightIn(min = Tokens.Touch), labelWeight = FontWeight.Medium)
+                GlassAction("Remove", {
+                    navigation.removeRecent(deployment.id)
+                    onBack()
+                }, Modifier.weight(205f).heightIn(min = Tokens.Touch), destructive = true, labelWeight = FontWeight.Medium)
             }
-            else -> {
-                when {
-                    route.variant == "protected" -> DashboardNotice("Deployment is protected", tone = Tone.Warning)
-                    route.variant == "unavailable" -> DashboardNotice("Preview unavailable", tone = Tone.Warning)
-                    else -> DashboardRow(navigation.projectName(project), "${deployment.environment} · ${deployment.branch} · ${deployment.sha}", leading = { ProjectMark(project) })
-                }
-                if (route.variant != "unavailable") {
-                    KeyValueRow("Deployment URL", deployment.url, Glyph.Globe)
-                    if (route.variant == "project-overview") {
-                        DashboardRow("Visit with Toolbar", glyph = Glyph.Toolbar, onClick = {
-                            navigation.replace(route.copy(destination = Destination.Toolbar))
-                        })
+        }
+        return
+    }
+    val toolbar = route.destination == Destination.Toolbar
+    val unavailable = route.variant == "unavailable"
+    val protected = route.variant == "protected"
+    val fromOverview = route.variant == "project-overview" && !toolbar
+    val height = when {
+        toolbar || unavailable -> Tokens.CompactPreviewBody
+        protected -> Tokens.ProtectedPreviewBody
+        fromOverview -> Tokens.BrowserPreviewBody + Tokens.PreviewActionRow
+        else -> Tokens.BrowserPreviewBody
+    }
+    val bodyInset = when {
+        unavailable || toolbar -> Tokens.DockIcon
+        protected -> Tokens.Space24 + Tokens.Space2
+        else -> Tokens.Space24 + Tokens.Space4
+    }
+    Column(Modifier.fillMaxWidth().height(height)) {
+        DashboardHeader(route.destination.label, onBack, titleLine = Tokens.DeploymentDetailTitleLine)
+        Column(Modifier.weight(1f).fillMaxWidth().dashboardScroll().padding(horizontal = Tokens.Inset).padding(top = bodyInset)) {
+            when {
+                toolbar -> {
+                    DeploymentPreviewNotice("Toolbar unavailable", "Toolbar is disabled for this deployment.")
+                    Text("Actions", Modifier.padding(start = Tokens.Space8, top = Tokens.BodyInset, bottom = Tokens.PreviewStatusInset),
+                        fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.MetadataLine, color = palette.secondary,
+                        fontWeight = FontWeight.Medium)
+                    DashboardGroup {
+                        DashboardRow("Open deployment preview", leading = { DashboardIcon(Glyph.Eye, palette.secondary) }, onClick = {
+                            navigation.replace(route.copy(destination = Destination.Preview, variant = "content"))
+                        }, trailing = { DashboardIcon(Glyph.Outbound, palette.secondary) }, minHeight = Tokens.PreviewActionRow)
+                        DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
+                        DashboardRow("Toolbar setup", leading = { DashboardIcon(Glyph.ToolbarDocs, palette.secondary, Modifier.width(Tokens.DockIcon)) },
+                            trailing = { DashboardIcon(Glyph.Outbound, palette.secondary) }, minHeight = Tokens.PreviewActionRow)
                     }
-                    DashboardButton("Open in browser", {}, Modifier.fillMaxWidth(), enabled = false)
-                } else DashboardButton("Back to deployment", onBack, Modifier.fillMaxWidth())
+                }
+                unavailable -> {
+                    DeploymentPreviewNotice("Preview unavailable", "This deployment has no preview URL.")
+                    Text("Actions", Modifier.padding(start = Tokens.Space8, top = Tokens.Space24 + Tokens.DockInset, bottom = Tokens.DockInset),
+                        fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ProjectSectionLine, color = palette.secondary,
+                        fontWeight = FontWeight.Medium)
+                    DashboardGroup {
+                        DashboardRow("Back to deployment", leading = { DashboardIcon(Glyph.PreviewDeployment, palette.secondary) },
+                            onClick = onBack, minHeight = Tokens.PreviewActionRow)
+                    }
+                }
+                protected -> DashboardGroup {
+                    Row(Modifier.padding(start = Tokens.Inset, top = Tokens.DockIcon, end = Tokens.Inset + Tokens.Space20),
+                        horizontalArrangement = Arrangement.spacedBy(Tokens.Space12)) {
+                        DashboardIcon(Glyph.Lock, palette.secondary, Modifier.size(Tokens.Icon))
+                        Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space12)) {
+                            Text("Deployment is protected", fontSize = Tokens.RootTitle, lineHeight = Tokens.DeploymentDetailTitleLine,
+                                fontWeight = FontWeight.SemiBold)
+                            Text("Continue in your browser to verify access with Vercel.", fontSize = Tokens.ListSubtitle,
+                                lineHeight = Tokens.ProjectOptionsLine, color = palette.secondary)
+                        }
+                    }
+                    DividerLine(Modifier.padding(horizontal = Tokens.Inset).padding(top = Tokens.Space6), palette.border)
+                    Text(projectName, Modifier.padding(horizontal = Tokens.Inset).padding(top = Tokens.Space8, bottom = Tokens.Space8 + Tokens.Space2),
+                        color = palette.secondary, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.ProjectSectionLine)
+                }
+                else -> DashboardGroup {
+                    DashboardRow(projectName, "${deployment.environment} · ${deployment.branch} · ${deployment.sha}",
+                        leading = { DashboardIcon(Glyph.Eye, palette.secondary) }, minHeight = Tokens.PreviewRecordRow)
+                    DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
+                    DashboardRow("Deployment URL", deployment.url,
+                        leading = { DashboardIcon(Glyph.ProjectDomain, palette.secondary, Modifier.size(Tokens.DockIcon)) }, trailing = {
+                            IconControl(Glyph.Copy, "Copy deployment URL", { copy(deployment.url) }, visualSize = Tokens.Space20, glass = false)
+                        }, minHeight = Tokens.PreviewRecordRow)
+                    if (fromOverview) {
+                        DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
+                        DashboardRow("Visit with Toolbar", leading = { DashboardIcon(Glyph.Toolbar, palette.secondary) }, onClick = {
+                            navigation.replace(route.copy(destination = Destination.Toolbar))
+                        }, minHeight = Tokens.PreviewActionRow)
+                    }
+                }
             }
+        }
+        if (!toolbar && !unavailable) {
+            GlassAction(if (protected) "Continue in browser" else "Open in browser", {},
+                Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset, vertical = Tokens.Space4),
+                enabled = false, glyph = Glyph.BrowserAction)
+        }
+    }
+}
+
+@Composable
+private fun DeploymentPreviewNotice(title: String, description: String) {
+    val palette = LocalDashboardPalette.current
+    Row(Modifier.padding(horizontal = Tokens.AlertMeasurePad), horizontalArrangement = Arrangement.spacedBy(Tokens.Space12)) {
+        DashboardIcon(Glyph.PreviewInfo, palette.secondary)
+        Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space6)) {
+            Text(title, fontSize = Tokens.ListTitle, lineHeight = Tokens.SheetTitleLine, fontWeight = FontWeight.Medium)
+            Text(description, fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.SearchDetailLine, color = palette.secondary)
         }
     }
 }

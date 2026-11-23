@@ -1,6 +1,7 @@
 package com.octaviantocan.vercelnative.dashboard
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,6 +15,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
@@ -28,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -35,8 +38,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
+import kotlinx.coroutines.delay
 
 internal enum class ActivityTab(val destination: Destination) {
     Recents(Destination.Recents), Usage(Destination.Usage), Alerts(Destination.Alerts),
@@ -47,7 +52,7 @@ internal fun ActivityTabs(selected: ActivityTab, onSelect: (ActivityTab) -> Unit
     val palette = LocalDashboardPalette.current
     BoxWithConstraints(modifier.fillMaxWidth().height(Tokens.Touch).selectableGroup()) {
         val segment = maxWidth / ActivityTab.entries.size
-        val underline by animateDpAsState(segment * selected.ordinal, DashboardMotion.move(DashboardMotion.Fast), label = "Activity underline")
+        val underline by animateDpAsState(segment * selected.ordinal, DashboardMotion.prototype(DashboardMotion.Tabs), label = "Activity underline")
         DividerLine(Modifier.align(Alignment.BottomCenter))
         Row(Modifier.fillMaxSize()) {
             ActivityTab.entries.forEach { tab ->
@@ -81,10 +86,10 @@ internal fun ActivityScreen(route: DashboardRoute, navigation: DashboardNavigati
             modifier = Modifier.weight(1f).fillMaxWidth(),
             transitionSpec = {
                 val direction = if (targetState.destination.ordinal > initialState.destination.ordinal) 1 else -1
-                (fadeIn(DashboardMotion.move(DashboardMotion.Fast)) +
-                    slideInHorizontally(DashboardMotion.move(DashboardMotion.Fast)) { direction * it / 8 }) togetherWith
-                    (fadeOut(DashboardMotion.move(DashboardMotion.Quick)) +
-                        slideOutHorizontally(DashboardMotion.move(DashboardMotion.Fast)) { -direction * it / 8 })
+                (fadeIn(DashboardMotion.prototype(DashboardMotion.Tabs)) +
+                    slideInHorizontally(DashboardMotion.prototype(DashboardMotion.Tabs)) { direction * it / 8 }) togetherWith
+                    (fadeOut(DashboardMotion.prototype(DashboardMotion.Tabs)) +
+                        slideOutHorizontally(DashboardMotion.prototype(DashboardMotion.Tabs)) { -direction * it / 8 })
             },
             label = "Activity tab content",
         ) { shown ->
@@ -110,51 +115,80 @@ private fun RecentsList(route: DashboardRoute, navigation: DashboardNavigation) 
     val sampleRemovedId = DashboardFixtures.defaultDeployment.takeIf { route.variant == "removed" }
     val visible = recent.filterNot { it.id in navigation.removedRecents || it.id == sampleRemovedId }
     var expanded by rememberSaveable {
-        mutableStateOf(visible.firstOrNull()?.id.takeIf { route.variant in setOf("recents-menu", "menu-spacing", "menu-earlier") })
+        mutableStateOf(when (route.variant) {
+            "menu-earlier" -> visible.getOrNull(1)?.id
+            "recents-menu", "menu-spacing" -> visible.firstOrNull()?.id
+            else -> null
+        })
     }
     if (route.variant == "empty") {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().padding(bottom = Tokens.BottomBar + Tokens.Space8), contentAlignment = Alignment.Center) {
             DashboardEmpty("Quiet on the deploy front.", "New deployments will appear here.", Glyph.Activity,
-                illustration = R.drawable.dashboard_figma_recents_empty)
+                illustration = R.drawable.dashboard_figma_recents_empty, descriptionGap = Tokens.Space4)
         }
         return
     }
-    Column(Modifier.fillMaxSize()) {
-        val removed = sampleRemovedId ?: navigation.removedRecents.lastOrNull()
-        if (removed != null) DashboardNotice(
-            "Removed from Recents",
-            Modifier.padding(horizontal = Tokens.Inset, vertical = Tokens.Space6),
-            Tone.Success,
-        )
+    val removed = sampleRemovedId ?: navigation.removedRecents.lastOrNull()
+    var showRemoval by rememberSaveable(removed) { mutableStateOf(removed != null) }
+    LaunchedEffect(removed) {
+        if (removed != null && sampleRemovedId == null && showRemoval) {
+            delay(Tokens.RecentsFeedbackMillis)
+            showRemoval = false
+        }
+    }
+    Box(Modifier.fillMaxSize()) {
         DashboardList(
-            Modifier.weight(1f),
+            Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = Tokens.RecentsStart, bottom = Tokens.DockScrollClearance),
         ) {
             items(visible, key = Deployment::id) { deployment ->
                 val project = navigation.project(deployment.projectId)
+                val earlier = route.variant == "menu-earlier"
                 DeploymentRow(
                     deployment, project,
                     onOpen = { navigation.show(Destination.Deployment, deployment.id) },
                     options = {
+                        val projectAction = MenuAction(if (earlier) "Project" else "Open project", Glyph.Project,
+                            { navigation.show(Destination.Project, project.id) }, project)
+                        val remove = MenuAction("Remove", Glyph.MenuRemove, { navigation.show(Destination.RemoveRecent, deployment.id) }, destructive = true)
+                        val actions = listOf(
+                            MenuAction("Preview", Glyph.MenuPreview, { navigation.show(Destination.Preview, deployment.id) }),
+                            MenuAction("Source", Glyph.GitHub, null),
+                            MenuAction("Deployment", Glyph.MenuDeployment, { navigation.show(Destination.Deployment, deployment.id) }),
+                            MenuAction("Branch Deployments", Glyph.MenuBranch, { navigation.show(Destination.Project, project.id, "branch", deployment.branch) }),
+                        )
                         RowOptions(
-                            actions = listOf(
-                                MenuAction("Open project", Glyph.Project, { navigation.show(Destination.Project, project.id) }, project),
-                                MenuAction("Preview", Glyph.MenuPreview, { navigation.show(Destination.Preview, deployment.id) }),
-                                MenuAction("Source", Glyph.GitHub, null),
-                                MenuAction("Deployment", Glyph.MenuDeployment, { navigation.show(Destination.Deployment, deployment.id) }),
-                                MenuAction("Branch Deployments", Glyph.MenuBranch, { navigation.show(Destination.Project, project.id, "branch", deployment.branch) }),
-                                MenuAction("Remove", Glyph.MenuRemove, { navigation.show(Destination.RemoveRecent, deployment.id) }),
-                            ),
+                            actions = if (earlier) actions + projectAction + remove else listOf(projectAction) + actions + remove,
                             label = "Options for ${deployment.title}",
                             expanded = expanded == deployment.id,
                             onOpen = { expanded = deployment.id },
                             onClose = { expanded = null },
                             authored = deployment.elapsed,
-                            separated = route.variant == "menu-earlier",
+                            separated = earlier,
                             recents = true,
                         )
                     },
                 )
+            }
+        }
+        if (removed != null && showRemoval) {
+            val deployment = DashboardFixtures.deployment(removed)
+            val palette = LocalDashboardPalette.current
+            val shape = CircleShape
+            Row(
+                Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                    .padding(horizontal = Tokens.Inset).padding(bottom = Tokens.DockScrollClearance)
+                    .heightIn(min = Tokens.RecentsFeedbackHeight).background(palette.popover, shape)
+                    .border(Tokens.Stroke, palette.border, shape).padding(horizontal = Tokens.Inset),
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space12), verticalAlignment = Alignment.CenterVertically,
+            ) {
+                DashboardIcon(Glyph.Check, palette.ready)
+                Column(Modifier.weight(1f)) {
+                    val subject = deployment.pullRequest?.let { "PR #$it" } ?: "deployment"
+                    Text("Removed $subject from Recents", fontSize = Tokens.Body, lineHeight = Tokens.ListSubtitleLine)
+                    Text(deployment.title, color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.MetadataLine,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
             }
         }
     }
@@ -175,74 +209,124 @@ internal fun UsageScreen(route: DashboardRoute, navigation: DashboardNavigation)
     }
     var expanded by rememberSaveable { mutableStateOf<String?>(null) }
     val preset = route.detail?.toIntOrNull()?.takeIf { route.variant == "study" }
-    if (route.variant == "error") {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            DashboardEmpty("Couldn’t load usage", "Try again to load this billing cycle.", Glyph.Usage, action = {
-                navigation.main(Destination.Usage)
-            })
-        }
-        return
+    val studyHasColumns = preset != null && preset in 5..7
+    val studyStart = with(LocalDensity.current) {
+        (if (studyHasColumns) Tokens.UsageStudyColumnScroll else Tokens.UsageStudyScroll).roundToPx()
     }
+    val listState = rememberLazyListState(initialFirstVisibleItemScrollOffset = if (preset == null) 0 else studyStart)
+    val failed = route.variant == "error"
     val empty = route.variant == "empty"
-    val scale = if (workspace.id == DashboardFixtures.studioWorkspace) 1.7 else 1.0
+    val scale = if (workspace.id == DashboardFixtures.studioWorkspace && route.variant != "studio") 1.7 else 1.0
     val resources = DashboardFixtures.resources
     val breakdown = resources.filter(UsageResource::showInBreakdown)
     val credit = if (empty) 0.0 else breakdown.sumOf { it.cost } * scale
     val sections = resources.withIndex().groupBy({ (index, _) ->
         when (index) {
             in 0..1 -> "Vercel Delivery Network"
-            in 2..4 -> "Vercel Functions"
-            in 5..8, in 12..16 -> "Content, Caching & Optimization"
+            in 2..5 -> "Vercel Functions"
+            in 6..8, in 12..16 -> "Content, Caching & Optimization"
             11, in 18..19, 23 -> "Build & Deploy"
             else -> "Observability"
         }
-    }) { it.value }
+    }) { it.value }.mapValues { (category, values) ->
+        if (category == "Vercel Delivery Network") listOf(DashboardFixtures.edgeCpuDuration) + values.reversed() else values
+    }
     DashboardList(
         Modifier.fillMaxSize(),
+        state = listState,
         contentPadding = PaddingValues(start = Tokens.Space24, top = Tokens.AlertTopGap, end = Tokens.Space24, bottom = Tokens.DockScrollClearance),
         verticalArrangement = Arrangement.spacedBy(Tokens.Inset),
     ) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(Tokens.Inset)) {
                 Text("Pro Plan Usage", fontSize = Tokens.UsageTitle, lineHeight = Tokens.UsageTitleLine, fontWeight = FontWeight.SemiBold)
-                val billing = if (period == UsagePeriod.Monthly) "Billing cycle · Nov 1–30 · Through Nov 21" else "Billing cycle · Nov 1–30"
+                val billing = when {
+                    workspace.id == DashboardFixtures.studioWorkspace && period != UsagePeriod.Monthly -> "${workspace.name} · Billing cycle Nov 1–30"
+                    period == UsagePeriod.Monthly -> "Billing cycle · Nov 1–30 · Through Nov 21"
+                    else -> "Billing cycle · Nov 1–30"
+                }
                 Text(billing, color = palette.secondary, fontSize = Tokens.AlertProjectSize, lineHeight = Tokens.ListSubtitleLine)
             }
         }
+        if (failed) {
+            item { DividerLine() }
+            item {
+                DashboardEmpty("Couldn’t load usage", "Try again to load this billing cycle.", Glyph.Usage,
+                    modifier = Modifier.padding(top = Tokens.Space32 + Tokens.Space6),
+                    action = { navigation.main(Destination.Usage) }, illustration = R.drawable.dashboard_figma_usage_error,
+                    glassAction = true, prominentTitle = true)
+            }
+            return@DashboardList
+        }
         item {
-            val shape = RoundedCornerShape(Tokens.ControlRadius)
+            val shape = RoundedCornerShape(if (empty) Tokens.CardRadius else Tokens.ControlRadius)
+            val creditHeight = if (empty) Tokens.UsageEmptyCreditHeight else Tokens.UsageCreditHeight
             Column(
-                Modifier.fillMaxWidth().heightIn(min = Tokens.UsageCreditHeight)
-                    .background(palette.control, shape).border(Tokens.Stroke, palette.quietBorder, shape).padding(Tokens.BodyInset),
-                verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
+                Modifier.fillMaxWidth().heightIn(min = creditHeight)
+                    .background(if (empty) palette.projectSheetGroup else palette.control, shape)
+                    .then(if (empty) Modifier else Modifier.border(Tokens.Stroke, palette.quietBorder, shape))
+                    .padding(if (empty) Tokens.ProjectOptionsInset else Tokens.BodyInset),
             ) {
-                Text("Included Credit", color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine)
-                Text("${sampleMoney(credit)} / $20.00", fontSize = Tokens.Title, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium)
-                Box(Modifier.fillMaxWidth().height(Tokens.Space4).clip(CircleShape).background(palette.insetSurface)) {
-                    if (credit > 0) Box(Modifier.fillMaxWidth((credit / 20).toFloat().coerceAtMost(1f)).fillMaxHeight().background(palette.link))
+                Text(if (empty) "Included credit" else "Included Credit", color = palette.secondary,
+                    fontSize = Tokens.Metadata, lineHeight = if (empty) Tokens.MetadataLine else Tokens.ListSubtitleLine)
+                Text("${sampleMoney(credit)} / $20.00", Modifier.padding(top = if (empty) Tokens.Space4 else Tokens.Space8),
+                    fontSize = if (empty) Tokens.AlertDetailTitle else Tokens.Title,
+                    lineHeight = if (empty) Tokens.AlertDetailTitleLine else Tokens.ListSubtitleLine,
+                    fontWeight = if (empty) FontWeight.SemiBold else FontWeight.Medium)
+                if (empty) Text("Current billing cycle", Modifier.padding(top = Tokens.Space8 + Tokens.Space2),
+                    color = palette.secondary, fontSize = Tokens.Caption, lineHeight = Tokens.AlertPillLine)
+                else Box(Modifier.fillMaxWidth().padding(top = Tokens.Space8).height(Tokens.Space4)
+                    .clip(CircleShape).background(palette.insetSurface)) {
+                    if (credit > 0) Box(Modifier.fillMaxWidth((credit / 20).toFloat().coerceAtMost(1f)).fillMaxHeight()
+                        .background(palette.studySparklineBlue, CircleShape))
                 }
             }
         }
         if (empty) {
-            item { DashboardEmpty("No usage recorded yet", "New consumption appears here once it’s recorded.", Glyph.Usage) }
-        } else {
-            item { UsageBreakdown(period, { period = it }, breakdown, scale) }
             item {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
-                    Text("Product", Modifier.weight(.6f), color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium)
-                    Text("Usage", Modifier.weight(.24f), color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium)
-                    Text("Charge", Modifier.weight(.16f), color = palette.secondary, fontSize = Tokens.Metadata,
-                        lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium, textAlign = TextAlign.End)
+                Box(Modifier.padding(top = Tokens.Space6)) {
+                    DashboardGroup {
+                        Column(Modifier.fillMaxWidth().heightIn(min = Tokens.UsageEmptyMessageHeight).padding(Tokens.Inset),
+                            verticalArrangement = Arrangement.spacedBy(Tokens.DockInset)) {
+                            Text("No usage recorded yet", fontSize = Tokens.Body, lineHeight = Tokens.ListSubtitleLine,
+                                fontWeight = FontWeight.Medium)
+                            Text("New consumption appears here once it’s recorded.", fontSize = Tokens.ListSubtitle,
+                                lineHeight = Tokens.ProjectSectionLine, color = palette.secondary)
+                        }
+                    }
                 }
             }
-            sections.forEach { (group, values) ->
-                item(group) {
-                    Column {
-                        Text(group, Modifier.fillMaxWidth().background(palette.control).padding(Tokens.Space8),
-                            fontSize = Tokens.Metadata, fontWeight = FontWeight.Medium, lineHeight = Tokens.ListSubtitleLine)
-                        for (resource in values) {
-                            UsageResourceRow(resource, scale, preset, expanded == resource.id) {
-                                expanded = if (expanded == resource.id) null else resource.id
+        } else {
+            item { UsageBreakdown(period, { period = it }, breakdown, scale) }
+            if (studyHasColumns) item { UsageStudyColumnHeader() }
+            else if (preset == null) {
+                item {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
+                        Text("Product", Modifier.weight(145f), color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium)
+                        Spacer(Modifier.width(Tokens.UsageSparklineWidth))
+                        Text("Usage", Modifier.weight(82f), color = palette.secondary, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium)
+                        Text("Charge", Modifier.weight(54f), color = palette.secondary, fontSize = Tokens.Metadata,
+                            lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.Medium, textAlign = TextAlign.End)
+                    }
+                }
+            }
+            val toggle: (UsageResource) -> Unit = { resource -> expanded = if (expanded == resource.id) null else resource.id }
+            if (preset != null) {
+                item("usage-study-groups") {
+                    Column(Modifier.padding(top = if (studyHasColumns) Dp.Hairline else Tokens.UsageStudyFirstGroupGap)) {
+                        for ((group, values) in DashboardFixtures.usageStudySections) {
+                            UsageStudyGroup(preset, group, values, scale, expanded, toggle)
+                        }
+                    }
+                }
+            } else {
+                sections.forEach { (group, values) ->
+                    item(group) {
+                        Column {
+                            Text(group, Modifier.fillMaxWidth().background(palette.control).padding(Tokens.Space8),
+                                fontSize = Tokens.Metadata, fontWeight = FontWeight.Medium, lineHeight = Tokens.ListSubtitleLine)
+                            for (resource in values) {
+                                UsageResourceRow(resource, scale, expanded == resource.id) { toggle(resource) }
                             }
                         }
                     }
@@ -250,10 +334,19 @@ internal fun UsageScreen(route: DashboardRoute, navigation: DashboardNavigation)
             }
         }
         item {
-            SectionLabel("Totals")
-            KeyValueRow("Subscription licenses", "$9.98")
-            KeyValueRow("Infrastructure", sampleMoney(if (empty) 0.0 else resources.sumOf { it.cost } * scale))
-            KeyValueRow("Total", sampleMoney(9.98 + if (empty) 0.0 else resources.sumOf { it.cost } * scale))
+            if (empty) Text("Totals", Modifier.padding(top = Tokens.AlertMeasurePad, bottom = Tokens.Space12),
+                fontSize = Tokens.SearchDetailSize, lineHeight = Tokens.MetadataLine, fontWeight = FontWeight.Medium, color = palette.secondary)
+            else SectionLabel("Totals")
+            DashboardGroup {
+                val rowHeight = if (empty) Tokens.SettingsOwnershipRow else Tokens.Touch
+                KeyValueRow("Subscription licenses", "$9.98", minHeight = rowHeight, compactValue = empty)
+                DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
+                KeyValueRow("Infrastructure", sampleMoney(if (empty) 0.0 else resources.sumOf { it.cost } * scale),
+                    minHeight = rowHeight, compactValue = empty)
+                DividerLine(Modifier.padding(horizontal = Tokens.Inset), palette.border)
+                KeyValueRow("Total", sampleMoney(9.98 + if (empty) 0.0 else resources.sumOf { it.cost } * scale),
+                    minHeight = rowHeight, compactValue = empty)
+            }
         }
     }
 }
@@ -263,7 +356,52 @@ private fun UsageBreakdown(period: UsagePeriod, select: (UsagePeriod) -> Unit, p
     val palette = LocalDashboardPalette.current
     val shape = RoundedCornerShape(Tokens.ControlRadius)
     val daily = period == UsagePeriod.Daily
-    val colors = listOf(palette.ready, palette.warning)
+    Column(
+        Modifier.fillMaxWidth().heightIn(min = Tokens.UsageChartPanel).border(Tokens.Stroke, palette.quietBorder, shape)
+            .padding(horizontal = Tokens.BodyInset, vertical = Tokens.Space12),
+    ) {
+        Text("Consumption Breakdown", fontSize = Tokens.ListTitle,
+            lineHeight = if (daily) Tokens.ListSubtitleLine else Tokens.SheetTitleLine, fontWeight = FontWeight.SemiBold)
+        BoxWithConstraints(Modifier.fillMaxWidth().padding(top = if (daily) Tokens.Space12 else Tokens.Space8).selectableGroup()) {
+            val count = UsagePeriod.entries.size
+            val shape = RoundedCornerShape(Tokens.AlertLoadingRadius)
+            val buttonWidth = (maxWidth - Tokens.Space8 * (count - 1)) / count
+            val selection by animateDpAsState((buttonWidth + Tokens.Space8) * period.ordinal,
+                DashboardMotion.prototype(DashboardMotion.Tabs), label = "Usage period selection")
+            Box(Modifier.offset(x = selection).width(buttonWidth).height(Tokens.UsagePeriodTabHeight).background(palette.selected, shape))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
+                for (choice in UsagePeriod.entries) {
+                    val chosen = choice == period
+                    Box(
+                        Modifier.weight(1f).height(Tokens.UsagePeriodTabHeight).clip(shape)
+                            .selectable(chosen, role = Role.Tab, onClick = { select(choice) }),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(choice.name, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine,
+                            color = if (chosen) palette.ink else palette.secondary, fontWeight = if (chosen) FontWeight.Medium else FontWeight.Normal)
+                    }
+                }
+            }
+        }
+        AnimatedContent(
+            targetState = period,
+            transitionSpec = {
+                (fadeIn(DashboardMotion.prototype(DashboardMotion.Tabs)) togetherWith
+                    fadeOut(DashboardMotion.prototype(DashboardMotion.Tabs))).using(
+                    SizeTransform { _, _ -> DashboardMotion.prototype(DashboardMotion.Tabs) },
+                )
+            },
+            label = "Usage chart period",
+        ) { selected -> UsagePlot(selected, products, scale) }
+    }
+}
+
+@Composable
+private fun UsagePlot(period: UsagePeriod, products: List<UsageResource>, scale: Double) {
+    val palette = LocalDashboardPalette.current
+    val daily = period == UsagePeriod.Daily
+    val colors = if (daily) listOf(palette.usageDailyGreen, palette.usageDailyGold)
+    else listOf(palette.usagePeriodGreen, palette.warning)
     val charges = products.map { it.cost * scale }
     val (dates, gridStep, shares) = when (period) {
         UsagePeriod.Daily -> Triple(
@@ -281,50 +419,41 @@ private fun UsageBreakdown(period: UsagePeriod, select: (UsagePeriod) -> Unit, p
         )
     }
     val intervals = if (daily) 5 else 3
-    Column(
-        Modifier.fillMaxWidth().heightIn(min = Tokens.UsageChartPanel).border(Tokens.Stroke, palette.quietBorder, shape)
-            .padding(Tokens.BodyInset),
-    ) {
-        Text("Consumption Breakdown", fontSize = Tokens.ListTitle, lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.SemiBold)
-        Row(Modifier.fillMaxWidth().padding(top = Tokens.Space12).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
-            UsagePeriod.entries.forEach { choice ->
-                val chosen = choice == period
-                Box(
-                    Modifier.weight(1f).height(Tokens.Space32).clip(RoundedCornerShape(Tokens.AlertLoadingRadius))
-                        .then(if (chosen) Modifier.background(palette.selected) else Modifier)
-                        .selectable(chosen, role = Role.Tab, onClick = { select(choice) }),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(choice.name, fontSize = Tokens.Metadata, lineHeight = Tokens.ListSubtitleLine,
-                        color = if (chosen) palette.ink else palette.secondary, fontWeight = if (chosen) FontWeight.Medium else FontWeight.Normal)
-                }
-            }
-        }
-        Row(Modifier.fillMaxWidth().padding(top = Tokens.Inset)
+    val weekly = period == UsagePeriod.Weekly
+    val axisWidth = if (daily) Tokens.Space24 else Tokens.Space32
+    val plotStart = if (weekly) Tokens.Space8 + Tokens.Space2 else Dp.Hairline
+    val plotEnd = if (weekly) Tokens.AlertLoadingRadius else Dp.Hairline
+    val monthOffset = if (period == UsagePeriod.Monthly) Tokens.Space4 else Dp.Hairline
+    Column {
+        Row(Modifier.fillMaxWidth().padding(top = if (daily) Tokens.Inset else Tokens.Inset + Tokens.Space2)
             .height(Tokens.UsageChartGrid + if (daily) Tokens.Space12 else Tokens.Space32 + Tokens.Space12)) {
-            Column(Modifier.width(if (daily) Tokens.Space24 else Tokens.Space32).fillMaxHeight(),
+            Column(Modifier.width(axisWidth).fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween) {
                 (intervals downTo 0).forEach { tick ->
                     Text(if (daily) "$$tick" else sampleMoney(tick * gridStep), fontSize = Tokens.ChartCaption, color = palette.secondary)
                 }
             }
-            Canvas(Modifier.weight(1f).fillMaxHeight()) {
-                val top = Tokens.Space6.toPx()
-                val bottom = size.height - top
+            Canvas(Modifier.weight(1f).fillMaxHeight().padding(start = plotStart, end = plotEnd)) {
+                val top = (if (daily) Tokens.Space6 else Tokens.Stroke).toPx()
+                val bottom = size.height - (Tokens.Space6 + if (daily) Tokens.Stroke else Dp.Hairline).toPx()
                 for (i in 0..intervals) {
                     val y = top + (bottom - top) * i / intervals
                     drawLine(palette.quietBorder, Offset(0f, y), Offset(size.width, y), Tokens.Stroke.toPx())
                 }
                 shares.forEachIndexed { index, bucket ->
-                    val position = if (daily) listOf(.10f, .59f)[index] else (index + .5f) / shares.size
-                    val bar = (if (period == UsagePeriod.Monthly) Tokens.Space32 else Tokens.Space20).toPx()
+                    val position = if (daily) listOf(.107f, .59f)[index] else (index + .5f) / shares.size
+                    val bar = when (period) {
+                        UsagePeriod.Daily -> Tokens.Space20
+                        UsagePeriod.Weekly -> Tokens.UsageWeeklyBarWidth
+                        UsagePeriod.Monthly -> Tokens.UsageMonthlyBarWidth
+                    }.toPx()
                     var y = bottom
                     bucket.forEachIndexed { product, share ->
                         val height = (bottom - top) * (charges[product] * share / (gridStep * intervals)).toFloat()
                         y -= height
                         if (height > 0) drawRoundRect(
                             colors[product],
-                            Offset(position * size.width - bar / 2, y),
+                            Offset(position * size.width + monthOffset.toPx() - bar / 2, y),
                             androidx.compose.ui.geometry.Size(bar, height),
                             androidx.compose.ui.geometry.CornerRadius(Tokens.Space2.toPx()),
                         )
@@ -332,10 +461,14 @@ private fun UsageBreakdown(period: UsagePeriod, select: (UsagePeriod) -> Unit, p
                 }
             }
         }
-        Spacer(Modifier.height(if (daily) Tokens.Space32 + Tokens.Space12 else Tokens.Space8))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Spacer(Modifier.height(if (daily) Tokens.Space32 + Tokens.ProjectDetailGap * 2 else Tokens.Space8))
+        val dateInsets = if (daily) Modifier else Modifier.padding(start = axisWidth + plotStart, end = plotEnd).offset(x = monthOffset)
+        Row(Modifier.fillMaxWidth().then(dateInsets)) {
             dates.forEach { date ->
-                Text(date, fontSize = Tokens.ChartCaption, lineHeight = Tokens.ListSubtitleLine, color = palette.secondary)
+                Text(date, Modifier.weight(1f), fontSize = Tokens.ChartCaption,
+                    lineHeight = if (daily) Tokens.ListSubtitleLine else Tokens.UsageDateLine,
+                    fontWeight = if (weekly) FontWeight.Medium else FontWeight.Normal,
+                    color = palette.secondary, textAlign = if (daily) TextAlign.Start else TextAlign.Center)
             }
         }
         products.forEachIndexed { index, product ->
@@ -352,85 +485,24 @@ private fun UsageBreakdown(period: UsagePeriod, select: (UsagePeriod) -> Unit, p
     }
 }
 
-private data class UsageTreatment(val icon: Boolean, val card: Boolean, val labelOrder: Boolean, val meter: Boolean, val stacked: Boolean)
-
-private val usageTreatments = listOf(
-    UsageTreatment(true, false, false, false, false),
-    UsageTreatment(true, false, true, true, false),
-    UsageTreatment(true, true, true, false, false),
-    UsageTreatment(true, true, false, true, false),
-    UsageTreatment(false, true, true, true, false),
-    UsageTreatment(true, false, false, true, true),
-    UsageTreatment(false, false, false, true, false),
-    UsageTreatment(false, true, false, false, false),
-    UsageTreatment(true, true, false, false, true),
-    UsageTreatment(true, false, true, false, true),
-    UsageTreatment(true, false, true, true, true),
-    UsageTreatment(false, false, true, false, true),
-    UsageTreatment(true, true, true, true, false),
-    UsageTreatment(true, true, false, true, true),
-    UsageTreatment(false, false, true, true, true),
-    UsageTreatment(false, true, false, true, false),
-    UsageTreatment(true, true, true, false, true),
-    UsageTreatment(false, true, true, true, true),
-    UsageTreatment(true, false, false, true, false),
-    UsageTreatment(false, false, false, false, true),
-)
-
 @Composable
-private fun UsageResourceRow(resource: UsageResource, scale: Double, preset: Int?, expanded: Boolean, onOpen: () -> Unit) {
+private fun UsageResourceRow(resource: UsageResource, scale: Double, expanded: Boolean, onOpen: () -> Unit) {
     val palette = LocalDashboardPalette.current
-    val treatment = preset?.let(usageTreatments::getOrNull)
-    val quantity = "${sampleNumber(resource.amount * scale)} ${resource.unit}"
+    val quantity = resource.quantity(scale)
     val cost = sampleMoney(resource.cost * scale)
-    if (treatment == null) {
-        Row(Modifier.fillMaxWidth().heightIn(min = Tokens.SearchRow).clickable(onClick = onOpen)
-            .padding(horizontal = Tokens.Stroke, vertical = Tokens.Space8), horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(resource.name, Modifier.weight(.6f), fontSize = Tokens.AlertProjectSize, lineHeight = Tokens.ListSubtitleLine)
-            Text(quantity, Modifier.weight(.24f), color = palette.secondary, fontSize = Tokens.Caption, maxLines = 1)
-            Text(cost, Modifier.weight(.16f), fontSize = Tokens.Metadata, textAlign = TextAlign.End, maxLines = 1)
-        }
-        if (expanded) {
-            KeyValueRow("Recorded usage", quantity)
-            KeyValueRow("Estimated charge", cost)
-        }
-        DividerLine()
-        return
+    Row(Modifier.fillMaxWidth().heightIn(min = Tokens.SearchRow).clickable(onClick = onOpen)
+        .padding(vertical = Tokens.Space8), horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
+        verticalAlignment = Alignment.CenterVertically) {
+        Text(resource.name, Modifier.weight(145f), fontSize = Tokens.Metadata, lineHeight = Tokens.SearchDetailLine)
+        UsageSparkline(resource)
+        Text(quantity, Modifier.weight(82f), color = palette.secondary, fontSize = Tokens.Caption, maxLines = 1)
+        Text(cost, Modifier.weight(54f), fontSize = Tokens.Metadata, textAlign = TextAlign.End, maxLines = 1)
     }
-    Surface(
-        shape = if (treatment.card) RoundedCornerShape(Tokens.ControlRadius) else androidx.compose.ui.graphics.RectangleShape,
-        color = if (treatment.card) palette.group else palette.canvas,
-    ) {
-        Column {
-            DashboardRow(
-                resource.name,
-                subtitle = when {
-                    treatment.stacked -> if (treatment.labelOrder) cost else quantity
-                    else -> null
-                },
-                glyph = Glyph.Usage.takeIf { treatment.icon },
-                trailing = {
-                    if (treatment.stacked) {
-                        MutedText(if (treatment.labelOrder) quantity else cost)
-                    } else Row(horizontalArrangement = Arrangement.spacedBy(Tokens.Space8)) {
-                        MutedText(if (treatment.labelOrder) cost else quantity)
-                        Text(if (treatment.labelOrder) quantity else cost, fontSize = Tokens.Metadata)
-                    }
-                },
-                onClick = onOpen,
-            )
-            if (treatment.meter) LinearProgressIndicator(
-                progress = { (resource.amount.rem(100.0) / 100.0).toFloat() },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = Tokens.Inset, vertical = Tokens.Space4),
-            )
-            if (expanded) {
-                KeyValueRow("Recorded usage", quantity)
-                KeyValueRow("Estimated charge", cost)
-            }
-            if (!treatment.card) DividerLine()
-        }
+    if (expanded) {
+        KeyValueRow("Recorded usage", quantity)
+        KeyValueRow("Estimated charge", cost)
     }
+    DividerLine()
 }
 
 @Composable
@@ -469,7 +541,7 @@ internal fun AlertsList(route: DashboardRoute, navigation: DashboardNavigation) 
             contentAlignment = Alignment.Center,
         ) {
             DashboardEmpty("All quiet here.", "There are no alerts in this workspace.", Glyph.Activity,
-                illustration = R.drawable.dashboard_figma_alerts_empty)
+                illustration = R.drawable.dashboard_figma_alerts_empty, descriptionGap = Tokens.Space4)
         }
         else -> DashboardList(Modifier.fillMaxSize(), contentPadding = padding) {
             items(alerts, key = DashboardAlert::id) { alert ->
@@ -545,7 +617,7 @@ internal fun AlertScreen(route: DashboardRoute, navigation: DashboardNavigation,
         if (alert == null || project == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 DashboardEmpty("All quiet here.", "There are no alerts in this workspace.", Glyph.Activity,
-                    illustration = R.drawable.dashboard_figma_alerts_empty)
+                    illustration = R.drawable.dashboard_figma_alerts_empty, descriptionGap = Tokens.Space4)
             }
             return
         }
@@ -602,7 +674,7 @@ internal fun AlertScreen(route: DashboardRoute, navigation: DashboardNavigation,
                     GlassAction(if (alert.kind.isUsage) "View usage" else "View logs", {
                         if (alert.kind.isUsage) navigation.show(Destination.Usage)
                         else navigation.show(Destination.Logs, project.id)
-                    }, Modifier.fillMaxWidth().padding(top = Tokens.Space4))
+                    }, Modifier.fillMaxWidth().padding(top = Tokens.Space12))
                 }
             }
         }
@@ -633,45 +705,44 @@ private fun AlertTrend(alert: DashboardAlert, accent: androidx.compose.ui.graphi
     val kind = alert.kind
     val step = kotlin.math.ceil(alert.value / (kind.chartStep * 3)).toInt() * kind.chartStep
     Column(
-        Modifier.fillMaxWidth().heightIn(min = Tokens.AlertChartHeight).border(Tokens.Stroke, palette.insetSurface, shape)
-            .padding(horizontal = Tokens.AlertMeasurePad, vertical = Tokens.Space12),
-        verticalArrangement = Arrangement.spacedBy(Tokens.Space8),
+        Modifier.fillMaxWidth().border(Tokens.Stroke, palette.insetSurface, shape)
+            .padding(start = Tokens.AlertMeasurePad, end = Tokens.AlertMeasurePad,
+                top = Tokens.ProjectOptionsInset, bottom = Tokens.PreviewStatusInset),
     ) {
         Text(kind.chartTitle, fontSize = Tokens.Body, lineHeight = Tokens.ProjectOptionsLine, fontWeight = FontWeight.SemiBold)
-        Row(Modifier.fillMaxWidth().height(Tokens.AlertPlotHeight)) {
-            Column(Modifier.width(if (kind == AlertKind.Transfer) Tokens.Touch else Tokens.Space32).fillMaxHeight(),
+        Spacer(Modifier.height(Tokens.ChartTitleGap))
+        Row(Modifier.fillMaxWidth().height(Tokens.CompactChartTicksHeight)) {
+            val tickWidth = if (kind == AlertKind.Transfer) Tokens.Touch else Tokens.ChartTickWidth
+            Column(Modifier.width(tickWidth).fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween) {
                 (3 downTo 0).forEach { level ->
-                    val label = "${level * step}${kind.unit}"
-                    Text(label, fontSize = Tokens.Caption, color = palette.secondary)
+                    val label = if (level == 0 && kind == AlertKind.Cdn) "0" else "${level * step}${kind.unit}"
+                    ChartTick(label)
                 }
             }
-            Canvas(Modifier.weight(1f).fillMaxHeight()) {
-                val gridHeight = size.height * .88f
-                val gridTop = (size.height - gridHeight) / 2
+            Canvas(Modifier.weight(1f).fillMaxHeight().padding(start = Tokens.DockInset, end = Tokens.Space2)) {
+                val gridTop = Tokens.Space8.toPx()
+                val gridHeight = size.height - 2 * gridTop
                 for (i in 0..3) {
                     val y = gridTop + gridHeight * i / 3
-                    drawLine(palette.quietBorder, Offset(0f, y), Offset(size.width, y), Tokens.Stroke.toPx())
+                    drawLine(palette.plotGrid, Offset(0f, y), Offset(size.width, y), Tokens.Stroke.toPx())
                 }
                 val samples = when (kind) {
-                    AlertKind.Cdn, AlertKind.Transfer -> listOf(-.35, -.35, -.15, .0, .08, .35, .74, 1.0, .66, .43)
-                    AlertKind.Monitor -> listOf(-.40, -.36, -.32, -.25, .12, 1.0, .86, .68, .19, .08)
-                    AlertKind.Function -> listOf(.04, .08, .07, .16, 1.0, .93, .73, .53, .42, .28)
+                    AlertKind.Cdn, AlertKind.Transfer -> listOf(42, 42, 48, 52, 54, 62, 73, 78, 66, 58)
+                    AlertKind.Monitor -> listOf(17, 18, 19, 22, 32, 67, 62, 56, 40, 33)
+                    AlertKind.Function -> listOf(13, 16, 15, 21, 84, 79, 61, 44, 36, 25)
                 }
+                val peak = samples.max()
                 val plot = Path()
                 samples.forEachIndexed { i, value ->
                     val x = size.width * i / samples.lastIndex
-                    val measurement = alert.baseline + (alert.value - alert.baseline) * value
+                    val measurement = alert.value * value / peak
                     val y = gridTop + gridHeight * (1f - (measurement / (step * 3)).toFloat())
                     if (i == 0) plot.moveTo(x, y) else plot.lineTo(x, y)
                 }
                 drawPath(plot, accent, style = Stroke(Tokens.Space2.toPx()))
             }
         }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf("09:10", "09:20", "09:30", "09:40").forEach { label ->
-                Text(label, fontSize = Tokens.ChartCaption, color = palette.secondary, fontFamily = GeistMono)
-            }
-        }
+        ChartDates(listOf("09:10", "09:20", "09:30", "09:40"))
     }
 }

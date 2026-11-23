@@ -1,5 +1,6 @@
 package com.octaviantocan.vercelnative.dashboard
 
+import android.content.ClipData
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.geometry.RoundRect
@@ -40,19 +41,26 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.painterResource
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.octaviantocan.vercelnative.R
 import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
+import kotlinx.coroutines.launch
 
 internal val LocalDashboardPalette = staticCompositionLocalOf { DashboardPalette.Dark }
 
 internal enum class Glyph(@DrawableRes val artwork: Int, val size: Dp) {
     Back(R.drawable.dashboard_figma_back, Tokens.Space20),
     BackChevron(R.drawable.dashboard_figma_profile_back, Tokens.Icon),
+    AccountBack(R.drawable.dashboard_figma_account_back, Tokens.Space20),
+    LightThemeBack(R.drawable.dashboard_figma_theme_back_light, Tokens.Space20),
     Close(R.drawable.dashboard_figma_search_close, Tokens.Icon),
+    AgentClose(R.drawable.dashboard_figma_agent_close, Tokens.Space20),
     More(R.drawable.dashboard_icon_more, Tokens.DockIcon),
     Chevron(R.drawable.dashboard_figma_chevron, Tokens.Inset),
     Search(R.drawable.dashboard_figma_search, Tokens.Icon),
@@ -63,25 +71,43 @@ internal enum class Glyph(@DrawableRes val artwork: Int, val size: Dp) {
     Branch(R.drawable.dashboard_figma_branch, Tokens.Inset),
     Filter(R.drawable.dashboard_figma_filter, Tokens.FilterGlyph),
     Refresh(R.drawable.dashboard_figma_refresh, Tokens.DockIcon),
+    RetryNotice(R.drawable.dashboard_figma_retry_notice, Tokens.Icon),
     Download(R.drawable.dashboard_figma_download, Tokens.DockIcon),
     Send(R.drawable.dashboard_figma_send, Tokens.Icon),
     Check(R.drawable.dashboard_figma_check, Tokens.DockIcon),
     Warn(R.drawable.dashboard_figma_warning, Tokens.Icon),
     Settings(R.drawable.dashboard_icon_settings, Tokens.DockIcon),
+    ProjectSettings(R.drawable.dashboard_figma_project_settings, Tokens.Space20),
     Help(R.drawable.dashboard_icon_help, Tokens.DockIcon),
     Usage(R.drawable.dashboard_icon_analytics, Tokens.DockIcon),
     Agent(R.drawable.dashboard_figma_assistant, Tokens.Icon),
     Theme(R.drawable.dashboard_icon_theme, Tokens.DockIcon),
+    ThemeSystem(R.drawable.dashboard_figma_theme_system, Tokens.DockIcon),
+    ThemeSun(R.drawable.dashboard_figma_theme_sun, Tokens.Space20),
+    ThemeMoon(R.drawable.dashboard_figma_theme_moon, Tokens.DockIcon),
+    AgentAttach(R.drawable.dashboard_figma_agent_attachment, Tokens.DockIcon),
+    AgentSend(R.drawable.dashboard_figma_agent_send, Tokens.Space20),
     Account(R.drawable.dashboard_icon_account, Tokens.DockIcon),
     Edit(R.drawable.dashboard_figma_edit, Tokens.ProjectOptionsInset),
     Live(R.drawable.dashboard_figma_live, Tokens.DockIcon),
+    PauseLive(R.drawable.dashboard_figma_log_pause, Tokens.DockIcon),
+    Copy(R.drawable.dashboard_figma_copy, Tokens.Inset),
+    Function(R.drawable.dashboard_figma_log_function, Tokens.BodyInset),
+    Clock(R.drawable.dashboard_figma_log_clock, Tokens.DockIcon),
+    TransferSuccess(R.drawable.dashboard_figma_transfer_success, Tokens.TransferSuccessGlyph),
+    TransferFailure(R.drawable.dashboard_figma_transfer_failure, Tokens.Icon),
     Lock(R.drawable.dashboard_figma_lock, Tokens.DockIcon),
     Team(R.drawable.dashboard_figma_project_team, Tokens.DockIcon),
     Layers(R.drawable.dashboard_figma_project_layers, Tokens.Inset),
     ProjectDomain(R.drawable.dashboard_figma_project_domain, Tokens.Inset),
     Commit(R.drawable.dashboard_figma_commit, Tokens.Inset),
     Info(R.drawable.dashboard_figma_information, Tokens.Inset),
+    SearchNoticeInfo(R.drawable.dashboard_figma_search_notice_info, Tokens.Space20),
+    PreviewInfo(R.drawable.dashboard_figma_preview_info, Tokens.Space20),
+    PreviewDeployment(R.drawable.dashboard_figma_deployment_cube, Tokens.DockIcon),
+    ToolbarDocs(R.drawable.dashboard_figma_toolbar_docs, Tokens.Inset),
     Outbound(R.drawable.dashboard_figma_outbound, Tokens.OutboundGlyph),
+    BrowserAction(R.drawable.dashboard_figma_browser_action, Tokens.DockIcon),
     MenuPreview(R.drawable.dashboard_figma_menu_preview, Tokens.MenuGlyph),
     MenuDeployment(R.drawable.dashboard_figma_menu_deployment, Tokens.MenuGlyph),
     MenuBranch(R.drawable.dashboard_figma_menu_branch, Tokens.MenuGlyph),
@@ -99,10 +125,11 @@ internal fun DashboardIcon(glyph: Glyph, tint: Color = LocalDashboardPalette.cur
 internal fun IconControl(
     glyph: Glyph, label: String, onClick: () -> Unit, active: Boolean = false,
     modifier: Modifier = Modifier, enabled: Boolean = true, visualSize: Dp = Tokens.Filter,
+    glass: Boolean = true,
 ) {
     val palette = LocalDashboardPalette.current
     Box(
-        modifier.size(visualSize).dashboardGlass()
+        modifier.size(visualSize).then(if (glass) Modifier.dashboardGlass() else Modifier)
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
@@ -121,17 +148,28 @@ internal fun DashboardHeader(
     modifier: Modifier = Modifier,
     titleSize: androidx.compose.ui.unit.TextUnit = Tokens.RootTitle,
     onSubtitleClick: (() -> Unit)? = null,
+    titleWeight: FontWeight = FontWeight.SemiBold,
+    titleLine: androidx.compose.ui.unit.TextUnit = Tokens.ListTitleLine,
+    titleGlyph: Glyph? = null,
+    titleInk: Color = LocalDashboardPalette.current.ink,
+    titleGlyphTint: Color = titleInk,
+    backGlass: Boolean = true,
 ) {
     Box(modifier.fillMaxWidth().heightIn(min = Tokens.TopBar).padding(horizontal = Tokens.Inset)) {
         if (onBack != null) {
             Box(Modifier.align(Alignment.CenterStart)) {
-                val label = if (leftIcon == Glyph.Close) "Close" else "Back"
-                IconControl(leftIcon, label, onBack)
+                val label = if (leftIcon == Glyph.Close || leftIcon == Glyph.AgentClose) "Close" else "Back"
+                val face = if (backGlass) Modifier else Modifier.background(LocalDashboardPalette.current.sheet, CircleShape)
+                    .border(Tokens.Stroke, LocalDashboardPalette.current.border, CircleShape)
+                IconControl(leftIcon, label, onBack, modifier = face, glass = backGlass)
             }
         }
         Column(Modifier.align(Alignment.Center).padding(horizontal = Tokens.Touch), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(title, fontSize = titleSize, lineHeight = Tokens.ListTitleLine,
-                fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Row(horizontalArrangement = Arrangement.spacedBy(Tokens.Space8), verticalAlignment = Alignment.CenterVertically) {
+                if (titleGlyph != null) DashboardIcon(titleGlyph, titleGlyphTint)
+                Text(title, fontSize = titleSize, lineHeight = titleLine, color = titleInk,
+                    fontWeight = titleWeight, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
             if (subtitle != null) Text(
                 subtitle,
                 modifier = if (onSubtitleClick == null) Modifier else Modifier.clickable(
@@ -154,16 +192,25 @@ internal fun DashboardField(
     shape: Shape = RoundedCornerShape(Tokens.ControlRadius),
     height: Dp = Tokens.Touch,
     error: Boolean = false,
+    focused: Boolean = false,
     color: Color = LocalDashboardPalette.current.input,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
+    trailingInset: Dp = Tokens.Space12,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    outline: Color = Color.Unspecified,
 ) {
     val palette = LocalDashboardPalette.current
     BasicTextField(
         value, onValueChange,
-        modifier.clip(shape).background(color).border(Tokens.Stroke, if (error) palette.error else palette.quietBorder, shape),
+        modifier.clip(shape).background(color).border(Tokens.Stroke,
+            when {
+                outline != Color.Unspecified -> outline
+                error -> palette.error
+                focused -> palette.muted
+                else -> palette.quietBorder
+            }, shape),
         textStyle = GeistText.copy(color = palette.ink, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine),
         singleLine = true,
         cursorBrush = SolidColor(palette.ink),
@@ -171,7 +218,7 @@ internal fun DashboardField(
         keyboardActions = keyboardActions,
         decorationBox = { input ->
             Row(
-                Modifier.heightIn(min = height).padding(horizontal = Tokens.Space12),
+                Modifier.heightIn(min = height).padding(start = Tokens.Space12, end = trailingInset),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Tokens.Space8),
             ) {
@@ -205,6 +252,14 @@ internal fun SectionLabel(title: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
+internal fun DashboardGroup(content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(Tokens.CardRadius))
+            .background(LocalDashboardPalette.current.projectSheetGroup), content = content,
+    )
+}
+
+@Composable
 internal fun DashboardRow(
     title: String,
     subtitle: String? = null,
@@ -214,6 +269,7 @@ internal fun DashboardRow(
     trailing: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     minHeight: Dp = Tokens.SearchRow,
+    titleMaxLines: Int = 2,
 ) {
     val palette = LocalDashboardPalette.current
     Row(
@@ -227,7 +283,7 @@ internal fun DashboardRow(
             Box(Modifier.width(Tokens.IconSlot), contentAlignment = Alignment.Center) { DashboardIcon(glyph, palette.muted) }
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.Space2)) {
-            Text(title, fontSize = Tokens.Body, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(title, fontSize = Tokens.Body, maxLines = titleMaxLines, overflow = TextOverflow.Ellipsis)
             if (subtitle != null) MutedText(subtitle)
         }
         if (trailing != null) trailing()
@@ -258,7 +314,60 @@ internal fun StatusPill(label: String, tone: Tone = Tone.Neutral, modifier: Modi
     )
 }
 
+@Composable
+internal fun DottedStatusPill(label: String, ink: Color, surface: Color, modifier: Modifier = Modifier) {
+    Row(
+        modifier.heightIn(min = Tokens.AlertPillHeight).background(surface, CircleShape)
+            .padding(horizontal = Tokens.PreviewStatusInset),
+        horizontalArrangement = Arrangement.spacedBy(Tokens.DockInset), verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(Tokens.Space6).background(ink, CircleShape))
+        Text(label, fontSize = Tokens.Caption, lineHeight = Tokens.AlertPillLine, fontWeight = FontWeight.Medium, color = ink)
+    }
+}
+
 internal enum class Tone { Neutral, Success, Warning, Error }
+
+@Composable
+internal fun DashboardGlassNotice(
+    title: String, onRetry: (() -> Unit)? = null, modifier: Modifier = Modifier,
+    detail: String? = null, error: Boolean = false, backdrop: androidx.compose.ui.graphics.layer.GraphicsLayer? = null,
+    retryLabel: String? = null,
+) {
+    val palette = LocalDashboardPalette.current
+    val accent = if (error) palette.error else palette.link
+    val searchNotice = backdrop != null && !error
+    Box(
+        modifier.fillMaxWidth().dashboardGlass(backdrop, tint = if (searchNotice) Color.White.copy(alpha = .42f) else null)
+            .then(if (error) Modifier.background(palette.errorSurface.copy(alpha = .8f), CircleShape)
+                .border(Tokens.Stroke, accent.copy(alpha = .35f), CircleShape) else Modifier)
+    ) {
+        if (searchNotice) Box(Modifier.matchParentSize().padding(Tokens.Stroke).background(palette.sheet, CircleShape))
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = Tokens.TopBar)
+                .padding(start = if (searchNotice) Tokens.FilterGlyph else Tokens.Inset,
+                    end = if (searchNotice) Tokens.Space6 else Tokens.Space4),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(if (searchNotice) Tokens.AlertMeasurePad else Tokens.Space12),
+        ) {
+            val glyph = when {
+                searchNotice -> Glyph.SearchNoticeInfo
+                error -> Glyph.PreviewInfo
+                else -> Glyph.Info
+            }
+            DashboardIcon(glyph, accent)
+            Column(Modifier.weight(1f)) {
+                Text(title, color = if (error) accent else palette.ink, fontSize = Tokens.Body, lineHeight = Tokens.ListSubtitleLine)
+                if (detail != null) Text(detail, color = palette.secondary, fontSize = Tokens.Metadata,
+                    lineHeight = Tokens.MetadataLine, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            if (onRetry != null) {
+                if (retryLabel == null) IconControl(Glyph.RetryNotice, "Retry", onRetry)
+                else TextButton(onClick = onRetry) { Text(retryLabel, color = palette.ink, fontSize = Tokens.ListSubtitle) }
+            }
+        }
+    }
+}
 
 @Composable
 internal fun DashboardNotice(
@@ -299,15 +408,32 @@ internal fun DashboardButton(label: String, onClick: () -> Unit, modifier: Modif
 }
 
 @Composable
-internal fun GlassAction(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun GlassAction(
+    label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, destructive: Boolean = false,
+    glyph: Glyph? = null, labelWeight: FontWeight = FontWeight.SemiBold,
+) {
+    val palette = LocalDashboardPalette.current
     Box(
         modifier.heightIn(min = Tokens.Filter).dashboardGlass()
-            .clickable(role = Role.Button, onClick = onClick).padding(horizontal = Tokens.Inset),
+            .then(if (destructive) Modifier.background(palette.errorSurface, CircleShape)
+                .border(Tokens.Stroke, palette.error.copy(alpha = .35f), CircleShape) else Modifier)
+            .clickable(enabled = enabled, role = Role.Button, onClick = onClick).padding(horizontal = Tokens.Inset),
         contentAlignment = Alignment.Center,
     ) {
-        Text(label, color = LocalDashboardPalette.current.glassInk, fontSize = Tokens.ListSubtitle,
-            lineHeight = Tokens.ListSubtitleLine, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+        val ink = if (destructive) palette.error else palette.glassInk
+        Row(horizontalArrangement = Arrangement.spacedBy(Tokens.Space8), verticalAlignment = Alignment.CenterVertically) {
+            if (glyph != null) DashboardIcon(glyph, ink)
+            Text(label, color = ink, fontSize = Tokens.ListSubtitle,
+                lineHeight = Tokens.ListSubtitleLine, fontWeight = labelWeight, textAlign = TextAlign.Center)
+        }
     }
+}
+
+@Composable
+internal fun rememberCopyText(): (String) -> Unit {
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
+    return { value -> scope.launch { clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(null, value))) } }
 }
 
 @Composable
@@ -343,13 +469,17 @@ internal fun ProjectArtwork(project: Project, size: Dp, fallbackSize: Dp) {
 internal fun DashboardEmpty(
     title: String, description: String, glyph: Glyph, modifier: Modifier = Modifier,
     loading: Boolean = false, action: (() -> Unit)? = null, actionLabel: String = "Retry",
-    @DrawableRes illustration: Int? = null,
+    @DrawableRes illustration: Int? = null, glassAction: Boolean = false,
+    footer: (@Composable () -> Unit)? = null,
+    prominentTitle: Boolean = false,
+    actionWidth: Dp = Tokens.AlertPlanButton,
+    descriptionGap: Dp = if (prominentTitle) Tokens.FeedbackExplanationGap else Tokens.Space8,
 ) {
     val palette = LocalDashboardPalette.current
     Column(
         modifier.fillMaxWidth().padding(Tokens.Space24),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Tokens.Space8, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.Center,
     ) {
         if (loading) CircularProgressIndicator(Modifier.size(Tokens.Filter), color = palette.ink)
         else if (illustration != null) Image(
@@ -357,44 +487,109 @@ internal fun DashboardEmpty(
             Modifier.size(Tokens.IllustrationWidth, Tokens.IllustrationHeight),
         )
         else Box(
-            Modifier.width(Tokens.IllustrationWidth).height(Tokens.IllustrationHeight),
+            Modifier.width(Tokens.IllustrationWidth)
+                .height(if (prominentTitle) Tokens.FeedbackIconSize else Tokens.IllustrationHeight),
             contentAlignment = Alignment.Center,
         ) {
             Box(
-                Modifier.size(Tokens.BottomBar).background(palette.group, RoundedCornerShape(Tokens.CardRadius))
+                Modifier.size(if (prominentTitle) Tokens.FeedbackIconSize else Tokens.BottomBar)
+                    .background(palette.group, RoundedCornerShape(Tokens.CardRadius))
                     .border(Tokens.Stroke, palette.border, RoundedCornerShape(Tokens.CardRadius)),
                 contentAlignment = Alignment.Center,
             ) { DashboardIcon(glyph, palette.secondary) }
         }
-        Text(title, fontSize = Tokens.Title, lineHeight = Tokens.EmptyTitleLine,
-            fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
-        Text(description, fontSize = Tokens.ListSubtitle, lineHeight = Tokens.ListSubtitleLine,
+        Text(title, Modifier.padding(top = if (prominentTitle) Tokens.FeedbackTitleGap else Tokens.Space8),
+            fontSize = if (prominentTitle) Tokens.Heading else Tokens.Title,
+            lineHeight = if (prominentTitle) Tokens.PlanTitleLine else Tokens.EmptyTitleLine,
+            fontWeight = if (prominentTitle) FontWeight.SemiBold else FontWeight.Medium, textAlign = TextAlign.Center)
+        Text(description, Modifier.padding(top = descriptionGap)
+            .widthIn(max = Tokens.FeedbackExplanationWidth),
+            fontSize = Tokens.ListSubtitle, lineHeight = if (prominentTitle) Tokens.ProjectOptionsLine else Tokens.ListSubtitleLine,
             color = palette.secondary, textAlign = TextAlign.Center)
-        if (action != null) DashboardButton(actionLabel, action)
+        if (action != null) {
+            val actionModifier = Modifier.padding(top = if (prominentTitle) Tokens.FeedbackActionGap else Tokens.Space8)
+            if (glassAction) GlassAction(actionLabel, action, actionModifier.widthIn(min = actionWidth))
+            else DashboardButton(actionLabel, action, actionModifier)
+        }
+        if (footer != null) Box(Modifier.padding(top = Tokens.Space8)) { footer() }
     }
 }
 
 @Composable
 internal fun DashboardChart(
-    values: List<Float>, modifier: Modifier = Modifier, color: Color = LocalDashboardPalette.current.chart,
+    values: List<Float>, ticks: List<String>, dates: List<String>, modifier: Modifier = Modifier,
+    color: Color = LocalDashboardPalette.current.chart, line: Boolean = false, height: Dp = Tokens.ChartHeight,
+    bars: Dp = Tokens.FirewallBarWidth, observability: Boolean = false,
 ) {
     val palette = LocalDashboardPalette.current
-    Canvas(modifier.fillMaxWidth().height(Tokens.ChartHeight)) {
-        for (line in 1..4) {
-            val y = size.height * line / 4
-            drawLine(palette.quietBorder, Offset(0f, y), Offset(size.width, y))
+    Column(modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth().height(height)) {
+            val tickWidth = if (observability) Tokens.ObservabilityTickWidth else Tokens.ChartTickWidth
+            Column(Modifier.width(tickWidth).fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
+                for (tick in ticks) ChartTick(tick, observability)
+            }
+            Canvas(Modifier.weight(1f).fillMaxHeight().padding(
+                start = if (observability) Dp.Hairline else Tokens.DockInset,
+                end = if (observability) Tokens.Stroke else Tokens.Space2,
+            )) {
+                val top = (if (observability) Tokens.Space6 + Tokens.Stroke else Tokens.Space8).toPx()
+                val bottom = size.height - top
+                val plotHeight = bottom - top
+                for (tick in ticks.indices) {
+                    val y = top + plotHeight * tick / ticks.lastIndex
+                    drawLine(if (observability) palette.quietBorder else palette.plotGrid,
+                        Offset(0f, y), Offset(size.width, y), Tokens.Stroke.toPx())
+                }
+                if (line) {
+                    val path = androidx.compose.ui.graphics.Path()
+                    values.forEachIndexed { index, fraction ->
+                        val x = index * size.width / values.lastIndex
+                        val y = bottom - plotHeight * fraction.coerceIn(0f, 1f)
+                        if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
+                    }
+                    drawPath(path, color, style = androidx.compose.ui.graphics.drawscope.Stroke(Tokens.Space2.toPx()))
+                } else {
+                    val step = (size.width - Tokens.Space8.toPx()).coerceAtLeast(0f) / values.size
+                    val width = bars.toPx().coerceAtMost(step * .65f)
+                    values.forEachIndexed { index, fraction ->
+                        val barHeight = plotHeight * fraction.coerceIn(0f, 1f)
+                        val x = step * (index + .45f) - width / 2
+                        drawRoundRect(color, Offset(x, bottom - barHeight), androidx.compose.ui.geometry.Size(width, barHeight),
+                            androidx.compose.ui.geometry.CornerRadius(Tokens.Space2.toPx()))
+                    }
+                }
+            }
         }
-        val step = size.width / (values.size + 1)
-        values.forEachIndexed { index, fraction ->
-            val height = size.height * fraction.coerceIn(0f, 1f)
-            val x = step * (index + 1)
-            drawLine(color, Offset(x, size.height), Offset(x, size.height - height), step * 0.48f, StrokeCap.Round)
+        ChartDates(dates, observability)
+    }
+}
+
+@Composable
+internal fun ChartTick(label: String, observability: Boolean = false) {
+    val palette = LocalDashboardPalette.current
+    Text(label, Modifier.fillMaxWidth(), color = if (observability) palette.secondary else palette.plotInk,
+        fontSize = Tokens.Caption, lineHeight = if (observability) Tokens.UsageDateLine else Tokens.ChartTickLine,
+        fontFamily = GeistMono, textAlign = if (observability) TextAlign.Start else TextAlign.End)
+}
+
+@Composable
+internal fun ChartDates(dates: List<String>, observability: Boolean = false) {
+    val palette = LocalDashboardPalette.current
+    val width = if (observability) Tokens.ObservabilityDateWidth else Tokens.ChartDateWidth
+    val gap = if (observability) Tokens.PreviewStatusInset else Tokens.ChartDateGap
+    BoxWithConstraints(Modifier.fillMaxWidth().offset(x = if (observability) Tokens.BodyInset else Tokens.Inset).padding(top = gap)) {
+        val column = width.coerceAtMost(maxWidth / dates.size)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            for (date in dates) Text(date, Modifier.width(column), color = if (observability) palette.secondary else palette.plotInk,
+                fontSize = Tokens.ChartCaption, lineHeight = if (observability) Tokens.UsageDateLine else Tokens.ChartDateLine,
+                fontFamily = GeistMono, textAlign = TextAlign.Center, maxLines = 1)
         }
     }
 }
 
 internal data class MenuAction(
     val label: String, val glyph: Glyph, val onClick: (() -> Unit)?, val project: Project? = null,
+    val destructive: Boolean = false,
 )
 
 @Composable
@@ -424,7 +619,17 @@ internal fun RowOptions(
                     DashboardArtwork(R.drawable.dashboard_icon_more, Tokens.DockIcon)
                 }
             }
-        } else IconControl(Glyph.More, label, onOpen, visualSize = Tokens.RowIcon)
+        } else {
+            Box(
+                Modifier.size(Tokens.Touch).clip(CircleShape).clickable(role = Role.Button, onClick = onOpen)
+                    .semantics { contentDescription = label },
+                contentAlignment = Alignment.Center,
+            ) {
+                Box(Modifier.size(Tokens.RowIcon).dashboardGlass(), contentAlignment = Alignment.Center) {
+                    DashboardIcon(Glyph.More, palette.projectEllipsis)
+                }
+            }
+        }
         if (expanded) {
             val radius = if (recents) Tokens.ProjectOptionsLightRadius else Tokens.ProjectOptionsRadius
             val shape = RoundedCornerShape(radius)
@@ -441,30 +646,46 @@ internal fun RowOptions(
                         .width(if (recents) Tokens.RecentsOptionsWidth else Tokens.DeploymentOptionsWidth).clip(shape)
                         .background(palette.projectOptionsSurface).border(Tokens.Stroke, palette.projectOptionsBorder, shape)
                         .dashboardScroll(surface = palette.projectOptionsSurface)
-                        .padding(vertical = if (recents) Tokens.DockInset + Tokens.Stroke else Tokens.Space8),
+                        .padding(vertical = when {
+                            separated -> Tokens.Stroke
+                            recents -> Tokens.DockInset + Tokens.Stroke
+                            else -> Tokens.Space8
+                        }),
                 ) {
+                    val timestampHeight = when {
+                        separated -> Tokens.EarlierRecentsTimestamp
+                        recents -> Tokens.RecentsOptionsTimestamp
+                        else -> Tokens.Space32 + Tokens.Space2
+                    }
                     Box(
-                        Modifier.fillMaxWidth().heightIn(min = if (recents) Tokens.RecentsOptionsTimestamp else Tokens.Space32 + Tokens.Space2)
-                            .padding(horizontal = Tokens.Inset),
+                        Modifier.fillMaxWidth().heightIn(min = timestampHeight).padding(horizontal = Tokens.Inset),
                         contentAlignment = Alignment.CenterStart,
                     ) {
-                        Text("Authored $authored", fontSize = if (recents) Tokens.ListSubtitle else Tokens.SearchDetailSize,
+                        val timestamp = if (recents) "Authored $authored" else "Deployed $authored"
+                        Text(timestamp, fontSize = if (recents) Tokens.ListSubtitle else Tokens.SearchDetailSize,
                             lineHeight = Tokens.SearchDetailLine, color = palette.secondary)
                     }
                     actions.forEachIndexed { index, item ->
-                        if (separated && index > 0) DividerLine(Modifier.padding(horizontal = Tokens.Inset))
+                        if (separated) DividerLine(Modifier.padding(horizontal = if (index == 0) Dp.Hairline else Tokens.Inset))
                         Row(
-                            Modifier.fillMaxWidth().heightIn(min = Tokens.MenuRow).clickable(enabled = item.onClick != null,
+                            Modifier.fillMaxWidth().heightIn(min = if (separated) Tokens.EarlierRecentsMenuRow else Tokens.MenuRow)
+                                .clickable(enabled = item.onClick != null,
                                 role = Role.Button, onClick = { onClose(); item.onClick?.invoke() })
-                                .padding(horizontal = Tokens.ProjectOptionsInset),
+                                .padding(horizontal = if (separated) Tokens.BodyInset else Tokens.ProjectOptionsInset),
                             horizontalArrangement = Arrangement.spacedBy(Tokens.Space12),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(Modifier.width(Tokens.Space20), contentAlignment = Alignment.Center) {
-                                if (item.project == null) DashboardIcon(item.glyph, palette.projectOptionsGlyph)
-                                else ProjectArtwork(item.project, Tokens.MetadataIcon, Tokens.MetadataIcon)
+                                if (item.project == null) {
+                                    DashboardIcon(item.glyph, if (item.destructive) palette.error else palette.projectOptionsGlyph)
+                                } else {
+                                    Box(Modifier.size(Tokens.Space20).background(palette.projectBadge, CircleShape),
+                                        contentAlignment = Alignment.Center) {
+                                        ProjectArtwork(item.project, Tokens.MetadataIcon, Tokens.MetadataIcon)
+                                    }
+                                }
                             }
-                            Text(item.label, color = palette.projectOptionsInk,
+                            Text(item.label, color = if (item.destructive) palette.error else palette.projectOptionsInk,
                                 fontSize = if (recents) Tokens.ListTitle else Tokens.Body,
                                 lineHeight = if (recents) Tokens.ListSubtitleLine else Tokens.ProjectOptionsLine,
                                 maxLines = 2, overflow = TextOverflow.Ellipsis)

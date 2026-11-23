@@ -25,7 +25,7 @@ internal data class Deployment(
 ) {
     val environment get() = if (branch == "main") "Production" else "Preview"
     val url get() = "$id.example"
-    val elapsed get() = if (ageHours < 24) "$ageHours h ago" else "${ageHours / 24} d ago"
+    val elapsed get() = if (ageHours < 24) "${ageHours}h ago" else "${ageHours / 24}d ago"
 }
 
 internal enum class DomainStatus(val label: String) {
@@ -67,18 +67,28 @@ internal enum class LogLevel(val label: String) { Info("Info"), Warning("Warning
 internal data class LogEvent(
     val id: String, val deploymentId: String, val time: String,
     val level: LogLevel, val path: String, val message: String, val durationMs: Int,
-)
+) {
+    val minutes get() = time.substring(0, 2).toInt() * 60 + time.substring(3, 5).toInt()
+}
 
 internal data class UsageResource(
     val id: String, val name: String, val amount: Double, val unit: String, val cost: Double,
-    val showInBreakdown: Boolean,
-)
+    val showInBreakdown: Boolean, val sampleQuantity: String? = null,
+) {
+    fun quantity(scale: Double): String {
+        if (scale == 1.0 && sampleQuantity != null) return sampleQuantity
+        return "${sampleNumber(amount * scale)} $unit"
+    }
+}
 
 internal fun sampleMoney(amount: Double): String = String.format(Locale.US, "\$%,.2f", amount)
 internal fun sampleNumber(amount: Double): String = String.format(Locale.US, "%,.1f", amount)
+internal fun sampleLogClock(minutes: Int): String = String.format(Locale.US, "%02d:%02d", minutes / 60, minutes % 60)
 
 internal object DashboardFixtures {
+    const val logTimeEnd = 14 * 60 + 30
     val workspaces = listOf(Workspace("personal", "Personal"), Workspace("studio", "Studio"))
+    val transferWorkspaces = workspaces + Workspace("lab", "Workspace Lab")
     val primaryWorkspace = workspaces.first().id
     val studioWorkspace = workspaces.last().id
 
@@ -92,7 +102,7 @@ internal object DashboardFixtures {
         "field-station", "ash-studio",
     )
     private val changes = listOf(
-        "Refine product filters", "Update the docs sidebar", "Improve empty state copy",
+        "Refine product filters and preserve the scroll position", "Update the docs sidebar", "Improve empty state copy",
         "Add mobile navigation", "Cache collection responses", "Tune checkout layout",
         "Add a status endpoint", "Fix the search count", "Update the landing page",
         "Render related products", "Restore the activity feed", "Tighten image loading",
@@ -100,9 +110,9 @@ internal object DashboardFixtures {
     private val branches = listOf("main", "preview/catalog", "main", "fix/navigation", "main", "preview/layout")
     private val authors = listOf("Jamie Example", "Riley Sample", "Morgan Demo", "Taylor Fixture")
 
-    val projects = workspaces.flatMapIndexed { workspaceIndex, workspace ->
+    val projects = transferWorkspaces.flatMapIndexed { workspaceIndex, workspace ->
         projectNames.mapIndexed { index, name ->
-            Project("prj-${workspace.id}-${index + 1}", workspace.id, if (workspaceIndex == 0) name else "$name-studio", index)
+            Project("prj-${workspace.id}-${index + 1}", workspace.id, if (workspaceIndex == 0) name else "$name-${workspace.id}", index)
         }
     }
     val defaultProject = projects.first().id
@@ -125,7 +135,7 @@ internal object DashboardFixtures {
                     else -> DeploymentStatus.Ready
                 },
                 ageHours = index * 3 + project.number + 1,
-                pullRequest = if (index % 3 == 0) null else 57 + revision,
+                pullRequest = if (index % 3 == 1) null else 57 + revision,
             )
         }
     }
@@ -161,7 +171,7 @@ internal object DashboardFixtures {
         AlertExample(AlertKind.Function, "Client error spike on /api/search", "/api/search", 8.2, 2.0, "Medium", "Error anomaly", "Configured 4xx"),
     )
 
-    val alerts = workspaces.flatMap { workspace ->
+    val alerts = transferWorkspaces.flatMap { workspace ->
         val candidates = projects.filter { it.workspaceId == workspace.id }
         List(36) { index ->
             val project = candidates[index % candidates.size]
@@ -181,29 +191,47 @@ internal object DashboardFixtures {
     }
     private val alertsById = alerts.associateBy(DashboardAlert::id)
 
+    private val catalogLogExamples = listOf(
+        LogEvent("log-$defaultProject-4", defaultDeployment, "14:16:42.82", LogLevel.Error, "/api/catalog", "Catalog lookup timed out", 192),
+        LogEvent("log-$defaultProject-5", defaultDeployment, "14:16:42.80", LogLevel.Error, "/api/catalog", "Upstream request failed", 188),
+        LogEvent("log-$defaultProject-2", defaultDeployment, "14:16:41.04", LogLevel.Warning, "/api/catalog", "Retrying catalog lookup", 120),
+        LogEvent("log-$defaultProject-0", defaultDeployment, "14:15:22.19", LogLevel.Info, "/api/catalog", "Starting catalog refresh", 48),
+        LogEvent("log-$defaultProject-1", defaultDeployment, "14:08:40.13", LogLevel.Info, "/api/catalog", "Catalog returned 24 items", 84),
+    )
+    private val otherWorkspaceLogExamples = listOf(
+        LogEvent("log-prj-personal-2-0", deployments("prj-personal-2").first().id, "14:16:18.67", LogLevel.Info, "/api/sync", "Sync job queued", 49),
+        LogEvent("log-prj-personal-3-0", deployments("prj-personal-3").first().id, "14:12:27.41", LogLevel.Info, "/api/counter", "Request completed", 50),
+    )
+    private val workspaceLogExamples = (
+        listOf(catalogLogExamples[0], catalogLogExamples[2], catalogLogExamples[4]) + otherWorkspaceLogExamples
+    ).sortedByDescending(LogEvent::time)
+    private val logExamplesById = (catalogLogExamples + otherWorkspaceLogExamples).associateBy(LogEvent::id)
+
     private val logsByProject = projects.associate { project ->
         project.id to List(45) { index ->
             val deployment = deployments(project.id)[index % 8]
             val path = listOf("/api/catalog", "/checkout", "/api/search", "/health", "/api/items")[index % 5]
-            val time = String.format(Locale.US, "14:%02d:%02d", 59 - index, (index * 13 + project.number) % 60)
+            val time = sampleLogClock(logTimeEnd - index - 1) + String.format(Locale.US, ":%02d", (index * 13 + project.number) % 60)
             val level = LogLevel.entries[(index + project.number) % 6 / 2]
             val message = when (level) {
                 LogLevel.Info -> "Request completed"
                 LogLevel.Warning -> "Slow response from upstream"
                 LogLevel.Error -> "Request timed out"
             }
-            LogEvent("log-${project.id}-$index", deployment.id, time, level, path, message, 48 + index * 36 + project.number)
-        }
+            val id = "log-${project.id}-$index"
+            logExamplesById[id] ?: LogEvent(id, deployment.id, time, level, path, message, 48 + index * 36 + project.number)
+        }.sortedByDescending(LogEvent::time)
     }
     private val logsById = logsByProject.values.flatten().associateBy(LogEvent::id)
 
     private val resourceNames = listOf(
-        "Edge Requests", "Fast Data Transfer", "Function Invocations", "Active CPU", "Provisioned Memory",
+        "Edge Requests", "Fast Data Transfer", "Function Invocations", "Fluid Active CPU", "Fluid Provisioned Memory",
         "Fast Origin Transfer", "Image Transformations", "ISR Reads", "ISR Writes", "Web Analytics Events",
-        "Speed Insights Data Points", "Build Execution", "Cache Reads", "Cache Writes", "Blob Storage",
-        "Blob Data Transfer", "Blob Operations", "Monitoring Events", "Workflow Runs", "Workflow Steps",
+        "Speed Insights Data Points", "Build Minutes", "Cache Reads", "Cache Writes", "Blob Storage",
+        "Blob Data Transfer", "Blob Advanced Operations", "Monitoring Events", "Workflow Runs", "Workflow Steps",
         "Log Drains", "Observability Events", "Queues", "Sandbox Execution",
     )
+    val edgeCpuDuration = UsageResource("usage-edge-cpu", "Edge Requests – Additional CPU Duration", 10.0, "ms", 0.0, false, "10 ms")
     val resources = resourceNames.mapIndexed { index, name ->
         val breakdownCost = when (name) {
             "Function Invocations" -> .60
@@ -216,13 +244,40 @@ internal object DashboardFixtures {
             index % 4 == 2 -> "min"
             else -> "k"
         }
+        val quantity = when (name) {
+            "Edge Requests" -> "89 / 10M"
+            "Fast Data Transfer" -> "1 MB / 1 TB"
+            "Function Invocations" -> "62"
+            "Fluid Active CPU" -> "15.43 seconds"
+            "Fluid Provisioned Memory" -> "0.04 GB hrs"
+            "Fast Origin Transfer" -> "1 MB"
+            "ISR Reads" -> "188"
+            "Blob Advanced Operations" -> "2"
+            "Speed Insights Data Points" -> "94"
+            "Web Analytics Events" -> "101"
+            "Build Minutes" -> "18 minutes"
+            else -> null
+        }
         UsageResource(
             "usage-$index", name, 7.6 + index * 12.15, units,
-            breakdownCost ?: (0.13 + (index * 11 % 93) * 0.07), showInBreakdown = breakdownCost != null,
+            breakdownCost ?: if (quantity != null) 0.0 else (0.13 + (index * 11 % 93) * 0.07),
+            showInBreakdown = breakdownCost != null, sampleQuantity = quantity,
         )
     }
 
-    fun workspace(id: String) = workspaces.first { it.id == id }
+    val usageStudySections = resources.associateBy(UsageResource::name).let { byName ->
+        fun select(vararg names: String) = names.map(byName::getValue)
+        listOf(
+            "Vercel Delivery Network" to (listOf(edgeCpuDuration) + select("Fast Data Transfer", "Edge Requests")),
+            "Vercel Functions" to select("Function Invocations", "Fluid Active CPU", "Fluid Provisioned Memory", "Fast Origin Transfer"),
+            "Content, Caching & Optimization" to select("ISR Reads", "Blob Advanced Operations"),
+            "Observability" to select("Speed Insights Data Points", "Web Analytics Events"),
+            "Build & Deploy" to select("Build Minutes"),
+            "Subscription Licenses" to listOf(UsageResource("usage-pro", "Pro", 2.0, "", 9.98, false, "2")),
+        )
+    }
+
+    fun workspace(id: String) = transferWorkspaces.first { it.id == id }
     fun project(id: String) = projects.first { it.id == id }
     fun deployments(projectId: String) = deploymentsByProject.getValue(projectId)
     fun deployment(id: String) = deploymentsById.getValue(id)
@@ -231,4 +286,11 @@ internal object DashboardFixtures {
     fun alert(id: String) = alertsById.getValue(id)
     fun logs(projectId: String) = logsByProject.getValue(projectId)
     fun log(id: String) = logsById.getValue(id)
+    fun reviewedLogs(projectId: String?, workspaceProjects: List<Project>) = when (projectId) {
+        defaultProject -> catalogLogExamples
+        null -> workspaceLogExamples.filter { event ->
+            workspaceProjects.any { it.id == deployment(event.deploymentId).projectId }
+        }
+        else -> emptyList()
+    }
 }

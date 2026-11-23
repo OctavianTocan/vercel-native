@@ -27,3 +27,12 @@ Reserve space for the Search composer and Navigation Assistant above the keyboar
 
 @cc [owner:OctavianTocan,label:design] dashboard-preview-metrics
 Alert details, chart labels, and baselines describe the same resource as the selected alert. Usage uses one billing-cycle charge per product across the chart legend and table, with Daily, Weekly, and Monthly grouping the chart. Firewall totals, bars, and time labels follow the selected range.
+
+@cc [owner:OctavianTocan,label:design] dashboard-sheet-and-detail-context
+When a user opens a detail from Activity, keep Activity selected. A nested Project sheet shows its parent behind it and returns to that parent on dismissal. Keep sheet controls below the Android status bar. Sources are the approved Figma Deployment Details, Alerts and Project Domains frames.
+
+@cc [owner:OctavianTocan,label:design] dashboard-usage-study-viewport
+The debug picker opens each Usage study at its resource comparison. Use the group, icon, chart and value placement in that study’s approved frame. Use the G33 layout for ordinary Usage.
+
+@cc [owner:OctavianTocan,label:design] dashboard-sheet-footer-visibility
+Keep the DNS verification, preview handoff and project transfer actions visible above the Android navigation area. Allow the content above the action to scroll when it exceeds the viewport. Sources are the approved Figma frames 604:1084, 586:274 and 535:1457.

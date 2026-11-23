@@ -41,7 +41,7 @@ import com.octaviantocan.vercelnative.dashboard.DashboardTokens as Tokens
 internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigation) {
     val projects = navigation.projects()
     var showFavorites by rememberSaveable(route.variant) {
-        mutableStateOf(route.variant !in setOf("plain", "icons", "menu-add", "menu-earlier"))
+        mutableStateOf(route.variant !in setOf("plain", "icons", "menu-add", "menu-earlier", "theme-plain"))
     }
     val useProjectTiles = !showFavorites && route.variant in setOf("plain", "icons")
     val favorite = projects.filter { showFavorites && it.id in navigation.favorites }
@@ -67,55 +67,85 @@ internal fun ProjectsScreen(route: DashboardRoute, navigation: DashboardNavigati
 
     Column(Modifier.fillMaxSize()) {
         DashboardRootHeader("Projects") { navigation.show(Destination.More) }
-        if (route.variant in setOf("loading", "empty", "error")) {
+        if (route.variant == "loading") {
+            ProjectLoadingList(Modifier.weight(1f))
+            return@Column
+        }
+        if (route.variant in setOf("empty", "error")) {
+            val empty = route.variant == "empty"
             DashboardEmpty(
-                title = when (route.variant) {
-                    "loading" -> "Loading projects"
-                    "empty" -> "A clean slate."
-                    else -> "Couldn’t load projects"
-                },
-                description = when (route.variant) {
-                    "loading" -> "Getting projects for ${navigation.currentWorkspace.name}."
-                    "empty" -> "No projects in this workspace yet."
-                    else -> "Check your connection and try again."
-                },
+                title = if (empty) "A clean slate." else "Couldn’t load projects",
+                description = if (empty) "No projects in this workspace yet." else "Check your connection and try again.",
                 glyph = Glyph.Project,
-                modifier = Modifier.weight(1f).padding(bottom = Tokens.DockScrollClearance),
-                loading = route.variant == "loading",
-                illustration = R.drawable.dashboard_figma_projects_empty.takeIf { route.variant == "empty" },
-                action = if (route.variant == "error") ({ navigation.main(Destination.Projects) }) else null,
+                modifier = Modifier.weight(1f).padding(bottom = if (empty) Tokens.BottomBar else Tokens.DockScrollClearance + Tokens.BodyInset),
+                illustration = if (empty) R.drawable.dashboard_figma_projects_empty else R.drawable.dashboard_figma_projects_error,
+                action = if (empty) null else ({ navigation.main(Destination.Projects) }), glassAction = true,
+                prominentTitle = !empty,
+                descriptionGap = if (empty) Tokens.Space4 else Tokens.FeedbackExplanationGap,
             )
             return@Column
         }
         Spacer(Modifier.height(Tokens.Inset))
-        DashboardList(
-            Modifier.weight(1f), state = listState,
-            contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance),
-        ) {
-            if (favoriteFailed) item {
-                DashboardNotice(
-                    "Couldn’t add to Favorites",
-                    Modifier.padding(horizontal = Tokens.Inset),
-                    Tone.Error,
-                    retry = { favoriteFailed = false },
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            DashboardList(Modifier.fillMaxSize(), state = listState,
+                contentPadding = PaddingValues(bottom = Tokens.DockScrollClearance),
+            ) {
+                if (favorite.isNotEmpty()) item { ProjectSectionLabel("Favorites") }
+                items(favorite, key = Project::id) { project ->
+                    ProjectListRow(
+                        project, navigation, true, expanded == project.id,
+                        { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
+                    )
+                }
+                if (showFavorites) item { ProjectSectionLabel("Other projects") }
+                itemsIndexed(other, key = { _, project -> project.id }) { index, project ->
+                    ProjectListRow(
+                        project, navigation, false, expanded == project.id,
+                        { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
+                        earlier = route.variant == "menu-earlier",
+                        useTile = useProjectTiles,
+                        topDivider = !showFavorites && index == 0,
+                    )
+                }
+            }
+            val attempted = other.firstOrNull()
+            if (favoriteFailed && attempted != null) {
+                DashboardGlassNotice(
+                    "Couldn’t add to Favorites", detail = navigation.projectName(attempted), error = true,
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                        .padding(horizontal = Tokens.Inset).padding(bottom = Tokens.DockScrollClearance),
+                    onRetry = { toggleFavorite(attempted.id); favoriteFailed = false },
                 )
             }
-            if (favorite.isNotEmpty()) item { ProjectSectionLabel("Favorites") }
-            items(favorite, key = Project::id) { project ->
-                ProjectListRow(
-                    project, navigation, true, expanded == project.id,
-                    { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
-                )
+        }
+    }
+}
+
+@Composable
+private fun ProjectLoadingList(modifier: Modifier) {
+    val palette = LocalDashboardPalette.current
+    DashboardList(modifier.fillMaxWidth().semantics { contentDescription = "Loading projects" },
+        contentPadding = PaddingValues(start = Tokens.Space24, top = Tokens.Inset, end = Tokens.Space24, bottom = Tokens.DockScrollClearance),
+    ) {
+        items(Tokens.AlertLoadingRows + 3) { index ->
+            if (index == 0 || index == 1) {
+                Box(Modifier.height(Tokens.ProjectSectionHeight), contentAlignment = Alignment.CenterStart) {
+                    Box(Modifier.fillMaxWidth(if (index == 0) .16f else .24f).height(Tokens.Space8).background(palette.selected, CircleShape))
+                }
             }
-            if (showFavorites) item { ProjectSectionLabel("Other projects") }
-            itemsIndexed(other, key = { _, project -> project.id }) { index, project ->
-                ProjectListRow(
-                    project, navigation, false, expanded == project.id,
-                    { expanded = project.id }, { expanded = null }, { toggleFavorite(project.id) },
-                    earlier = route.variant == "menu-earlier",
-                    useTile = useProjectTiles,
-                    topDivider = !showFavorites && index == 0,
-                )
+            Box(Modifier.fillMaxWidth().height(Tokens.ProjectListRow)) {
+                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Tokens.ProjectBadgeGap)) {
+                    Box(Modifier.size(Tokens.RowIcon).background(palette.selected, CircleShape))
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Tokens.Space12)) {
+                        Box(Modifier.fillMaxWidth(listOf(.65f, .76f, .35f, .27f, .59f)[index % 5])
+                            .height(Tokens.Space8).background(palette.selected, CircleShape))
+                        Box(Modifier.fillMaxWidth(listOf(.82f, .44f, .37f, .72f)[index % 4])
+                            .height(Tokens.Space8).background(palette.selected, CircleShape))
+                    }
+                    DashboardIcon(Glyph.More, palette.selected)
+                }
+                DividerLine(Modifier.align(Alignment.BottomCenter))
             }
         }
     }
